@@ -141,9 +141,13 @@ function render(){
     ['inzicht','Inzicht','<path d="M3 18l5-6 4 3 4-7 5 4"/>'],
     ['log','Log','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>']];
   const screens = {checkin: vCheckin, vandaag: vVandaag, plan: vPlan, inzicht: vInzicht, log: vLog, meer: vMeer};
+  const old = document.getElementById('screen'); const keep = (old && LAST_TAB===TAB) ? old.scrollTop : 0;
   document.getElementById('app').innerHTML = vTimeline() + `<div class="screen" id="screen">${(screens[TAB]||vVandaag)()}</div>` +
     `<div class="tabs">${tabs.map(t=>`<div class="${TAB===t[0]?'on':''}" onclick="goTab('${t[0]}')"><svg viewBox="0 0 24 24">${t[2]}</svg>${t[1]}</div>`).join('')}</div>`;
+  if(keep){ const sc=document.getElementById('screen'); if(sc) sc.scrollTop = keep; }
+  LAST_TAB = TAB;
 }
+let LAST_TAB = null;
 function goTab(name){ TAB = name; LS.set('pt_tab', name); render(); }
 function vTimeline(){
   const t = D.timeline; const goals = t.goals; const nextIdx = goals.findIndex(g=>!g.done);
@@ -183,21 +187,24 @@ function vCheckin(){
   <div class="muted" style="margin:-6px 0 12px">Over vannacht en gisteren. Invullen en opslaan; de coach verwerkt het bij de volgende ronde (09:00 en 17:00).</div>
   <div class="card"><h2>Bio markers · vannacht en gisteren</h2>${markerRows(m.rows)}</div>
   <div class="small" style="text-align:center;margin:-4px 0 12px">Laatste sync · Oura ${syncT(m.sync.oura)} <span style="color:var(--green)">✓</span> · Garmin ${syncT(m.sync.garmin)} <span style="color:var(--green)">✓</span></div>
-  <div class="card"><h2>Wellness report · hoe voelt u zich nu <span class="n muted">(1 = top, 7 = slecht)</span></h2>
+  <div class="card"><h2>Wellness report <span class="n muted">(na opstaan invullen)</span></h2>
     <div class="muted">Spierpijn</div>${seg('soreness', CI.soreness)}
     <div class="muted" style="margin-top:8px">Vermoeidheid</div>${seg('fatigue', CI.fatigue)}
     <div class="muted" style="margin-top:8px">Stress</div>${seg('stress', CI.stress)}
     <div class="setrow" style="margin-top:6px"><div><b>Alcohol</b><span>gisteravond</span></div><span class="toggle ${CI.alcohol?'':'off'}" onclick="ciToggle('alcohol')"></span></div>
     <div class="setrow"><div><b>Avondsnack</b><span>late maaltijd na 21:00</span></div><span class="toggle ${CI.evening_snack?'':'off'}" onclick="ciToggle('evening_snack')"></span></div>
   </div>
-  <div class="card"><h2>Personal input · over gisteren</h2><textarea class="inp" id="ci-text" placeholder="Hoe ging het gisteren? Bijzonderheden, pijntjes, reistijd, werkdruk…" oninput="CI.text=this.value">${esc(CI.text)}</textarea><button class="btn" id="ci-save" onclick="ciSave()">Opslaan</button></div>
+  <div class="card"><h2>Personal input · over gisteren</h2><textarea class="inp" id="ci-text" placeholder="Hoe ging het gisteren? Bijzonderheden, pijntjes, reistijd, werkdruk…" oninput="CI.text=this.value;ciQueue(1500)">${esc(CI.text)}</textarea><div class="small" id="ci-status" style="margin-top:8px">${CI_STATUS}</div></div>
   <div class="card coach hl"><h2>Coach · analyse van gisteren <span class="pill ${prev.source?'ok':'r'}">${prev.source==='claude'?'Claude':prev.source==='rules'?'regels':'nog geen'}</span></h2>
     <p>${esc(prev.analysis||'Nog geen analyse: die verschijnt na de volgende ronde op de Mac.')}</p>
     <div class="small">Gebaseerd op uw workouts van gisteren, de bio markers van vannacht, het wellness report en uw personal input.</div></div>`;
 }
-function ciSet(k,v){ CI[k]=v; render(); }
-function ciToggle(k){ CI[k]=!CI[k]; render(); }
-async function ciSave(){ const b=document.getElementById('ci-save'); b.disabled=true; try{ await api('PUT','/input',{day:D.today, kind:'checkin', data:CI}); toast('Opgeslagen'); D.markers.wellness = {...CI}; D.markers.personal = CI.text; LS.set('pt_snapshot', D); }catch(e){ toast('Opslaan mislukt: '+e.message); } b.disabled=false; }
+let CI_STATUS = 'Wordt automatisch opgeslagen.'; let CI_TIMER = null;
+function ciSet(k,v){ CI[k]=v; render(); ciQueue(600); }
+function ciToggle(k){ CI[k]=!CI[k]; render(); ciQueue(600); }
+function ciQueue(ms){ clearTimeout(CI_TIMER); ciStatus('Opslaan…'); CI_TIMER = setTimeout(ciSave, ms); }
+function ciStatus(t){ CI_STATUS = t; const el=document.getElementById('ci-status'); if(el) el.textContent = t; }
+async function ciSave(){ try{ await api('PUT','/input',{day:D.today, kind:'checkin', data:CI}); D.markers.wellness = {...CI}; D.markers.personal = CI.text; LS.set('pt_snapshot', D); ciStatus('Automatisch opgeslagen · '+new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})); }catch(e){ ciStatus('Opslaan mislukt, probeert het opnieuw bij de volgende wijziging'); } }
 
 // ---------------------------------------------------------------- vandaag
 function vVandaag(){
