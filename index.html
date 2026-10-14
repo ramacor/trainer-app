@@ -26,9 +26,11 @@
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;height:100%}
 #app{display:flex;flex-direction:column;height:100dvh}
 .timeline{padding:calc(env(safe-area-inset-top) + 8px) 16px 4px;background:var(--bg)}
-.tl{position:relative;height:5px;border-radius:3px;background:var(--surface2);margin:10px 14px 0 4px}
+.tl{position:relative;height:5px;border-radius:3px;background:var(--surface2);margin:10px 0 0}
 .tl i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--q))}
-.tl em{position:absolute;top:50%;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--surface);transform:translate(-50%,-50%);box-shadow:0 0 0 3px var(--q-bg)}
+.tl em{position:absolute;top:50%;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--surface);transform:translate(-50%,-50%);box-shadow:0 0 0 3px var(--q-bg);animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 2px var(--q-bg),0 0 0 0 rgba(108,86,224,.55)}70%{box-shadow:0 0 0 3px var(--q-bg),0 0 0 11px rgba(108,86,224,0)}100%{box-shadow:0 0 0 3px var(--q-bg),0 0 0 0 rgba(108,86,224,0)}}
+@media (prefers-reduced-motion: reduce){.tl em{animation:none}}
 .tl b{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--ink3);opacity:.3}
 .tl s{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:13px;line-height:1;text-decoration:none;color:var(--ink3)}
 .tl s.next{color:var(--accent);font-size:16px}.tl s.done{color:var(--green)}
