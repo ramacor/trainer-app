@@ -39,7 +39,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .screen{flex:1;overflow-y:auto;padding:4px 16px calc(65px + env(safe-area-inset-bottom))}
 .hdr{display:flex;align-items:baseline;justify-content:space-between;margin:6px 0 12px}
 .hdr h1{font-size:30px;margin:0;letter-spacing:-.3px}.hdr h1 small{font-size:inherit;font-weight:inherit;color:inherit}.hdr .d{color:var(--ink2);font-size:13px}
-.gear{font-size:20px;color:var(--ink2);cursor:pointer}
+.gear{font-size:20px;color:var(--ink2);cursor:pointer;margin-left:8px;vertical-align:middle}.hdr .date{font-size:30px;font-weight:700;letter-spacing:-.3px;text-align:right;white-space:nowrap}
 .card{background:var(--surface);border-radius:16px;padding:14px;box-shadow:var(--shadow);border:1px solid var(--line);margin:0 0 12px}
 .card h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:0 0 8px;font-weight:700}
 .card h2 .n{text-transform:none;letter-spacing:0;font-weight:400}
@@ -179,7 +179,7 @@ function vCheckin(){
   if(!CI) CI = { soreness: w.soreness||4, fatigue: w.fatigue||4, stress: w.stress||4, alcohol: !!w.alcohol, evening_snack: !!w.evening_snack, text: m.personal||'' };
   const seg = (k, v) => `<div class="seg">${[1,2,3,4,5,6,7].map(i=>`<span class="${v===i?'on':''}" onclick="ciSet('${k}',${i})">${i}</span>`).join('')}</div>`;
   const syncT = x => x ? new Date(x).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}) : '–';
-  return `<div class="hdr"><h1>Check-in <small>- ${esc(D.timeline.today_txt)}</small></h1></div>
+  return `<div class="hdr"><h1>Check-in</h1><span class="date">${esc(D.timeline.today_txt)}</span></div>
   <div class="muted" style="margin:-6px 0 12px">Over vannacht en gisteren. Invullen en opslaan; de coach verwerkt het bij de volgende ronde (09:00 en 17:00).</div>
   <div class="card"><h2>Bio markers · vannacht en gisteren</h2>${markerRows(m.rows)}</div>
   <div class="small" style="text-align:center;margin:-4px 0 12px">Laatste sync · Oura ${syncT(m.sync.oura)} <span style="color:var(--green)">✓</span> · Garmin ${syncT(m.sync.garmin)} <span style="color:var(--green)">✓</span></div>
@@ -212,7 +212,7 @@ function vVandaag(){
     ${row(ICON_GARMIN,'Beweging','10k stappen · of 1 u Tacx · of 1 u zwemmen', ch.alt?`${ch.alt} ✓`:`${(ch.steps||0).toLocaleString('nl-NL')} <small>/ 10k</small>`, stepsOk?'✓':Math.round((ch.steps||0)/100)+' %', stepsOk?'ok':'warn')}
     ${row(ICON_GARMIN,'Trappen','', `${Math.round(ch.floors||0)} <small>/ 10</small>`, flOk?'✓':Math.round((ch.floors||0)*10)+' %', flOk?'ok':'warn')}
     ${row(ICON_GARMIN,'Water','', `${nl((ch.water_ml||0)/1000)} <small>/ 2 l</small>`, waOk?'✓':'–', waOk?'ok':'warn')}</ul></div>` : '';
-  return `<div class="hdr"><h1>Vandaag <small>- ${esc(D.timeline.today_txt)}</small></h1><span class="gear" onclick="goTab('meer')">⚙︎</span></div>
+  return `<div class="hdr"><h1>Vandaag</h1><span class="date">${esc(D.timeline.today_txt)} <span class="gear" onclick="goTab('meer')">⚙︎</span></span></div>
   ${focusCard()}${decBanner()}
   <div class="card coach"><h2>Coach · vandaag en deze week</h2><b class="t" style="margin-top:0">Vandaag</b><p>${esc(c.today||'Nog geen advies: verschijnt na de volgende ronde.')}</p><b class="t">Deze week</b><p>${esc(c.week||'')}</p></div>
   ${w || `<div class="card"><h2>Geen sessie vandaag</h2><div class="advice"><b>Advies</b>${esc(tb.rest_advice||'')}</div></div>`}${chal}`;
