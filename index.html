@@ -220,7 +220,6 @@ function vCheckin(){
   if(!CI) CI = { soreness: w.soreness||null, fatigue: w.fatigue||null, stress: w.stress||null, alcohol: !!w.alcohol, evening_snack: !!w.evening_snack, text: m.personal||'' };
   const seg = (k, v) => `<div class="seg">${[1,2,3,4,5,6,7].map(i=>`<span class="${v===i?'on':(pw[k]===i?'prev':'')}" onclick="ciSet('${k}',${i})">${i}</span>`).join('')}</div>`;
   return `<div class="hdr"><h1>Reflect</h1><span class="date">${esc(D.timeline.yesterday_txt||D.timeline.today_txt)} <span class="gear" id="rf-btn" onclick="requestRefresh()" title="Verversen">${REFRESHING?'⟳':'↻'}</span></span></div>
-  <div class="muted" style="margin:-6px 0 12px">Terugblik op vannacht en gisteren. Vul in en genereer onderaan het coachrapport.</div>
   <div class="card"><h2>Bio markers · vannacht en gisteren</h2>${markerRows(m.rows)}</div>
   ${syncLine('margin:-4px 0 12px')}
   <div class="card"><h2>Wellness report <span class="n muted">(invullen vóór workout)</span></h2>
