@@ -44,7 +44,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .hdr h1{font-size:30px;margin:0;letter-spacing:-.3px}.hdr h1 small{font-size:inherit;font-weight:inherit;color:inherit}.hdr .d{color:var(--ink2);font-size:13px}
 .gear{font-size:20px;color:var(--ink2);cursor:pointer;margin-left:8px;vertical-align:middle;display:inline-block}.gear.spin{animation:spin 1.2s linear infinite;color:var(--accent)}@keyframes spin{to{transform:rotate(360deg)}}.hdr .date{font-size:30px;font-weight:700;letter-spacing:-.3px;text-align:right;white-space:nowrap}
 .card{background:var(--surface);border-radius:16px;padding:14px;box-shadow:var(--shadow);border:1px solid var(--line);margin:0 0 12px}
-.card h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:0 0 8px;font-weight:700}
+.card h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:0 0 8px;font-weight:700}.ci .card h2{color:var(--ink)}.ci .card h2 .n{color:var(--ink3)}
 .card h2 .n{text-transform:none;letter-spacing:0;font-weight:400}
 .muted{color:var(--ink2);font-size:13px}.small{font-size:12px;color:var(--ink3)}
 .dec{border-radius:12px;padding:9px 12px;margin:0 0 12px;display:flex;align-items:center;gap:10px}
@@ -226,7 +226,7 @@ function vCheckin(){
   const m = D.markers; const w = m.wellness || {}; const pw = m.wellness_prev || {}; const prev = D.today_block.coach || {};
   if(!CI) CI = { soreness: w.soreness||null, fatigue: w.fatigue||null, stress: w.stress||null, alcohol: !!w.alcohol, evening_snack: !!w.evening_snack, text: m.personal||'' };
   const seg = (k, v) => `<div class="seg">${[1,2,3,4,5,6,7].map(i=>`<span class="${v===i?'on':(pw[k]===i?'prev':'')}" onclick="ciSet('${k}',${i})">${i}</span>`).join('')}</div>`;
-  return `<div class="hdr"><h1>Reflect</h1><span class="date">${esc(D.timeline.yesterday_txt||D.timeline.today_txt)} <span class="gear" id="rf-btn" onclick="requestRefresh()" title="Verversen">${REFRESHING?'⟳':'↻'}</span></span></div>
+  return `<div class="ci"><div class="hdr"><h1>Reflect</h1><span class="date">${esc(D.timeline.yesterday_txt||D.timeline.today_txt)} <span class="gear" id="rf-btn" onclick="requestRefresh()" title="Verversen">${REFRESHING?'⟳':'↻'}</span></span></div>
   <div class="card"><h2>Bio markers · vannacht en gisteren</h2>${markerRows(m.rows)}</div>
   ${syncLine('margin:-4px 0 12px')}
   <div class="card"><h2>Wellness report <span class="n muted">(invullen vóór workout)</span></h2>
@@ -242,7 +242,7 @@ function vCheckin(){
   <div class="small" style="margin:6px 0 10px;text-align:center">Analyseert gisteren met uw workouts, de bio markers van vannacht, het wellness report en uw personal input.</div>
   <div class="card coach hl"><h2>Coach · analyse van gisteren</h2>
     <p>${esc(prev.analysis||'Nog geen rapport: vul het wellness report in en tik op "Coachrapport genereren".')}</p>
-    ${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}</div>`;
+    ${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}</div></div>`;
 }
 let CI_STATUS = 'Wordt automatisch opgeslagen.'; let CI_TIMER = null;
 let CH_TIMER = null;
