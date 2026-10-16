@@ -195,7 +195,7 @@ function vTimeline(){
   const ticks = (t.ticks||[]).map(x=>`<b style="left:${x}%"></b>`).join('');
   const ng = t.next_goal;
   return `<div class="timeline"><div class="tl"><div class="ln"></div>${ticks}<i style="width:${t.pct}%"></i><em style="left:${t.pct}%"></em>${doneMarks}${marks}</div>
-  <div class="lbl"><span>week ${t.week??'–'}/${t.weeks} - dag ${t.day_in_week} - ${t.pursuit_pct??0}%</span><span class="goal">${ng?`${esc(ng.short||ng.name)} · ${esc(ng.date_txt)}`:'pursuit voltooid'}</span></div></div>`;
+  <div class="lbl"><span>week ${t.week??'–'}/${t.weeks} - dag ${t.day_in_week} - ${t.pursuit_pct??0}%</span><span class="goal">${ng?`${esc(ng.short||ng.name)} · ${esc(ng.date_txt)}`:'missie voltooid'}</span></div></div>`;
 }
 function focusCard(){ const ng=D.timeline.next_goal; if(!ng) return ''; const idx = D.timeline.goals.findIndex(g=>g.code===ng.code)+1; const logo = ng.logo ? (ng.logo.includes('gymrace') ? `<img class="gr" src="gymrace-logo.png" alt="">` : `<img src="${ng.logo.replace('img/','')}" alt="">`) : `<img src="runner-purple.png" alt="">`;
   return `<div class="focus">${logo}<div><b>Doel ${idx} · ${esc(ng.name)}</b><span>${esc(ng.date_txt)} · nog ${ng.days_left} dagen · ${esc(ng.target)}</span></div><em>★</em></div>`; }
@@ -292,12 +292,13 @@ function missionCards(){
   const gl = p.goals.map((g,i)=>{ const logo = g.logo ? (g.logo.includes('gymrace') ? `<img class="gr" src="gymrace-logo.png" alt="">` : `<img src="${g.logo.replace('img/','')}" alt="">`) : `<img src="runner-purple.png" alt="">`; return `<div class="g">${logo}<div><b>${esc(g.name)}</b><span>${esc(g.target)}</span></div><div class="d">${esc(g.date_txt)}</div></div>`; }).join('');
   const ph = p.strength_phases.filter(x=>!x.name.startsWith('rust')).map((x,i)=>`<div><b>Kracht fase ${i+1}</b>${esc(x.name)}<br>${x.from.slice(8,10)}-${x.from.slice(5,7)} t/m ${x.to.slice(8,10)}-${x.to.slice(5,7)}</div>`).join('');
   const ms = p.milestones.map(m=>`<li class="${m.current?'now':''}"><div class="wk"><b>${m.week}</b>wk</div><div class="t">${m.kind==='doel'?'★ ':''}${esc(m.title)}<span>${esc(m.sub)}</span></div><div class="pill ${m.kind==='doel'?'q':'r'}">${m.current?'nu':m.kind==='doel'?'doel':m.kind}</div></li>`).join('');
-  return `<div class="card"><h2>Pursuit · missie naar de Singelloop · ${p.pursuit.start.slice(8,10)}-${p.pursuit.start.slice(5,7)}-${p.pursuit.start.slice(0,4)} – ${p.pursuit.end.slice(8,10)}-${p.pursuit.end.slice(5,7)}-${p.pursuit.end.slice(0,4)}</h2><div class="goal3">${gl}</div><div class="phase">${ph}</div></div>
+  return `<div class="card"><h2>Missie naar de Singelloop · ${p.pursuit.start.slice(8,10)}-${p.pursuit.start.slice(5,7)}-${p.pursuit.start.slice(0,4)} – ${p.pursuit.end.slice(8,10)}-${p.pursuit.end.slice(5,7)}-${p.pursuit.end.slice(0,4)}</h2><div class="goal3">${gl}</div></div>
+  <div class="card"><h2>Trainingsfases · kracht</h2><div class="phase">${ph}</div></div>
   <div class="card"><h2>Milestones · hoog over</h2><ul class="ms">${ms}</ul><div class="small" style="margin-top:8px">Alleen de komende weken zijn in detail uitgewerkt; herzieningsmomenten: ${esc(p.revisions.join(', '))}.</div></div>`;
 }
 function vDoel(){
   const p = D.plan;
-  return `<div class="hdr"><h1>Doel</h1><span class="d">pursuit · ${p.pursuit.weeks} weken</span></div>${missionCards()}`;
+  return `<div class="hdr"><h1>Doel</h1><span class="d">missie · ${p.pursuit.weeks} weken</span></div>${missionCards()}`;
 }
 function vPlan(){
   const p = D.plan; if(PW==null) PW = (p.weeks.find(w=>w.current)||p.weeks[0]).week;
