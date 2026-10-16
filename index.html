@@ -234,7 +234,7 @@ function vCheckin(){
   <div class="card"><h2>Personal input · over gisteren</h2><textarea class="inp" id="ci-text" placeholder="Hoe ging het gisteren? Bijzonderheden, pijntjes, reistijd, werkdruk…" oninput="CI.text=this.value;ciQueue(1500)">${esc(CI.text)}</textarea><div class="small" id="ci-status" style="margin-top:8px">${CI_STATUS}</div></div>
   <button class="btn" onclick="requestCoach()" ${COACHING?'disabled':''}>${COACHING?'Coach is bezig…':'Coachrapport genereren'}</button>
   <div class="small" style="margin:6px 0 10px;text-align:center">Analyseert gisteren met uw workouts, de bio markers van vannacht, het wellness report en uw personal input.</div>
-  <div class="card coach hl"><h2>Coach · analyse van gisteren <span class="pill ${prev.source?'ok':'r'}">${prev.source==='claude'?'Claude':prev.source==='rules'?'regels':'nog geen'}</span></h2>
+  <div class="card coach hl"><h2>Coach · analyse van gisteren</h2>
     <p>${esc(prev.analysis||'Nog geen rapport: vul het wellness report in en tik op "Coachrapport genereren".')}</p>
     ${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}</div>`;
 }
