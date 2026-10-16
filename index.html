@@ -190,7 +190,7 @@ async function requestRefresh(){
 const CHEV = '<span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>';
 const CNAME = {A:'Run 1', B:'Run 2', C:'Run 3', S1:'Gym 1', S2:'Gym 2', S3:'Gym 3'};
 function cname(c){ return CNAME[c] || c; }
-function wtitle(x){ return x.kind==='kracht' && /^Gym \d/.test(x.name||'') ? x.name : `${cname(x.code)} · ${x.name}`; }
+function wtitle(x){ return /^(Gym|Run) \d/.test(x.name||'') ? x.name : `${cname(x.code)} · ${x.name}`; }
 function goTab(name){ TAB = name; LS.set('pt_tab', name); render(); }
 function vTimeline(){
   const t = D.timeline; const goals = t.goals; const nextIdx = goals.findIndex(g=>!g.done);
