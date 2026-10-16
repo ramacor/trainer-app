@@ -257,7 +257,7 @@ async function ciSave(){ try{ await api('PUT','/input',{day:D.today, kind:'check
 // ---------------------------------------------------------------- vandaag
 function vVandaag(){
   const tb = D.today_block; const c = tb.coach || {};
-  const w = tb.workouts.map((x,i)=>`<div class="card"><h2>Workout · ${esc(cname(x.code))} ${x.kind==='vervalt'?'<span class="pill r">vervalt</span>':x.kind==='kracht'?'<span class="pill s">kracht</span>':x.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</h2>
+  const w = tb.workouts.map((x,i)=>`<div class="card"><h2>${esc(cname(x.code))} ${x.kind==='vervalt'?'<span class="pill r">vervalt</span>':x.kind==='kracht'?'<span class="pill s">kracht</span>':x.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</h2>
     <ul class="list"><li class="tap" onclick="openWorkout('today',${i})"><div class="li-main"><b>${esc(x.name)}</b><span>${esc(x.kind==='loop'?(x.purpose||'').split('Focus:')[0].replace('Doel: ','').slice(0,90):x.kind==='kracht'?(x.exercises||[]).slice(0,3).map(e=>e.split(' · ')[0].replace(/^\d[ab]? /,'')).join(', '):'')}</span>${resultLine(x)}</div><div class="li-r wr">${stopwatch(x)}${x.result?'<span class="pill ok">gedaan ✓</span>':CHEV}</div></li></ul></div>`).join('');
   const ch = tb.challenge; const cnt = ch.counts||{};
   const stepsOk = (ch.steps||0) >= ch.goals.stappen || ch.alt; const flOk = (ch.floors||0) >= ch.goals.trappen; const waOk = (ch.water_ml||0) >= ch.goals.water_ml;
@@ -272,7 +272,7 @@ function vVandaag(){
     ${crow('water', '','Water','', `${nl((ch.water_ml||0)/1000)} <small>/ 2 l</small>`, waOk)}</ul><div class="small muted" style="margin-top:6px">Tik op een regel om af te vinken. Beweging, trappen en water vult het horloge automatisch aan.</div></div>` : '';
   return `<div class="hdr"><h1>Vandaag</h1><span class="date">${esc(D.timeline.today_txt)} <span class="gear" onclick="requestRefresh()" title="Verversen">${REFRESHING?'⟳':'↻'}</span></span></div>
   ${focusCard()}${decBanner()}
-  <div class="card coach"><h2>Coach · vandaag en deze week</h2><b class="t" style="margin-top:0">Vandaag</b><p>${esc(c.today||'Nog geen advies: verschijnt na de volgende ronde.')}</p><b class="t">Deze week</b><p>${esc(c.week||'')}</p></div>
+  <div class="card coach"><h2>Coach · vandaag</h2><p style="margin-top:0">${esc(c.today||'Nog geen advies: genereer het coachrapport onder Reflect.')}</p></div>
   ${w || `<div class="card"><h2>Geen sessie vandaag</h2><div class="advice"><b>Advies</b>${esc(tb.rest_advice||'')}</div></div>`}${chal}${syncLine('')}`;
 }
 const syncT = x => x ? new Date(x).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}) : '–';
