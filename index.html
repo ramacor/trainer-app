@@ -89,7 +89,8 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .wtab td.r{width:30px;text-align:right;color:var(--accent);font-weight:700;white-space:nowrap}.wtab td.t{width:70px;white-space:nowrap;font-weight:600}.wtab td.d{width:48px;text-align:right;white-space:nowrap}.wtab td.z{white-space:nowrap}.wtab td.n{color:var(--ink2)}
 .wtab tr.rep td{background:var(--q-bg)}.wtab tr.rep td.r{box-shadow:inset 3px 0 var(--accent)}.wtab tr.cont td{border-top:0}.wtab tr.mid td{color:var(--amber)}
 .coach.hl{background:var(--q-bg);border:1.5px solid var(--accent);box-shadow:var(--shadow)}.coach.hl h2{color:var(--accent);font-size:13px}.coach.hl p{font-size:15px;line-height:1.55;color:var(--ink)}.coach.hl .small{color:var(--ink2)}
-.coach p{font-size:13.5px;line-height:1.5;margin:0 0 6px}.coach p.kop{font-size:13px;color:var(--ink2);margin-bottom:4px}.coach.hl b.t{color:var(--accent)}.coach b.t{display:block;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);margin:8px 0 2px}
+.coach p{font-size:13.5px;line-height:1.5;margin:0 0 6px}.fb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}.fb .fbl{font-size:11.5px;color:var(--ink3);margin-right:2px}.fbb{width:30px;height:30px;border-radius:50%;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.fbb svg{width:16px;height:16px;fill:none;stroke:var(--ink2);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}.fbb.on{background:var(--green-bg)}.fbb.on svg{stroke:var(--green)}.fbb.on.dn{background:var(--red-bg)}.fbb.on.dn svg{stroke:var(--red)}.fb .fbt{width:100%;min-height:64px;margin-top:4px}.fb .fbq{flex-basis:100%;font-size:12.5px;color:var(--ink2);font-style:italic}
+.coach p.kop{font-size:13px;color:var(--ink2);margin-bottom:4px}.coach.hl b.t{color:var(--accent)}.coach b.t{display:block;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);margin:8px 0 2px}
 textarea.inp{width:100%;min-height:72px;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--ink);font:16px/1.5 -apple-system,system-ui,sans-serif;padding:10px;resize:none}
 .setrow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}.setrow:first-child{border-top:0}.setrow b{font-weight:600;font-size:15px;display:block}.setrow span{font-size:12.5px;color:var(--ink2)}
 .toggle{width:46px;height:28px;border-radius:14px;background:var(--accent);position:relative;display:inline-block;cursor:pointer;flex:0 0 auto}.toggle::after{content:"";position:absolute;right:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff}
@@ -243,8 +244,24 @@ function vCheckin(){
   <div class="card"><h2>Personal input <span class="n muted">(over gisteren)</span></h2><textarea class="inp" id="ci-text" placeholder="Hoe ging het gisteren? Bijzonderheden, pijntjes, reistijd, werkdruk…" oninput="CI.text=this.value;ciQueue(1500)">${esc(CI.text)}</textarea><div class="small" id="ci-status" style="margin-top:8px">${CI_STATUS}</div></div>
   <button class="btn" onclick="requestCoach()" ${COACHING?'disabled':''}>${COACHING?'Coach is bezig…':'Coachrapport genereren'}</button>
   <div class="small" style="margin:6px 0 10px;text-align:center">Analyseert gisteren met uw workouts, de bio markers van vannacht, het wellness report en uw personal input.</div>
-  ${coachCard(prev)}${prev.weekly?`<div class="card coach"><h2>Coach · weekrapport</h2><p style="margin-top:0">${esc(prev.weekly)}</p></div>`:''}</div>`;
+  ${coachCard(prev)}${prev.weekly?`<div class="card coach"><h2>Coach · weekrapport</h2><p style="margin-top:0">${esc(prev.weekly)}</p>${fbBar('weekly:'+(prev.weekly_day||prev.day))}</div>`:''}</div>`;
 }
+// ---- beoordeling van de coach (duim omhoog/omlaag + opmerking) ----
+let FB = Object.assign({}, LS.get('pt_fb', {})); let FB_OPEN = {}; let FB_TIMER = null;
+const FB_ICO = {up:'<svg viewBox="0 0 24 24"><path d="M7 11v9H4v-9h3zm2 0l3.5-7a2 2 0 0 1 2 2v4h4.5a2 2 0 0 1 2 2.3l-1.2 6.5A2 2 0 0 1 17.8 20H9v-9z"/></svg>',
+  down:'<svg viewBox="0 0 24 24"><path d="M17 13V4h3v9h-3zm-2 0l-3.5 7a2 2 0 0 1-2-2v-4H5a2 2 0 0 1-2-2.3l1.2-6.5A2 2 0 0 1 6.2 4H15v9z"/></svg>',
+  chat:'<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4V5z"/></svg>'};
+function fbGet(t){ return FB[t] || (D && D.feedback && D.feedback[t]) || {}; }
+function fbBar(t){ return `<div class="fb" data-t="${esc(t)}">${fbInner(t)}</div>`; }
+function fbInner(t){ const f = fbGet(t); const open = FB_OPEN[t] || (!!f.text && !FB_OPEN.hasOwnProperty(t) && false);
+  return `<span class="fbl">Nuttig?</span><span class="fbb ${f.vote===1?'on':''}" onclick="fbVote('${t}',1)" title="Nuttig">${FB_ICO.up}</span><span class="fbb ${f.vote===-1?'on dn':''}" onclick="fbVote('${t}',-1)" title="Niet nuttig">${FB_ICO.down}</span><span class="fbb ${f.text?'on':''}" onclick="fbText('${t}')" title="Opmerking">${FB_ICO.chat}</span>
+  ${open?`<textarea class="inp fbt" placeholder="Wat had de coach beter kunnen zeggen?" oninput="fbNote('${t}',this.value)">${esc(f.text||'')}</textarea>`:(f.text?`<span class="fbq">“${esc(f.text)}”</span>`:'')}`; }
+function fbRefresh(t){ document.querySelectorAll(`.fb[data-t="${CSS.escape(t)}"]`).forEach(el=>{ el.innerHTML = fbInner(t); }); }
+function fbVote(t, v){ const f = Object.assign({}, fbGet(t)); f.vote = (f.vote===v) ? 0 : v; f.at = new Date().toISOString(); FB[t] = f; LS.set('pt_fb', FB); fbRefresh(t); fbQueue(); }
+function fbText(t){ FB_OPEN[t] = !FB_OPEN[t]; fbRefresh(t); if(FB_OPEN[t]){ const ta = document.querySelector(`.fb[data-t="${CSS.escape(t)}"] textarea`); if(ta) ta.focus(); } }
+function fbNote(t, txt){ const f = Object.assign({}, fbGet(t)); f.text = txt; f.at = new Date().toISOString(); FB[t] = f; LS.set('pt_fb', FB); fbQueue(1200); }
+function fbQueue(ms){ clearTimeout(FB_TIMER); FB_TIMER = setTimeout(fbSave, ms||400); }
+async function fbSave(){ try{ await api('PUT','/input',{day:new Date().toISOString().slice(0,10), kind:'feedback', data:{items: FB}}); if(D){ D.feedback = Object.assign({}, D.feedback||{}, FB); LS.set('pt_snapshot', D); } }catch(e){ toast('Beoordeling niet opgeslagen, probeer opnieuw'); } }
 function coachCard(prev){
   const r = prev.report;
   if(!r) return `<div class="card coach hl"><h2>Coach</h2><p>${esc(prev.analysis||'Nog geen rapport: vul het wellness report in en tik op "Coachrapport genereren".')}</p>${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}</div>`;
@@ -252,7 +269,7 @@ function coachCard(prev){
   const sec = (t, x) => x ? `<b class="t">${t}</b><p>${esc(x)}</p>` : '';
   return `<div class="card coach hl"><h2>Coach</h2><p class="kop"><span class="pill ${col}">${esc((r.kop.match(/\. (Groen|Oranje|Rood)[^.]*/)||['',''])[1]||'')}</span> ${esc(r.kop)}</p>
     ${sec('Gisteren', r.gisteren)}${sec('Vannacht', r.vannacht)}${sec('Vandaag', r.vandaag)}${sec('Vooruit', r.vooruit)}
-    ${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}</div>`;
+    ${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}${fbBar('daily:'+prev.day)}</div>`;
 }
 let CI_STATUS = 'Wordt automatisch opgeslagen.'; let CI_TIMER = null;
 let CH_TIMER = null;
@@ -282,7 +299,7 @@ function vVandaag(){
     ${crow('water', '','Water','', `${nl((ch.water_ml||0)/1000)} <small>/ 2 l</small>`, waOk)}</ul><div class="small muted" style="margin-top:6px">Tik op een regel om af te vinken. Beweging, trappen en water vult het horloge automatisch aan.</div></div>` : '';
   return `<div class="hdr"><h1>Vandaag</h1><span class="date">${esc(D.timeline.today_txt)} <span class="gear" onclick="requestRefresh()" title="Verversen">${REFRESHING?'⟳':'↻'}</span></span></div>
   ${decBanner()}
-  <div class="card coach"><h2>Coach · vandaag</h2><p style="margin-top:0">${esc(c.today||'Nog geen advies: genereer het coachrapport onder Reflect.')}</p></div>
+  <div class="card coach"><h2>Coach · vandaag</h2><p style="margin-top:0">${esc(c.today||'Nog geen advies: genereer het coachrapport onder Reflect.')}</p>${c.day?fbBar('daily:'+c.day):''}</div>
   ${w || `<div class="card"><h2>Geen sessie vandaag</h2><div class="advice"><b>Advies</b>${esc(tb.rest_advice||'')}</div></div>`}${chal}${syncLine('margin:4px 0 14px')}`;
 }
 const syncT = x => x ? new Date(x).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}) : '–';
@@ -291,7 +308,7 @@ function stopwatch(x){ return `<div class="sw"><svg viewBox="0 0 24 26"><path d=
 function reviewLine(x){ const r=x.result; if(!r||!r.review) return ''; const first = r.review.split(/(?<=[.!?])\s+/).slice(0,2).join(' '); return `<span class="rev">${esc(first)}</span>`; }
 function resultLine(x){ const r=x.result; if(!r) return ''; const parts=[]; if(r.distance_km) parts.push(nl(r.distance_km)+' km'); parts.push(r.duration); if(r.pace) parts.push(r.pace); if(r.avg_hr) parts.push('HR '+Math.round(r.avg_hr)+(r.max_hr?' / max '+Math.round(r.max_hr):'')+(r.hr_source==='wrist'?' (pols)':'')); if(r.self_effort) parts.push('zwaarte '+r.self_effort+'/10'); if(r.self_feel) parts.push('gevoel '+r.self_feel+'/5'); return `<span style="color:var(--green);font-weight:600">✓ ${esc(parts.join(' · '))}</span>`; }
 function resultBlock(x){ const r=x.result; if(!r) return ''; let h = `<h4>Resultaat · ${esc(new Date(r.start).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}))}</h4><p>${resultLine(x).replace('✓ ','')}${r.training_load?` · belasting ${r.training_load}`:''}</p>`;
-  if(r.review) h += `<div class="card coach hl" style="margin:10px 0"><h2>Coach over deze sessie</h2><p>${esc(r.review)}</p></div>`;
+  if(r.review) h += `<div class="card coach hl" style="margin:10px 0"><h2>Coach over deze sessie</h2><p>${esc(r.review)}</p>${fbBar('review:'+r.activity_id)}</div>`;
   if(r.laps && r.laps.length){ h += `<table class="wtab" style="margin-top:8px">${r.laps.map(l=>`<tr class="${l.type==='midpoint'?'mid':''}"><td class="t">${esc(l.type)}</td><td class="d">${esc(l.duration)}</td><td class="d">${l.distance_m?l.distance_m+' m':''}</td><td class="z">${esc(l.pace||'')}</td><td class="n">${l.avg_hr?'HR '+Math.round(l.avg_hr)+(l.max_hr?' / '+Math.round(l.max_hr):''):''}</td></tr>`).join('')}</table>`; }
   return h; }
 function openWorkout(src, i){ const x = src==='today' ? D.today_block.workouts[i] : src; showWorkout(x); }
