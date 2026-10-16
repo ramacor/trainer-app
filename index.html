@@ -66,7 +66,8 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .grp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:700;padding:12px 0 4px}.grp:first-child{padding-top:0}
 .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600}
 .pill.q{background:var(--q-bg);color:var(--q)}.pill.e{background:var(--e-bg);color:var(--e)}.pill.s{background:var(--s-bg);color:var(--s)}.pill.ok{background:var(--green-bg);color:var(--green)}.pill.warn{background:var(--amber-bg);color:var(--amber)}.pill.r{background:var(--surface2);color:var(--ink2)}
-.seg{display:flex;gap:4px;margin-top:6px}.seg span{flex:1;text-align:center;padding:7px 0;border-radius:8px;background:var(--surface2);font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer}.seg span.on{background:var(--accent);color:#fff}
+.seg{display:flex;gap:4px;margin-top:6px}.seg span{flex:1;text-align:center;padding:7px 0;border-radius:8px;background:var(--surface2);font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer}.seg span.on{background:var(--accent);color:#fff}.hab{padding:8px 0}.hab+.hab{border-top:1px solid var(--line)}.hab-t{display:flex;align-items:baseline;gap:10px}.hab-t b{font-size:26px;font-weight:800;letter-spacing:-.5px;min-width:34px}.hab-t span{font-size:13px;color:var(--ink2)}.dots{display:flex;gap:3px;margin-top:8px}.dots i{flex:1;height:8px;border-radius:2px;background:var(--surface2)}.dots i.y{background:var(--green)}.dots i.n{background:var(--red)}.dots i.na{background:var(--surface2)}
+.seg span.prev{box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--accent)}.btn:disabled{opacity:.6}
 .btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;background:var(--accent);color:#fff;font-size:16px;font-weight:700;margin-top:10px;cursor:pointer}.btn.ghost{background:var(--surface2);color:var(--ink)}.btn:disabled{opacity:.6}
 .list{margin:0;padding:0;list-style:none}.list li{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}.list li:first-child{border-top:0}.list li.tap{cursor:pointer}
 .day{width:44px;text-align:center}.day b{display:block;font-size:17px}.day span{font-size:11px;color:var(--ink3);text-transform:uppercase}
@@ -144,7 +145,7 @@ function saveCode(){ CODE = document.getElementById('code').value.trim().toUpper
 // ---------------------------------------------------------------- shell
 function render(){
   if(!D){ document.getElementById('app').innerHTML = '<div class="setup"><p class="muted">Laden…</p></div>'; return; }
-  const tabs = [['checkin','Check‑in','<path d="M9 11l2 2 4-4"/><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M9 3v2h6V3"/>'],
+  const tabs = [['checkin','Reflect','<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>'],
     ['vandaag','Vandaag','<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/>'],
     ['plan','Plan','<path d="M4 6h16M4 12h16M4 18h10"/>'],
     ['inzicht','Inzicht','<path d="M3 18l5-6 4 3 4-7 5 4"/>'],
@@ -157,7 +158,18 @@ function render(){
   LAST_TAB = TAB;
 }
 let LAST_TAB = null;
-let REFRESHING = false;
+let REFRESHING = false; let COACHING = false;
+async function requestCoach(){
+  if(COACHING) return; COACHING = true; const before = D && D._updated; render();
+  try{ if(CI_TIMER){ clearTimeout(CI_TIMER); CI_TIMER=null; await ciSave(); } await api('PUT','/input',{day:new Date().toISOString().slice(0,10), kind:'coach', data:{at:new Date().toISOString()}}); toast('Coach analyseert gisteren…'); }
+  catch(e){ toast('Verzoek mislukt: '+e.message); COACHING=false; render(); return; }
+  const t0 = Date.now();
+  while(Date.now()-t0 < 180000){
+    await new Promise(r=>setTimeout(r,5000));
+    try{ const r = await api('GET','/state'); if(r && r.payload && r.updated_at !== before){ D = r.payload; D._updated = r.updated_at; LS.set('pt_snapshot', D); COACHING=false; render(); toast('Coachrapport klaar'); return; } }catch(e){}
+  }
+  COACHING=false; render(); toast('Geen antwoord van de server; probeer het later opnieuw');
+}
 async function requestRefresh(){
   if(REFRESHING) return; REFRESHING = true; const before = D && D._updated; render(); document.querySelectorAll('.gear[title=Verversen]').forEach(e=>e.classList.add('spin'));
   toast('Server haalt Oura en Garmin op…');
@@ -202,24 +214,27 @@ function markerRows(rows){
 // ---------------------------------------------------------------- check-in
 let CI = null;
 function vCheckin(){
-  const m = D.markers; const w = m.wellness || {}; const prev = D.today_block.coach || {};
-  if(!CI) CI = { soreness: w.soreness||4, fatigue: w.fatigue||4, stress: w.stress||4, alcohol: !!w.alcohol, evening_snack: !!w.evening_snack, text: m.personal||'' };
-  const seg = (k, v) => `<div class="seg">${[1,2,3,4,5,6,7].map(i=>`<span class="${v===i?'on':''}" onclick="ciSet('${k}',${i})">${i}</span>`).join('')}</div>`;
-  return `<div class="hdr"><h1>Check-in</h1><span class="date">${esc(D.timeline.today_txt)} <span class="gear" id="rf-btn" onclick="requestRefresh()" title="Verversen">${REFRESHING?'⟳':'↻'}</span></span></div>
-  <div class="muted" style="margin:-6px 0 12px">Over vannacht en gisteren. Invullen en opslaan; de coach verwerkt het bij de volgende ronde (09:00 en 17:00).</div>
+  const m = D.markers; const w = m.wellness || {}; const pw = m.wellness_prev || {}; const prev = D.today_block.coach || {};
+  if(!CI) CI = { soreness: w.soreness||null, fatigue: w.fatigue||null, stress: w.stress||null, alcohol: !!w.alcohol, evening_snack: !!w.evening_snack, text: m.personal||'' };
+  const seg = (k, v) => `<div class="seg">${[1,2,3,4,5,6,7].map(i=>`<span class="${v===i?'on':(pw[k]===i?'prev':'')}" onclick="ciSet('${k}',${i})">${i}</span>`).join('')}</div>`;
+  return `<div class="hdr"><h1>Reflect</h1><span class="date">${esc(D.timeline.yesterday_txt||D.timeline.today_txt)} <span class="gear" id="rf-btn" onclick="requestRefresh()" title="Verversen">${REFRESHING?'⟳':'↻'}</span></span></div>
+  <div class="muted" style="margin:-6px 0 12px">Terugblik op vannacht en gisteren. Vul in en genereer onderaan het coachrapport.</div>
   <div class="card"><h2>Bio markers · vannacht en gisteren</h2>${markerRows(m.rows)}</div>
   ${syncLine('margin:-4px 0 12px')}
   <div class="card"><h2>Wellness report <span class="n muted">(na opstaan invullen)</span></h2>
     <div class="muted">Spierpijn</div>${seg('soreness', CI.soreness)}
     <div class="muted" style="margin-top:8px">Vermoeidheid</div>${seg('fatigue', CI.fatigue)}
     <div class="muted" style="margin-top:8px">Stress</div>${seg('stress', CI.stress)}
+    ${(pw.soreness||pw.fatigue||pw.stress)?'<div class="small" style="margin-top:6px">Paarse omtrek = uw waarde van gisteren.</div>':''}
     <div class="setrow" style="margin-top:6px"><div><b>Alcohol</b><span>gisteravond</span></div><span class="toggle ${CI.alcohol?'':'off'}" onclick="ciToggle('alcohol')"></span></div>
-    <div class="setrow"><div><b>Avondsnack</b><span>late maaltijd na 21:00</span></div><span class="toggle ${CI.evening_snack?'':'off'}" onclick="ciToggle('evening_snack')"></span></div>
+    <div class="setrow"><div><b>Avondsnack</b><span>gesnackt na het avondeten (chips, koek, …)</span></div><span class="toggle ${CI.evening_snack?'':'off'}" onclick="ciToggle('evening_snack')"></span></div>
   </div>
   <div class="card"><h2>Personal input · over gisteren</h2><textarea class="inp" id="ci-text" placeholder="Hoe ging het gisteren? Bijzonderheden, pijntjes, reistijd, werkdruk…" oninput="CI.text=this.value;ciQueue(1500)">${esc(CI.text)}</textarea><div class="small" id="ci-status" style="margin-top:8px">${CI_STATUS}</div></div>
+  <button class="btn" onclick="requestCoach()" ${COACHING?'disabled':''}>${COACHING?'Coach is bezig…':'Coachrapport genereren'}</button>
+  <div class="small" style="margin:6px 0 10px;text-align:center">Analyseert gisteren met uw workouts, de bio markers van vannacht, het wellness report en uw personal input.</div>
   <div class="card coach hl"><h2>Coach · analyse van gisteren <span class="pill ${prev.source?'ok':'r'}">${prev.source==='claude'?'Claude':prev.source==='rules'?'regels':'nog geen'}</span></h2>
-    <p>${esc(prev.analysis||'Nog geen analyse: die verschijnt na de volgende ronde op de Mac.')}</p>
-    <div class="small">Gebaseerd op uw workouts van gisteren, de bio markers van vannacht, het wellness report en uw personal input.</div></div>`;
+    <p>${esc(prev.analysis||'Nog geen rapport: vul het wellness report in en tik op "Coachrapport genereren".')}</p>
+    ${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}</div>`;
 }
 let CI_STATUS = 'Wordt automatisch opgeslagen.'; let CI_TIMER = null;
 let CH_TIMER = null;
@@ -314,6 +329,10 @@ function vInzicht(){
   const c5 = M.length ? chart([{pts:M.map(p=>({x:d(p.day),y:p.rhr})), color:'var(--ink3)', dots:true, r:2},{pts:M.map(p=>({x:d(p.day),y:p.rhr_7d})), color:'var(--red)'}], {yfmt:v=>nl(v,0)}) : '';
   const c6 = M.length ? chart([{pts:M.map(p=>({x:d(p.day),y:p.sleep_h})), color:'var(--accent)', dots:true, r:2.4}], {y0:4, y1:10, yfmt:v=>nl(v,0)+' u'}) : '';
   const g30 = I.goals30; const n = g30.length; const ns = g30.filter(x=>x.steps>=10000).length, nf = g30.filter(x=>x.floors>=10).length, nw = g30.filter(x=>(x.water_ml||0)>=2000).length;
+  const H = I.habits || {}; const hab = (key, name) => { const h = H[key]; if(!h) return ''; const dots = h.days.map(x=>`<i class="${x.v==null?'na':x.v?'y':'n'}" title="${x.eve}"></i>`).join('');
+    const txt = h.n_known ? `${h.streak} ${h.streak===1?'avond':'avonden'} zonder ${name}${h.last_yes_txt?` · laatste keer ${esc(h.last_yes_txt)}`:h.since_txt?` · sinds ${esc(h.since_txt)}`:''}` : `nog niets ingevuld`;
+    return `<div class="hab"><div class="hab-t"><b>${h.n_known?h.streak:'–'}</b><span>${txt}</span></div><div class="dots">${dots}</div></div>`; };
+  const habits = `<div class="card"><h2>Gewoontes · avonden</h2>${hab('evening_snack','avondsnack')}${hab('alcohol','alcohol')}<div class="small" style="margin-top:8px">Laatste 30 avonden uit het wellness report: groen = niet, rood = wel, grijs = niet ingevuld. Teller loopt sinds de laatste gemelde keer.</div></div>`;
   return `<div class="hdr"><h1>Inzicht</h1><span class="d">doelen en trends</span></div>
   <div class="card"><h2>10 km · prognose t.o.v. 50:00</h2>${c1}${leg([['var(--accent)','lijn 1 · schema naar 50:00 (31 jan) en 45:00 (3 okt)'],['var(--green)','lijn 2 · realistisch'],['var(--ink)','lijn 3 · indicatie uit lopen ≥ 4,8 km (Riegel)']])}</div>
   <div class="card"><h2>Kracht · e1RM</h2><p class="muted">${esc(I.strength_kpi.note)}</p></div>
@@ -323,6 +342,7 @@ function vInzicht(){
   <div class="card"><h2>HRV · nachten en 7-daags gemiddelde</h2>${c4}${leg([['var(--ink3)','nacht'],['var(--accent)','7 d'],['var(--e-bg)','band']])}</div>
   <div class="card"><h2>Laagste nachtelijke hartslag</h2>${c5}</div>
   <div class="card"><h2>Slaap · uren per nacht</h2>${c6}</div>
+  ${habits}
   <div class="card"><h2>Challenge · ${n} dagen</h2><ul class="trk"><li class="${ns>=n*0.7?'ok':'warn'}">${ICON_GARMIN}<div class="n">Stappen ≥ 10.000</div><div class="v">${ns} / ${n}</div><div class="dl">${n?Math.round(ns/n*100):0} %</div></li><li class="${nf>=n*0.7?'ok':'warn'}">${ICON_GARMIN}<div class="n">Trappen ≥ 10</div><div class="v">${nf} / ${n}</div><div class="dl">${n?Math.round(nf/n*100):0} %</div></li><li class="${nw>=n*0.7?'ok':'na'}">${ICON_GARMIN}<div class="n">Water ≥ 2 l</div><div class="v">${nw} / ${n}</div><div class="dl">${nw?Math.round(nw/n*100)+' %':'–'}</div></li></ul></div>`;
 }
 
