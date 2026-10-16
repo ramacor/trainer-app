@@ -79,8 +79,8 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .chips span{flex:0 0 auto;padding:6px 11px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:12.5px;color:var(--ink2);cursor:pointer}.chips span.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .tabs{height:auto;background:var(--surface);border-top:1px solid var(--line);display:flex;padding:8px 6px calc(env(safe-area-inset-bottom) + 6px)}
 .tabs div{flex:1;text-align:center;font-size:10.5px;color:var(--ink3);cursor:pointer}.tabs div svg{display:block;margin:0 auto 2px;width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.tabs div.on{color:var(--accent)}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;z-index:20}.modal.open{display:flex}
-.modal .box{background:var(--surface);border-radius:22px 22px 0 0;padding:10px 16px calc(28px + env(safe-area-inset-bottom));max-height:88%;overflow-y:auto;width:100%;border-top:1px solid var(--line)}
+.modal{position:fixed;inset:0;background:var(--bg);display:none;align-items:stretch;z-index:20}.modal.open{display:flex}.tabs{position:relative;z-index:30}
+.modal .box{background:var(--bg);border-radius:0;padding:calc(env(safe-area-inset-top) + 10px) 16px calc(76px + env(safe-area-inset-bottom));height:100%;overflow-y:auto;width:100%}
 .grab{width:38px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 10px}
 .modal h3{font-size:18px;margin:4px 0 2px}.modal .meta{color:var(--ink2);font-size:12.5px;margin:0 0 10px}.modal h4{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:12px 0 4px;font-weight:700}
 .modal p{font-size:14px;line-height:1.5;margin:0}.modal ul{margin:0;padding:0 0 0 16px;font-size:13.5px;line-height:1.5}
@@ -112,7 +112,7 @@ svg.chart{width:100%;height:130px;display:block}.legend{display:flex;gap:12px;fo
 </head>
 <body>
 <div id="app"></div>
-<div class="modal" id="modal" onclick="if(event.target.id==='modal')closeModal()"><div class="box"><div class="grab"></div><div id="mbody"></div><button class="btn ghost" onclick="closeModal()">Sluiten</button></div></div>
+<div class="modal" id="modal" onclick="if(event.target.id==='modal')closeModal()"><div class="box"><div class="small" onclick="closeModal()" style="cursor:pointer;margin:0 0 10px;color:var(--accent);font-weight:700">← terug</div><div id="mbody"></div><button class="btn ghost" onclick="closeModal()">Sluiten</button></div></div>
 <div class="toast" id="toast"></div>
 <script>
 'use strict';
@@ -194,7 +194,7 @@ const CNAME = {A:'Run 1', B:'Run 2', C:'Run 3', S1:'Gym 1', S2:'Gym 2', S3:'Gym 
 function cname(c){ return CNAME[c] || c; }
 function wname(x){ return (x.name||'').replace(/^(Gym|Run) \d · /,'').replace(/^Rust · /,''); }
 function wtitle(x){ return (x.kind==='rust' || /^(Gym|Run) \d/.test(x.name||'')) ? x.name : `${cname(x.code)} · ${x.name}`; }
-function goTab(name){ TAB = name; LS.set('pt_tab', name); render(); }
+function goTab(name){ closeModal(); TAB = name; LS.set('pt_tab', name); render(); }
 function vTimeline(){
   const t = D.timeline; const goals = t.goals; const nextIdx = goals.findIndex(g=>!g.done);
   const after = goals.slice(nextIdx+1);
@@ -287,9 +287,9 @@ function resultBlock(x){ const r=x.result; if(!r) return ''; let h = `<h4>Result
   return h; }
 function openWorkout(src, i){ const x = src==='today' ? D.today_block.workouts[i] : src; showWorkout(x); }
 function showWorkout(x){
-  let h = `<div style="display:flex;justify-content:space-between;align-items:baseline"><h3>${esc(wtitle(x))}</h3>${x.kind==='kracht'?`<span class="pill s">${esc(x.tag||'kracht')}</span>`:x.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</div><p class="meta">${esc(x.date_txt)} · ${x.minutes} min${x.km?` · ≈ ${nl(x.km)} km`:''}</p>`;
+  let h = `<div style="display:flex;justify-content:space-between;align-items:baseline"><h3>${esc(wtitle(x))}</h3>${x.kind==='kracht'?`<span class="pill s">${esc(x.tag||'kracht')}</span>`:x.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</div><p class="meta">${esc(x.date_txt)} · ${x.minutes} min${x.km?` · ${nl(x.km)} km`:''}</p>`;
   h += resultBlock(x);
-  if(x.purpose) h += `<h4>Doel en focus</h4><p>${esc(x.purpose)}</p>`;
+  if(x.purpose) h += `<h4>Doel</h4><p>${esc(x.purpose)}</p>`;
   if(x.steps) h += `<h4>Opbouw</h4><table class="wtab">${x.steps.map(r=>`<tr class="${r[0]?'rep':''}${r[0]==='|'?' cont':''}${r[1]==='other'?' mid':''}"><td class="r">${r[0]==='|'?'':esc(r[0])}</td><td class="t">${r[1]==='other'?'midpoint':esc(r[1])}</td><td class="d">${esc(r[2])}</td><td class="z">${esc(r[3])}</td><td class="n">${esc(r[4])}</td></tr>`).join('')}</table>`;
   if(x.exercises) h += `<h4>Oefeningen</h4><ul>${x.exercises.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`;
   document.getElementById('mbody').innerHTML = h; document.getElementById('modal').classList.add('open');
