@@ -155,9 +155,11 @@ function render(){
   const screens = {checkin: vCheckin, vandaag: vVandaag, doel: vDoel, plan: vPlan, inzicht: vInzicht, menu: vMenu, log: vLog, meer: vMeer};
   const tabOf = {log:'menu', meer:'menu'}; const cur = tabOf[TAB] || TAB;
   const old = document.getElementById('screen'); const keep = (old && LAST_TAB===TAB) ? old.scrollTop : 0;
+  const oldChips = document.querySelector('.chips'); const keepX = (oldChips && LAST_TAB===TAB) ? oldChips.scrollLeft : 0;
   document.getElementById('app').innerHTML = vTimeline() + `<div class="screen" id="screen">${(screens[TAB]||vVandaag)()}</div>` +
     `<div class="tabs">${tabs.map(t=>`<div class="${cur===t[0]?'on':''}" onclick="goTab('${t[0]}')"><svg viewBox="0 0 24 24">${t[2]}</svg>${t[1]}</div>`).join('')}</div>`;
   if(keep){ const sc=document.getElementById('screen'); if(sc) sc.scrollTop = keep; }
+  if(keepX){ const ch=document.querySelector('.chips'); if(ch) ch.scrollLeft = keepX; }
   LAST_TAB = TAB;
 }
 let LAST_TAB = null;
