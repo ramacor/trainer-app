@@ -147,10 +147,11 @@ function render(){
   if(!D){ document.getElementById('app').innerHTML = '<div class="setup"><p class="muted">Laden…</p></div>'; return; }
   const tabs = [['checkin','Reflect','<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>'],
     ['vandaag','Vandaag','<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/>'],
+    ['doel','Doel','<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>'],
     ['plan','Plan','<path d="M4 6h16M4 12h16M4 18h10"/>'],
     ['inzicht','Inzicht','<path d="M3 18l5-6 4 3 4-7 5 4"/>'],
     ['menu','Menu','<path d="M4 7h16M4 12h16M4 17h16"/>']];
-  const screens = {checkin: vCheckin, vandaag: vVandaag, plan: vPlan, inzicht: vInzicht, menu: vMenu, log: vLog, meer: vMeer};
+  const screens = {checkin: vCheckin, vandaag: vVandaag, doel: vDoel, plan: vPlan, inzicht: vInzicht, menu: vMenu, log: vLog, meer: vMeer};
   const tabOf = {log:'menu', meer:'menu'}; const cur = tabOf[TAB] || TAB;
   const old = document.getElementById('screen'); const keep = (old && LAST_TAB===TAB) ? old.scrollTop : 0;
   document.getElementById('app').innerHTML = vTimeline() + `<div class="screen" id="screen">${(screens[TAB]||vVandaag)()}</div>` +
@@ -287,18 +288,25 @@ function closeModal(){ document.getElementById('modal').classList.remove('open')
 
 // ---------------------------------------------------------------- plan
 let PW = null;
-function vPlan(){
-  const p = D.plan; if(PW==null) PW = (p.weeks.find(w=>w.current)||p.weeks[0]).week;
+function missionCards(){
+  const p = D.plan;
   const gl = p.goals.map((g,i)=>{ const logo = g.logo ? (g.logo.includes('gymrace') ? `<img class="gr" src="gymrace-logo.png" alt="">` : `<img src="${g.logo.replace('img/','')}" alt="">`) : `<img src="runner-purple.png" alt="">`; return `<div class="g">${logo}<div><b>${esc(g.name)}</b><span>${esc(g.target)}</span></div><div class="d">${esc(g.date_txt)}</div></div>`; }).join('');
   const ph = p.strength_phases.filter(x=>!x.name.startsWith('rust')).map((x,i)=>`<div><b>Kracht fase ${i+1}</b>${esc(x.name)}<br>${x.from.slice(8,10)}-${x.from.slice(5,7)} t/m ${x.to.slice(8,10)}-${x.to.slice(5,7)}</div>`).join('');
   const ms = p.milestones.map(m=>`<li class="${m.current?'now':''}"><div class="wk"><b>${m.week}</b>wk</div><div class="t">${m.kind==='doel'?'★ ':''}${esc(m.title)}<span>${esc(m.sub)}</span></div><div class="pill ${m.kind==='doel'?'q':'r'}">${m.current?'nu':m.kind==='doel'?'doel':m.kind}</div></li>`).join('');
+  return `<div class="card"><h2>Pursuit · missie naar de Singelloop · ${p.pursuit.start.slice(8,10)}-${p.pursuit.start.slice(5,7)}-${p.pursuit.start.slice(0,4)} – ${p.pursuit.end.slice(8,10)}-${p.pursuit.end.slice(5,7)}-${p.pursuit.end.slice(0,4)}</h2><div class="goal3">${gl}</div><div class="phase">${ph}</div></div>
+  <div class="card"><h2>Milestones · hoog over</h2><ul class="ms">${ms}</ul><div class="small" style="margin-top:8px">Alleen de komende weken zijn in detail uitgewerkt; herzieningsmomenten: ${esc(p.revisions.join(', '))}.</div></div>`;
+}
+function vDoel(){
+  const p = D.plan;
+  return `<div class="hdr"><h1>Doel</h1><span class="d">pursuit · ${p.pursuit.weeks} weken</span></div>${missionCards()}`;
+}
+function vPlan(){
+  const p = D.plan; if(PW==null) PW = (p.weeks.find(w=>w.current)||p.weeks[0]).week;
   const chips = `<div class="chips"><span class="${PW==='all'?'on':''}" onclick="PW='all';render()">Alle</span>${p.weeks.map(w=>`<span class="${PW===w.week?'on':''}" onclick="PW=${w.week};render()">Wk ${w.week}</span>`).join('')}</div>`;
   const weeks = p.weeks.filter(w=>PW==='all'||w.week===PW).map(w=>`<div class="card"><h2>Week ${w.week} · ${esc(w.phase)} · ${w.run_minutes} min lopen</h2>
     <ul class="list">${w.sessions.map((s,i)=>`<li class="${s.kind==='vervalt'?'':'tap'}" onclick="${s.kind==='vervalt'?'':`showWorkout(D.plan.weeks[${p.weeks.indexOf(w)}].sessions[${i}])`}"><div class="day"><b>${s.date.slice(8,10)}</b><span>${s.date_txt.slice(0,2)}</span></div><div class="li-main"><b>${esc(s.code)} · ${esc(s.name)}</b><span>${s.kind==='loop'?(s.purpose||'').split('Focus:')[0].replace('Doel: ','').slice(0,90):s.kind==='kracht'?(s.exercises||[]).slice(0,3).map(e=>e.split(' · ')[0].replace(/^\d[ab]? /,'')).join(', '):''}</span></div><div class="li-r">${s.result?'<span class="pill ok">gedaan ✓</span>':s.kind==='vervalt'?'<span class="pill r">vervalt</span>':s.kind==='kracht'?'<span class="pill s">kracht</span>':s.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}<br>${s.result?`${s.result.distance_km?nl(s.result.distance_km)+' km · ':''}${s.result.duration}`:`${s.minutes} min${s.km?` · ${nl(s.km)} km`:''}`}</div></li>`).join('')}</ul>
     <div class="small" style="margin-top:8px">Challenge: ${['push-ups','sit-ups','tibialis raises','calf raises'].filter(k=>k in w.challenge).map(k=>`${w.challenge[k]} ${k}`).join(' · ')}</div></div>`).join('');
-  return `<div class="hdr"><h1>Plan</h1><span class="d">pursuit · ${p.pursuit.weeks} weken</span></div>
-  <div class="card"><h2>Pursuit · missie naar de Singelloop · ${p.pursuit.start.slice(8,10)}-${p.pursuit.start.slice(5,7)}-${p.pursuit.start.slice(0,4)} – ${p.pursuit.end.slice(8,10)}-${p.pursuit.end.slice(5,7)}-${p.pursuit.end.slice(0,4)}</h2><div class="goal3">${gl}</div><div class="phase">${ph}</div></div>
-  <div class="card"><h2>Milestones · hoog over</h2><ul class="ms">${ms}</ul><div class="small" style="margin-top:8px">Alleen de komende weken zijn in detail uitgewerkt; herzieningsmomenten: ${esc(p.revisions.join(', '))}.</div></div>
+  return `<div class="hdr"><h1>Plan</h1><span class="d">week voor week · ${p.weeks.length} weken uitgewerkt</span></div>
   ${chips}${weeks}`;
 }
 
@@ -330,7 +338,7 @@ function vInzicht(){
   const c5 = M.length ? chart([{pts:M.map(p=>({x:d(p.day),y:p.rhr})), color:'var(--ink3)', dots:true, r:2},{pts:M.map(p=>({x:d(p.day),y:p.rhr_7d})), color:'var(--red)'}], {yfmt:v=>nl(v,0)}) : '';
   const c6 = M.length ? chart([{pts:M.map(p=>({x:d(p.day),y:p.sleep_h})), color:'var(--accent)', dots:true, r:2.4}], {y0:4, y1:10, yfmt:v=>nl(v,0)+' u'}) : '';
   const g30 = I.goals30; const n = g30.length; const ns = g30.filter(x=>x.steps>=10000).length, nf = g30.filter(x=>x.floors>=10).length, nw = g30.filter(x=>(x.water_ml||0)>=2000).length;
-  const H = I.habits || {}; const hab = (key, name) => { const h = H[key]; if(!h) return ''; const dots = h.days.map(x=>`<i class="${x.v==null?'na':x.v?'y':'n'}" title="${x.eve}"></i>`).join('');
+  const H = I.habits || {}; const hab = (key, name) => { const h = H[key]; if(!h) return ''; const dots = h.days.map(x=>`<i class="${x.v==null?'na':x.v?'n':'y'}" title="${x.eve}"></i>`).join('');
     const txt = h.n_known ? `${h.streak} ${h.streak===1?'avond':'avonden'} zonder ${name}${h.last_yes_txt?` · laatste keer ${esc(h.last_yes_txt)}`:h.since_txt?` · sinds ${esc(h.since_txt)}`:''}` : `nog niets ingevuld`;
     return `<div class="hab"><div class="hab-t"><b>${h.n_known?h.streak:'–'}</b><span>${txt}</span></div><div class="dots">${dots}</div></div>`; };
   const habits = `<div class="card"><h2>Gewoontes · avonden</h2>${hab('evening_snack','avondsnack')}${hab('alcohol','alcohol')}<div class="small" style="margin-top:8px">Laatste 30 avonden uit het wellness report: groen = niet, rood = wel, grijs = niet ingevuld. Teller loopt sinds de laatste gemelde keer.</div></div>`;
@@ -380,13 +388,14 @@ function vMeer(){
   return `<div class="hdr"><h1>Instellingen</h1><span class="d" onclick="goTab('menu')" style="cursor:pointer">← menu</span></div>
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
-  <div class="setrow"><div><b>Thema</b><span>systeem · licht · donker</span></div><span class="muted"><span onclick="setTheme(null)" style="cursor:pointer">S</span> · <span onclick="setTheme('light')" style="cursor:pointer">L</span> · <span onclick="setTheme('dark')" style="cursor:pointer">D</span></span></div></div>
+  <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
   <div class="card"><h2>Bronnen</h2><div class="muted">Oura: nacht-HRV, laagste HR, slaap, temperatuur, ademfrequentie. Garmin: borstband-hartslag, tempo, workouts, stappen, trappen, water, weegschaal, zelfevaluatie. Protocol: Nuuttila 2022 / Vesterinen 2016. Data staan alleen achter uw synccode.</div></div>`;
 }
-function setTheme(t){ if(t) document.documentElement.setAttribute('data-theme', t); else document.documentElement.removeAttribute('data-theme'); LS.set('pt_theme', t); }
-const th = LS.get('pt_theme', null); if(th) setTheme(th);
+function setTheme(t){ t = t==='light' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', t); LS.set('pt_theme', t); document.querySelectorAll('meta[name=theme-color]').forEach(m=>{ m.removeAttribute('media'); m.content = t==='dark' ? '#000000' : '#F4F5F8'; }); }
+function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 'dark'); render(); }
+setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 load();
 </script>
