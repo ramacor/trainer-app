@@ -289,7 +289,7 @@ function openWorkout(src, i){ const x = src==='today' ? D.today_block.workouts[i
 function showWorkout(x){
   let h = `<div style="display:flex;justify-content:space-between;align-items:baseline"><h3>${esc(wtitle(x))}</h3>${x.kind==='kracht'?`<span class="pill s">${esc(x.tag||'kracht')}</span>`:x.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</div><p class="meta">${esc(x.date_txt)} · ${x.minutes} min${x.km?` · ${nl(x.km)} km`:''}</p>`;
   h += resultBlock(x);
-  if(x.purpose) h += `<h4>Doel</h4><p>${esc(x.purpose)}</p>`;
+  if(x.purpose) h += `<h4>Doel</h4><p>${esc(x.purpose.replace(/^Doel:\s*/,''))}</p>`;
   if(x.steps) h += `<h4>Opbouw</h4><table class="wtab">${x.steps.map(r=>`<tr class="${r[0]?'rep':''}${r[0]==='|'?' cont':''}${r[1]==='other'?' mid':''}"><td class="r">${r[0]==='|'?'':esc(r[0])}</td><td class="t">${r[1]==='other'?'midpoint':esc(r[1])}</td><td class="d">${esc(r[2])}</td><td class="z">${esc(r[3])}</td><td class="n">${esc(r[4])}</td></tr>`).join('')}</table>`;
   if(x.exercises) h += `<h4>Oefeningen</h4><ul>${x.exercises.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`;
   document.getElementById('mbody').innerHTML = h; document.getElementById('modal').classList.add('open');
