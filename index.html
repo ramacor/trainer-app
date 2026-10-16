@@ -227,7 +227,7 @@ function vCheckin(){
   if(!CI) CI = { soreness: w.soreness||null, fatigue: w.fatigue||null, stress: w.stress||null, alcohol: !!w.alcohol, evening_snack: !!w.evening_snack, text: m.personal||'' };
   const seg = (k, v) => `<div class="seg">${[1,2,3,4,5,6,7].map(i=>`<span class="${v===i?'on':(pw[k]===i?'prev':'')}" onclick="ciSet('${k}',${i})">${i}</span>`).join('')}</div>`;
   return `<div class="ci"><div class="hdr"><h1>Reflect</h1><span class="date">${esc(D.timeline.yesterday_txt||D.timeline.today_txt)} <span class="gear" id="rf-btn" onclick="requestRefresh()" title="Verversen">${REFRESHING?'⟳':'↻'}</span></span></div>
-  <div class="card"><h2>Bio markers · vannacht en gisteren</h2>${markerRows(m.rows)}</div>
+  <div class="card"><h2>Bio markers <span class="n muted">(vannacht en gisteren)</span></h2>${markerRows(m.rows)}</div>
   ${syncLine('margin:-4px 0 12px')}
   <div class="card"><h2>Wellness report <span class="n muted">(invullen vóór workout)</span></h2>
     <div class="muted">Spierpijn</div>${seg('soreness', CI.soreness)}
@@ -237,7 +237,7 @@ function vCheckin(){
     <div class="setrow" style="margin-top:6px"><div><b>Alcohol</b><span>gisteravond</span></div><span class="toggle ${CI.alcohol?'':'off'}" onclick="ciToggle('alcohol')"></span></div>
     <div class="setrow"><div><b>Avondsnack</b><span>gesnackt na het avondeten (chips, koek, …)</span></div><span class="toggle ${CI.evening_snack?'':'off'}" onclick="ciToggle('evening_snack')"></span></div>
   </div>
-  <div class="card"><h2>Personal input · over gisteren</h2><textarea class="inp" id="ci-text" placeholder="Hoe ging het gisteren? Bijzonderheden, pijntjes, reistijd, werkdruk…" oninput="CI.text=this.value;ciQueue(1500)">${esc(CI.text)}</textarea><div class="small" id="ci-status" style="margin-top:8px">${CI_STATUS}</div></div>
+  <div class="card"><h2>Personal input <span class="n muted">(over gisteren)</span></h2><textarea class="inp" id="ci-text" placeholder="Hoe ging het gisteren? Bijzonderheden, pijntjes, reistijd, werkdruk…" oninput="CI.text=this.value;ciQueue(1500)">${esc(CI.text)}</textarea><div class="small" id="ci-status" style="margin-top:8px">${CI_STATUS}</div></div>
   <button class="btn" onclick="requestCoach()" ${COACHING?'disabled':''}>${COACHING?'Coach is bezig…':'Coachrapport genereren'}</button>
   <div class="small" style="margin:6px 0 10px;text-align:center">Analyseert gisteren met uw workouts, de bio markers van vannacht, het wellness report en uw personal input.</div>
   <div class="card coach hl"><h2>Coach · analyse van gisteren</h2>
