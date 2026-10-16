@@ -71,7 +71,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;background:var(--accent);color:#fff;font-size:16px;font-weight:700;margin-top:10px;cursor:pointer}.btn.ghost{background:var(--surface2);color:var(--ink)}.btn:disabled{opacity:.6}
 .list{margin:0;padding:0;list-style:none}.list li{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}.list li:first-child{border-top:0}.list li.tap{cursor:pointer}
 .day{width:44px;text-align:center}.day b{display:block;font-size:17px}.day span{font-size:11px;color:var(--ink3);text-transform:uppercase}
-.li-main{flex:1;min-width:0}.li-main b{display:block;font-size:14.5px}.li-main span{font-size:12.5px;color:var(--ink2)}.li-r{text-align:right;font-size:12.5px;color:var(--ink2);white-space:nowrap}
+.li-main{flex:1;min-width:0}.li-main b{display:block;font-size:14.5px}.li-main span{font-size:12.5px;color:var(--ink2)}.li-r{text-align:right;font-size:12.5px;color:var(--ink2);white-space:nowrap}.chev{width:26px;height:26px;border-radius:50%;background:var(--q-bg);display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}.chev svg{width:14px;height:14px;fill:none;stroke:var(--accent);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
 .chips span{flex:0 0 auto;padding:6px 11px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:12.5px;color:var(--ink2);cursor:pointer}.chips span.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .tabs{height:auto;background:var(--surface);border-top:1px solid var(--line);display:flex;padding:8px 6px calc(env(safe-area-inset-bottom) + 6px)}
@@ -184,6 +184,10 @@ async function requestRefresh(){
   }
   REFRESHING=false; render(); toast('Geen nieuwe gegevens binnen 2 minuten; staat de server aan?');
 }
+const CHEV = '<span class="chev"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></span>';
+const CNAME = {A:'Run 1', B:'Run 2', C:'Run 3', S1:'Gym 1', S2:'Gym 2', S3:'Gym 3'};
+function cname(c){ return CNAME[c] || c; }
+function wtitle(x){ return x.kind==='kracht' && /^Gym \d/.test(x.name||'') ? x.name : `${cname(x.code)} · ${x.name}`; }
 function goTab(name){ TAB = name; LS.set('pt_tab', name); render(); }
 function vTimeline(){
   const t = D.timeline; const goals = t.goals; const nextIdx = goals.findIndex(g=>!g.done);
@@ -250,8 +254,8 @@ async function ciSave(){ try{ await api('PUT','/input',{day:D.today, kind:'check
 // ---------------------------------------------------------------- vandaag
 function vVandaag(){
   const tb = D.today_block; const c = tb.coach || {};
-  const w = tb.workouts.map((x,i)=>`<div class="card"><h2>Workout · ${esc(x.code)} ${x.kind==='vervalt'?'<span class="pill r">vervalt</span>':x.kind==='kracht'?'<span class="pill s">kracht</span>':x.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</h2>
-    <ul class="list"><li class="tap" onclick="openWorkout('today',${i})"><div class="li-main"><b>${esc(x.name)}</b><span>${x.minutes} min${x.km?` · ≈ ${nl(x.km)} km`:''}${x.kind==='loop'?' · op het horloge':''}</span>${resultLine(x)}</div><div class="li-r">${x.result?'<span class="pill ok">gedaan ✓</span>':'▸'}</div></li></ul></div>`).join('');
+  const w = tb.workouts.map((x,i)=>`<div class="card"><h2>Workout · ${esc(cname(x.code))} ${x.kind==='vervalt'?'<span class="pill r">vervalt</span>':x.kind==='kracht'?'<span class="pill s">kracht</span>':x.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</h2>
+    <ul class="list"><li class="tap" onclick="openWorkout('today',${i})"><div class="li-main"><b>${esc(x.name)}</b><span>${x.minutes} min${x.km?` · ≈ ${nl(x.km)} km`:''}${x.kind==='loop'?' · op het horloge':''}</span>${resultLine(x)}</div><div class="li-r">${x.result?'<span class="pill ok">gedaan ✓</span>':CHEV}</div></li></ul></div>`).join('');
   const ch = tb.challenge; const cnt = ch.counts||{};
   const stepsOk = (ch.steps||0) >= ch.goals.stappen || ch.alt; const flOk = (ch.floors||0) >= ch.goals.trappen; const waOk = (ch.water_ml||0) >= ch.goals.water_ml;
   const row = (icon, name, sub, val, dl, cls) => { const m = String(val).match(/^(.*?)\s*(?:<small>(.*)<\/small>)?$/); return `<li class="${cls}">${icon}<div class="n">${name}${sub?`<span>${sub}</span>`:''}</div><div class="v"><span class="num">${m?m[1]:val}</span><small>${m&&m[2]?m[2]:''}</small></div><div class="dl">${dl}</div></li>`; };
@@ -276,7 +280,7 @@ function resultBlock(x){ const r=x.result; if(!r) return ''; let h = `<h4>Result
   return h; }
 function openWorkout(src, i){ const x = src==='today' ? D.today_block.workouts[i] : src; showWorkout(x); }
 function showWorkout(x){
-  let h = `<div style="display:flex;justify-content:space-between;align-items:baseline"><h3>${esc(x.code)} · ${esc(x.name)}</h3>${x.kind==='kracht'?'<span class="pill s">kracht</span>':x.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</div><p class="meta">${esc(x.date_txt)} · ${x.minutes} min${x.km?` · ≈ ${nl(x.km)} km`:''}</p>`;
+  let h = `<div style="display:flex;justify-content:space-between;align-items:baseline"><h3>${esc(wtitle(x))}</h3>${x.kind==='kracht'?'<span class="pill s">kracht</span>':x.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</div><p class="meta">${esc(x.date_txt)} · ${x.minutes} min${x.km?` · ≈ ${nl(x.km)} km`:''}</p>`;
   h += resultBlock(x);
   if(x.purpose) h += `<h4>Doel en focus</h4><p>${esc(x.purpose)}</p>`;
   if(x.steps) h += `<h4>Opbouw</h4><table class="wtab">${x.steps.map(r=>`<tr class="${r[0]?'rep':''}${r[0]==='|'?' cont':''}${r[1]==='other'?' mid':''}"><td class="r">${r[0]==='|'?'':esc(r[0])}</td><td class="t">${r[1]==='other'?'midpoint':esc(r[1])}</td><td class="d">${esc(r[2])}</td><td class="z">${esc(r[3])}</td><td class="n">${esc(r[4])}</td></tr>`).join('')}</table>`;
@@ -304,7 +308,7 @@ function vPlan(){
   const p = D.plan; if(PW==null) PW = (p.weeks.find(w=>w.current)||p.weeks[0]).week;
   const chips = `<div class="chips"><span class="${PW==='all'?'on':''}" onclick="PW='all';render()">Alle</span>${p.weeks.map(w=>`<span class="${PW===w.week?'on':''}" onclick="PW=${w.week};render()">Wk ${w.week}</span>`).join('')}</div>`;
   const weeks = p.weeks.filter(w=>PW==='all'||w.week===PW).map(w=>`<div class="card"><h2>Week ${w.week} · ${esc(w.phase)} · ${w.run_minutes} min lopen</h2>
-    <ul class="list">${w.sessions.map((s,i)=>`<li class="${s.kind==='vervalt'?'':'tap'}" onclick="${s.kind==='vervalt'?'':`showWorkout(D.plan.weeks[${p.weeks.indexOf(w)}].sessions[${i}])`}"><div class="day"><b>${s.date.slice(8,10)}</b><span>${s.date_txt.slice(0,2)}</span></div><div class="li-main"><b>${esc(s.code)} · ${esc(s.name)}</b><span>${s.kind==='loop'?(s.purpose||'').split('Focus:')[0].replace('Doel: ','').slice(0,90):s.kind==='kracht'?(s.exercises||[]).slice(0,3).map(e=>e.split(' · ')[0].replace(/^\d[ab]? /,'')).join(', '):''}</span></div><div class="li-r">${s.result?'<span class="pill ok">gedaan ✓</span>':s.kind==='vervalt'?'<span class="pill r">vervalt</span>':s.kind==='kracht'?'<span class="pill s">kracht</span>':s.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}<br>${s.result?`${s.result.distance_km?nl(s.result.distance_km)+' km · ':''}${s.result.duration}`:`${s.minutes} min${s.km?` · ${nl(s.km)} km`:''}`}</div></li>`).join('')}</ul>
+    <ul class="list">${w.sessions.map((s,i)=>`<li class="${s.kind==='vervalt'?'':'tap'}" onclick="${s.kind==='vervalt'?'':`showWorkout(D.plan.weeks[${p.weeks.indexOf(w)}].sessions[${i}])`}"><div class="day"><b>${s.date.slice(8,10)}</b><span>${s.date_txt.slice(0,2)}</span></div><div class="li-main"><b>${esc(wtitle(s))}</b><span>${s.kind==='loop'?(s.purpose||'').split('Focus:')[0].replace('Doel: ','').slice(0,90):s.kind==='kracht'?(s.exercises||[]).slice(0,3).map(e=>e.split(' · ')[0].replace(/^\d[ab]? /,'')).join(', '):''}</span></div><div class="li-r">${s.result?'<span class="pill ok">gedaan ✓</span>':s.kind==='vervalt'?'<span class="pill r">vervalt</span>':s.kind==='kracht'?'<span class="pill s">kracht</span>':s.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}<br>${s.result?`${s.result.distance_km?nl(s.result.distance_km)+' km · ':''}${s.result.duration}`:`${s.minutes} min${s.km?` · ${nl(s.km)} km`:''}`}</div></li>`).join('')}</ul>
     <div class="small" style="margin-top:8px">Challenge: ${['push-ups','sit-ups','tibialis raises','calf raises'].filter(k=>k in w.challenge).map(k=>`${w.challenge[k]} ${k}`).join(' · ')}</div></div>`).join('');
   return `<div class="hdr"><h1>Plan</h1><span class="d">week voor week · ${p.weeks.length} weken uitgewerkt</span></div>
   ${chips}${weeks}`;
@@ -358,7 +362,7 @@ function vInzicht(){
 // ---------------------------------------------------------------- log
 function vLog(){
   const days = D.log.map(L=>{
-    const planned = L.planned.map(p=>`<li><div class="li-main"><b>${esc(p.code)} · ${esc(p.name)}</b><span>gepland · ${p.minutes} min</span></div><div class="li-r">${p.kind==='vervalt'?'<span class="pill r">vervalt</span>':p.kind==='kracht'?'<span class="pill s">kracht</span>':p.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</div></li>`).join('');
+    const planned = L.planned.map(p=>`<li><div class="li-main"><b>${esc(wtitle(p))}</b><span>gepland · ${p.minutes} min</span></div><div class="li-r">${p.kind==='vervalt'?'<span class="pill r">vervalt</span>':p.kind==='kracht'?'<span class="pill s">kracht</span>':p.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</div></li>`).join('');
     const acts = L.activities.map(a=>`<li><div class="li-main"><b>${esc(a.activity_type)}${a.distance_m?` · ${nl(a.distance_m/1000)} km`:''}</b><span>${dur(a.duration_s)}${a.pace?` · ${a.pace}`:''}${a.avg_hr?` · HR ${a.avg_hr}`:''}${a.max_hr?` · max ${a.max_hr}`:''} ${a.hr_source?`<span class="pill r">${a.hr_source==='strap'?'band':'pols'}</span>`:''}${a.self_effort?` · zwaarte ${a.self_effort}/10`:''}</span></div><div class="li-r">${L.trimp?`TRIMP ${L.trimp}`:''}</div></li>`).join('');
     const CK = L.checked||{}; const cnt = L.challenge||{};
     const lrow = (name, val, ok) => `<li class="${ok?'ok':'warn'}"><div class="n">${name}</div><div class="v"><span class="num">${val}</span></div><div class="dl">${ok?'<span class="tick on">✓</span>':'<span class="tick"></span>'}</div></li>`;
@@ -379,8 +383,8 @@ function vLog(){
 function vMenu(){
   return `<div class="hdr"><h1>Menu</h1></div>
   <div class="card"><ul class="list">
-    <li class="tap" onclick="goTab('log')"><div class="li-main"><b>Log</b><span>per dag · workouts, challenge, wellness en coach</span></div><div class="li-r">▸</div></li>
-    <li class="tap" onclick="goTab('meer')"><div class="li-main"><b>Instellingen</b><span>synccode, zones, app-informatie</span></div><div class="li-r">▸</div></li>
+    <li class="tap" onclick="goTab('log')"><div class="li-main"><b>Log</b><span>per dag · workouts, challenge, wellness en coach</span></div><div class="li-r">${CHEV}</div></li>
+    <li class="tap" onclick="goTab('meer')"><div class="li-main"><b>Instellingen</b><span>synccode, zones, app-informatie</span></div><div class="li-r">${CHEV}</div></li>
   </ul></div>`;
 }
 function vMeer(){
