@@ -27,16 +27,18 @@ input,textarea,select,button{font-size:16px}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;height:100%}
 #app{display:flex;flex-direction:column;height:100dvh}
 .timeline{padding:calc(env(safe-area-inset-top) + 8px) 16px 4px;background:var(--bg)}
-.tl{position:relative;height:5px;border-radius:3px;background:var(--surface2);margin:10px 0 0}
-.tl i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--q))}
-.tl em{position:absolute;top:50%;width:12px;height:12px;border-radius:50%;background:var(--accent);border:2px solid var(--surface);transform:translate(-50%,-50%);box-shadow:0 0 0 3px var(--q-bg);animation:pulse 2s ease-out infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 2px var(--q-bg),0 0 0 0 rgba(108,86,224,.55)}70%{box-shadow:0 0 0 3px var(--q-bg),0 0 0 11px rgba(108,86,224,0)}100%{box-shadow:0 0 0 3px var(--q-bg),0 0 0 0 rgba(108,86,224,0)}}
+.tl{position:relative;height:28px;margin:6px 0 0}
+.tl .ln{position:absolute;left:0;right:0;top:14px;height:1px;background:var(--line)}
+.tl i{position:absolute;left:0;top:13px;height:3px;border-radius:2px;background:var(--accent)}
+.tl em{position:absolute;top:14px;width:8px;height:8px;border-radius:50%;background:var(--accent);transform:translate(-50%,-50%);box-shadow:0 0 0 5px var(--q-bg);animation:pulse 2s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 4px var(--q-bg),0 0 0 0 rgba(108,86,224,.5)}70%{box-shadow:0 0 0 5px var(--q-bg),0 0 0 12px rgba(108,86,224,0)}100%{box-shadow:0 0 0 5px var(--q-bg),0 0 0 0 rgba(108,86,224,0)}}
 @media (prefers-reduced-motion: reduce){.tl em{animation:none}}
-.tl b{position:absolute;top:-3px;bottom:-3px;width:1px;background:var(--ink3);opacity:.3}
-.tl s{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:13px;line-height:1;text-decoration:none;color:var(--ink3)}
-.tl s.next{color:var(--accent);font-size:16px}.tl s.last{transform:translate(-100%,-50%)}.tl s.done{color:var(--green)}
-.tl .brk{position:absolute;top:50%;width:14px;height:14px;transform:translate(-50%,-50%);overflow:visible}
-.timeline .lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-top:14px}.timeline .lbl .goal{color:var(--accent);font-weight:700}
+.tl b{position:absolute;top:11px;height:7px;width:1px;background:var(--ink3);opacity:.35}
+.tl s{position:absolute;top:14px;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--surface);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;text-decoration:none}
+.tl s img{width:14px;height:14px;object-fit:contain}.tl s img.gr{object-fit:cover;border-radius:3px}
+.tl s.next{border-color:var(--accent);box-shadow:0 0 0 3px var(--q-bg)}.tl s.last{transform:translate(-100%,-50%)}.tl s.done{border-color:var(--green)}
+.tl .brk{position:absolute;top:14px;transform:translateY(-50%);color:var(--ink3);font-size:11px;letter-spacing:2px;line-height:1;background:var(--bg);padding:0 2px}
+.timeline .lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-top:8px}.timeline .lbl .goal{color:var(--accent);font-weight:700}
 .screen{flex:1;overflow-y:auto;padding:4px 16px calc(65px + env(safe-area-inset-bottom))}
 .hdr{display:flex;align-items:baseline;justify-content:space-between;margin:6px 0 12px}
 .hdr h1{font-size:30px;margin:0;letter-spacing:-.3px}.hdr h1 small{font-size:inherit;font-weight:inherit;color:inherit}.hdr .d{color:var(--ink2);font-size:13px}
@@ -171,12 +173,13 @@ function goTab(name){ TAB = name; LS.set('pt_tab', name); render(); }
 function vTimeline(){
   const t = D.timeline; const goals = t.goals; const nextIdx = goals.findIndex(g=>!g.done);
   const after = goals.slice(nextIdx+1);
-  let stars = `<s class="${'next'}" style="left:78%">★</s>`;
-  if(after.length){ stars += `<svg class="brk" style="left:84%" viewBox="0 0 16 16"><path d="M3 0v16M13 0v16" stroke="var(--bg)" stroke-width="4"/><path d="M4 0l5 4-5 4 5 4-5 4M8 0l5 4-5 4 5 4-5 4" fill="none" stroke="var(--ink3)" stroke-width="1.4"/></svg>`; after.forEach((g,i)=>{ const last = i===after.length-1; stars += `<s class="${last?'last':''}" style="left:${last?100:92}%">★</s>`; }); }
-  const doneStars = goals.slice(0,nextIdx).map((g,i)=>`<s class="done" style="left:${2+i*4}%">★</s>`).join('');
+  const logo = g => { const src = (g.logo||'img/runner-purple.png').replace('img/',''); return `<img class="${src.includes('gymrace')?'gr':''}" src="${src}" alt="">`; };
+  let marks = nextIdx>=0 ? `<s class="next" style="left:76%">${logo(goals[nextIdx])}</s>` : '';
+  if(after.length){ marks += `<span class="brk" style="left:83.5%">···</span>`; after.forEach((g,i)=>{ const last = i===after.length-1; marks += `<s class="${last?'last':''}" style="left:${last?100:91}%">${logo(g)}</s>`; }); }
+  const doneMarks = goals.slice(0,nextIdx).map((g,i)=>`<s class="done" style="left:${4+i*8}%">${logo(g)}</s>`).join('');
   const ticks = (t.ticks||[]).map(x=>`<b style="left:${x}%"></b>`).join('');
   const ng = t.next_goal;
-  return `<div class="timeline"><div class="tl">${ticks}<i style="width:${t.pct}%"></i><em style="left:${t.pct}%"></em>${doneStars}${stars}</div>
+  return `<div class="timeline"><div class="tl"><div class="ln"></div>${ticks}<i style="width:${t.pct}%"></i><em style="left:${t.pct}%"></em>${doneMarks}${marks}</div>
   <div class="lbl"><span>week ${t.week??'–'}/${t.weeks} - dag ${t.day_in_week} - ${t.pursuit_pct??0}%</span><span class="goal">${ng?`${esc(ng.short||ng.name)} · ${esc(ng.date_txt)}`:'pursuit voltooid'}</span></div></div>`;
 }
 function focusCard(){ const ng=D.timeline.next_goal; if(!ng) return ''; const idx = D.timeline.goals.findIndex(g=>g.code===ng.code)+1; const logo = ng.logo ? (ng.logo.includes('gymrace') ? `<img class="gr" src="gymrace-logo.png" alt="">` : `<img src="${ng.logo.replace('img/','')}" alt="">`) : `<img src="runner-purple.png" alt="">`;
