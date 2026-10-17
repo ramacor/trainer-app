@@ -281,7 +281,7 @@ let CI_STATUS = 'Wordt automatisch opgeslagen.'; let CI_TIMER = null;
 let CH_TIMER = null;
 function chToggle(k){ const ch = D.today_block.challenge; ch.checked = ch.checked || {}; if(ch.checked[k]) delete ch.checked[k]; else ch.checked[k] = true; LS.set('pt_snapshot', D); render(); clearTimeout(CH_TIMER); CH_TIMER = setTimeout(chSave, 600); }
 async function chSave(){ try{ await api('PUT','/input',{day:D.today, kind:'challenge', data:{items: D.today_block.challenge.checked||{}}}); }catch(e){ toast('Afvinken niet opgeslagen, probeer opnieuw'); } }
-function ciSet(k,v){ CI[k]=v; render(); ciQueue(600); }
+function ciSet(k,v){ CI[k] = (CI[k]===v) ? null : v; render(); ciQueue(600); }
 function ciToggle(k){ CI[k]=!CI[k]; render(); ciQueue(600); }
 function ciQueue(ms){ clearTimeout(CI_TIMER); ciStatus('Opslaan…'); CI_TIMER = setTimeout(ciSave, ms); }
 function ciStatus(t){ CI_STATUS = t; const el=document.getElementById('ci-status'); if(el) el.textContent = t; }
