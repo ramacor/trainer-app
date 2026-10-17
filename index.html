@@ -219,7 +219,7 @@ function markerRows(rows){
     let dl='–', cls='';
     if(r.delta!=null && r.delta!==0){ const good = r.lower_better ? r.delta<0 : r.delta>0; cls = good?'up':'dn'; dl=(r.delta>0?'+':'')+nl(r.delta, Number.isInteger(r.delta)?0:1); }
     else if(r.delta===0) dl='0';
-    const val = r.value==null ? '—' : (Number.isInteger(r.value)? r.value : nl(r.value, r.unit==='°C'?2:1));
+    const val = r.txt!=null ? r.txt : (r.value==null ? '—' : (Number.isInteger(r.value)? r.value : nl(r.value, r.unit==='°C'?2:1)));
     out+=`<li class="${r.status}">${SRC[r.src]||''}<div class="n">${esc(r.name)}${r.sub?`<span>${esc(r.sub)}</span>`:''}</div><div class="v"><span class="num">${val}</span><small>${r.unit?esc(r.unit):''}</small></div><div class="dl ${cls}">${dl}</div></li>`; });
   return `<ul class="trk">${out}</ul>`;
 }
@@ -228,7 +228,7 @@ function markerRows(rows){
 let CI = null;
 function vCheckin(){
   const m = D.markers; const w = m.wellness || {}; const pw = m.wellness_prev || {}; const prev = D.today_block.coach || {};
-  if(!CI) CI = { soreness: w.soreness||null, fatigue: w.fatigue||null, stress: w.stress||null, alcohol: !!w.alcohol, evening_snack: !!w.evening_snack, text: m.personal||'' };
+  if(!CI) CI = { soreness: w.soreness||null, fatigue: w.fatigue||null, stress: w.stress||null, mood: w.mood||null, motivation: w.motivation||null, alcohol: !!w.alcohol, evening_snack: !!w.evening_snack, pain: !!w.pain, pain_note: w.pain_note||'', symptoms: !!w.symptoms, appetite_low: !!w.appetite_low, text: m.personal||'' };
   const seg = (k, v) => `<div class="seg">${[1,2,3,4,5,6,7].map(i=>`<span class="${v===i?'on':(pw[k]===i?'prev':'')}" onclick="ciSet('${k}',${i})">${i}</span>`).join('')}</div>`;
   return `<div class="ci"><div class="hdr"><h1>Reflect</h1><span class="date">${esc(D.timeline.yesterday_txt||D.timeline.today_txt)} <span class="gear" id="rf-btn" onclick="requestRefresh()" title="Verversen">${REFRESHING?'⟳':'↻'}</span></span></div>
   <div class="card"><h2>Bio markers <span class="n muted">(vannacht en gisteren)</span></h2>${markerRows(m.rows)}</div>
@@ -237,8 +237,14 @@ function vCheckin(){
     <div class="muted">Spierpijn</div>${seg('soreness', CI.soreness)}
     <div class="muted" style="margin-top:8px">Vermoeidheid</div>${seg('fatigue', CI.fatigue)}
     <div class="muted" style="margin-top:8px">Stress</div>${seg('stress', CI.stress)}
-    ${(pw.soreness||pw.fatigue||pw.stress)?'<div class="small" style="margin-top:6px">Paarse omtrek = uw waarde van gisteren.</div>':''}
-    <div class="setrow" style="margin-top:6px"><div><b>Alcohol</b><span>gisteravond</span></div><span class="toggle ${CI.alcohol?'':'off'}" onclick="ciToggle('alcohol')"></span></div>
+    <div class="muted" style="margin-top:8px">Stemming <span class="n">(1 = opgewekt, 7 = prikkelbaar of somber)</span></div>${seg('mood', CI.mood)}
+    <div class="muted" style="margin-top:8px">Zin om te trainen <span class="n">(1 = geen zin, 7 = veel zin)</span></div>${seg('motivation', CI.motivation)}
+    ${(pw.soreness||pw.fatigue||pw.stress||pw.mood||pw.motivation)?'<div class="small" style="margin-top:6px">Paarse omtrek = uw waarde van gisteren.</div>':''}
+    <div class="setrow" style="margin-top:6px"><div><b>Pijn aan gewricht of pees</b><span>geen spierpijn: knie, scheen, achilles, heup, rug</span></div><span class="toggle ${CI.pain?'':'off'}" onclick="ciToggle('pain')"></span></div>
+    ${CI.pain?`<input class="inp" style="margin:0 0 8px" placeholder="Waar? (bijv. linkerknie)" value="${esc(CI.pain_note||'')}" oninput="CI.pain_note=this.value;ciQueue(1200)">`:''}
+    <div class="setrow"><div><b>Ziektesymptomen</b><span>keel, neus, hoest, rillerig</span></div><span class="toggle ${CI.symptoms?'':'off'}" onclick="ciToggle('symptoms')"></span></div>
+    <div class="setrow"><div><b>Eetlust minder</b><span>minder trek dan normaal</span></div><span class="toggle ${CI.appetite_low?'':'off'}" onclick="ciToggle('appetite_low')"></span></div>
+    <div class="setrow"><div><b>Alcohol</b><span>gisteravond</span></div><span class="toggle ${CI.alcohol?'':'off'}" onclick="ciToggle('alcohol')"></span></div>
     <div class="setrow"><div><b>Avondsnack</b><span>gesnackt na het avondeten (chips, koek, …)</span></div><span class="toggle ${CI.evening_snack?'':'off'}" onclick="ciToggle('evening_snack')"></span></div>
   </div>
   <div class="card"><h2>Personal input <span class="n muted">(over gisteren)</span></h2><textarea class="inp" id="ci-text" placeholder="Hoe ging het gisteren? Bijzonderheden, pijntjes, reistijd, werkdruk…" oninput="CI.text=this.value;ciQueue(1500)">${esc(CI.text)}</textarea><div class="small" id="ci-status" style="margin-top:8px">${CI_STATUS}</div></div>
@@ -408,7 +414,7 @@ function vLog(){
     const stepsOk = (L.steps||0) >= 10000 || !!L.alt || !!CK.beweging, flOk = (L.floors||0) >= 10 || !!CK.trappen, waOk = (L.water_ml||0) >= 2000 || !!CK.water;
     const ch = L.challenge ? `<ul class="trk chal sm">${['push-ups','sit-ups','tibialis raises','calf raises'].filter(k=>k in cnt).map(k=>{ const ok = L.challenge_done || !!CK[k]; return lrow(esc(k[0].toUpperCase()+k.slice(1)), `${ok?cnt[k]:0} / ${cnt[k]}`, ok); }).join('')}
       ${lrow('Beweging', L.alt?`${L.alt} ✓`:`${(L.steps||0).toLocaleString('nl-NL')} / 10k`, stepsOk)}${lrow('Trappen', `${Math.round(L.floors||0)} / 10`, flOk)}${lrow('Water', `${L.water_ml?nl(L.water_ml/1000):'–'} / 2 l`, waOk)}</ul>` : '';
-    const w = L.wellness ? `<span>welzijn ${L.wellness.soreness||'–'}/${L.wellness.fatigue||'–'}/${L.wellness.stress||'–'}${L.wellness.alcohol?' · alcohol':''}${L.wellness.evening_snack?' · snack':''}</span>` : '';
+    const w = L.wellness ? `<span>welzijn ${L.wellness.soreness||'–'}/${L.wellness.fatigue||'–'}/${L.wellness.stress||'–'}${L.wellness.mood?`/${L.wellness.mood}`:''}${L.wellness.motivation?` · zin ${L.wellness.motivation}`:''}${L.wellness.pain?` · pijn${L.wellness.pain_note?' ('+esc(L.wellness.pain_note)+')':''}`:''}${L.wellness.symptoms?' · symptomen':''}${L.wellness.appetite_low?' · eetlust':''}${L.wellness.alcohol?' · alcohol':''}${L.wellness.evening_snack?' · snack':''}</span>` : '';
     const dec = L.decision ? `<span class="pill ${L.decision==='GREEN'?'ok':L.decision==='AMBER'?'warn':'r'}">${L.decision}</span>` : '';
     return `<div class="dayhdr"><b>${esc(L.date_txt)}</b><span>${L.week?`week ${L.week}`:''} ${dec}</span></div><div class="card">
       ${(planned||acts)?`<ul class="list">${planned}${acts}</ul>`:`<div class="muted">${L.blocked?`Rustperiode (${esc(L.blocked[0])})`:'Geen sessie gepland'}${L.activities.length?'':' · geen activiteit'}</div>`}
