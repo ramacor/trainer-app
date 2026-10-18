@@ -9,7 +9,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
+<<<<<<< Updated upstream
 <meta name="app-build" content="20261018-0948">
+=======
+<meta name="app-build" content="20261018-0949">
+>>>>>>> Stashed changes
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -441,7 +445,11 @@ function vMeer(){
   return `<div class="hdr"><h1>Instellingen</h1><span class="d" onclick="goTab('menu')" style="cursor:pointer">← menu</span></div>
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
+<<<<<<< Updated upstream
   <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261018-0948'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+=======
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261018-0949'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+>>>>>>> Stashed changes
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -452,9 +460,15 @@ function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 
 setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
+<<<<<<< Updated upstream
 const BUILD = '20261018-0948'; let UPDATE_SEEN = false;
 async function checkUpdate(){
   if(BUILD === '20261018-0948' || UPDATE_SEEN) return;
+=======
+const BUILD = '20261018-0949'; let UPDATE_SEEN = false;
+async function checkUpdate(){
+  if(BUILD === '20261018-0949' || UPDATE_SEEN) return;
+>>>>>>> Stashed changes
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true; const el = document.getElementById('upd'); el.classList.add('on'); } }catch(e){}
 }
