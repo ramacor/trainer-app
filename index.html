@@ -9,11 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<<<<<<< Updated upstream
-<meta name="app-build" content="20261018-0949">
-=======
-<meta name="app-build" content="20261018-1006">
->>>>>>> Stashed changes
+<meta name="app-build" content="20261018-1021">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -95,7 +91,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .wtab td.r{width:30px;text-align:right;color:var(--accent);font-weight:700;white-space:nowrap}.wtab td.t{width:70px;white-space:nowrap;font-weight:600}.wtab td.d{width:48px;text-align:right;white-space:nowrap}.wtab td.z{white-space:nowrap}.wtab td.n{color:var(--ink2)}
 .wtab tr.rep td{background:var(--q-bg)}.wtab tr.rep td.r{box-shadow:inset 3px 0 var(--accent)}.wtab tr.cont td{border-top:0}.wtab tr.mid td{color:var(--amber)}
 .coach.hl{background:var(--q-bg);border:1.5px solid var(--accent);box-shadow:var(--shadow)}.coach.hl h2{color:var(--accent);font-size:13px}.coach.hl p{font-size:15px;line-height:1.55;color:var(--ink)}.coach.hl .small{color:var(--ink2)}
-.coach p{font-size:13.5px;line-height:1.5;margin:0 0 6px}.fb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}.fb .fbl{font-size:11.5px;color:var(--ink3);margin-right:2px}.fbb{width:30px;height:30px;border-radius:50%;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.fbb svg{width:16px;height:16px;fill:none;stroke:var(--ink2);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}.fbb.on{background:var(--green-bg)}.fbb.on svg{stroke:var(--green)}.fbb.on.dn{background:var(--red-bg)}.fbb.on.dn svg{stroke:var(--red)}.fb .fbt{width:100%;min-height:64px;margin-top:4px}.fb .fbq{flex-basis:100%;font-size:12.5px;color:var(--ink2);font-style:italic}
+.coach p{font-size:13.5px;line-height:1.5;margin:0 0 6px}.fb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}.fb .fbl{font-size:11.5px;color:var(--ink3);margin-right:2px}.fbb{width:30px;height:30px;border-radius:50%;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.fbb svg{width:16px;height:16px;fill:none;stroke:var(--ink2);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}.fbb.on{background:var(--green-bg)}.fbb.on svg{stroke:var(--green)}.fbb.on.dn{background:var(--red-bg)}.fbb.on.dn svg{stroke:var(--red)}.fb .fbt{width:100%;min-height:64px;margin-top:4px}.fbrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}.btn.mini{width:auto;padding:8px 16px;font-size:14px;margin:0}.fb .fbq{flex-basis:100%;font-size:12.5px;color:var(--ink2);font-style:italic}
 .coach p.kop{font-size:13px;color:var(--ink2);margin-bottom:4px}.coach.hl b.t{color:var(--accent)}.coach b.t{display:block;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);margin:8px 0 2px}
 textarea.inp{width:100%;min-height:72px;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--ink);font:16px/1.5 -apple-system,system-ui,sans-serif;padding:10px;resize:none}
 .setrow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}.setrow:first-child{border-top:0}.setrow b{font-weight:600;font-size:15px;display:block}.setrow span{font-size:12.5px;color:var(--ink2)}
@@ -291,13 +287,14 @@ function fbGet(t){ return FB[t] || (D && D.feedback && D.feedback[t]) || {}; }
 function fbBar(t){ return `<div class="fb" data-t="${esc(t)}">${fbInner(t)}</div>`; }
 function fbInner(t){ const f = fbGet(t); const open = FB_OPEN[t] || (!!f.text && !FB_OPEN.hasOwnProperty(t) && false);
   return `<span class="fbl">Nuttig?</span><span class="fbb ${f.vote===1?'on':''}" onclick="fbVote('${t}',1)" title="Nuttig">${FB_ICO.up}</span><span class="fbb ${f.vote===-1?'on dn':''}" onclick="fbVote('${t}',-1)" title="Niet nuttig">${FB_ICO.down}</span><span class="fbb ${f.text?'on':''}" onclick="fbText('${t}')" title="Opmerking">${FB_ICO.chat}</span>
-  ${open?`<textarea class="inp fbt" placeholder="Wat had de coach beter kunnen zeggen?" oninput="fbNote('${t}',this.value)">${esc(f.text||'')}</textarea>`:(f.text?`<span class="fbq">“${esc(f.text)}”</span>`:'')}`; }
+  ${open?`<textarea class="inp fbt" placeholder="Wat had de coach beter kunnen zeggen? Bijv. 'korter', 'geen citaten', 'meer feiten', 'herhaling'." oninput="fbNote('${t}',this.value)" onblur="fbSave()">${esc(f.text||'')}</textarea><div class="fbrow"><span class="small" id="fbs-${esc(t).replace(/[^a-z0-9]/gi,'_')}">${f.saved?'Opgeslagen ✓':'Nog niet opgeslagen'}</span><button class="btn mini" onclick="fbCommit('${t}')">Opslaan</button></div>`:(f.text?`<span class="fbq">“${esc(f.text)}”</span>`:'')}`; }
+async function fbCommit(t){ const f = Object.assign({}, fbGet(t)); f.at = new Date().toISOString(); FB[t] = f; LS.set('pt_fb', FB); clearTimeout(FB_TIMER); const ok = await fbSave(); if(ok){ FB[t].saved = true; FB_OPEN[t] = false; fbRefresh(t); toast('Opmerking opgeslagen'); } }
 function fbRefresh(t){ document.querySelectorAll(`.fb[data-t="${CSS.escape(t)}"]`).forEach(el=>{ el.innerHTML = fbInner(t); }); }
 function fbVote(t, v){ const f = Object.assign({}, fbGet(t)); f.vote = (f.vote===v) ? 0 : v; f.at = new Date().toISOString(); FB[t] = f; LS.set('pt_fb', FB); fbRefresh(t); fbQueue(); }
 function fbText(t){ FB_OPEN[t] = !FB_OPEN[t]; fbRefresh(t); if(FB_OPEN[t]){ const ta = document.querySelector(`.fb[data-t="${CSS.escape(t)}"] textarea`); if(ta) ta.focus(); } }
-function fbNote(t, txt){ const f = Object.assign({}, fbGet(t)); f.text = txt; f.at = new Date().toISOString(); FB[t] = f; LS.set('pt_fb', FB); fbQueue(1200); }
+function fbNote(t, txt){ const f = Object.assign({}, fbGet(t)); f.text = txt; f.at = new Date().toISOString(); f.saved = false; FB[t] = f; LS.set('pt_fb', FB); const el=document.getElementById('fbs-'+t.replace(/[^a-z0-9]/gi,'_')); if(el) el.textContent='Nog niet opgeslagen'; fbQueue(1500); }
 function fbQueue(ms){ clearTimeout(FB_TIMER); FB_TIMER = setTimeout(fbSave, ms||400); }
-async function fbSave(){ try{ await api('PUT','/input',{day:new Date().toISOString().slice(0,10), kind:'feedback', data:{items: FB}}); if(D){ D.feedback = Object.assign({}, D.feedback||{}, FB); LS.set('pt_snapshot', D); } }catch(e){ toast('Beoordeling niet opgeslagen, probeer opnieuw'); } }
+async function fbSave(){ try{ await api('PUT','/input',{day:new Date().toISOString().slice(0,10), kind:'feedback', data:{items: FB}}); Object.keys(FB).forEach(k=>{ FB[k].saved = true; }); LS.set('pt_fb', FB); if(D){ D.feedback = Object.assign({}, D.feedback||{}, FB); LS.set('pt_snapshot', D); } document.querySelectorAll('[id^=fbs-]').forEach(el=>el.textContent='Opgeslagen ✓'); return true; }catch(e){ toast('Beoordeling niet opgeslagen, probeer opnieuw'); return false; } }
 function coachCard(prev){
   const r = prev.report;
   if(!r) return `<div class="card coach hl"><h2>Coach</h2><p>${esc(prev.analysis||'Nog geen rapport: vul het wellness report in en tik op "Coachrapport genereren".')}</p>${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}</div>`;
@@ -468,11 +465,8 @@ function vMeer(){
   return `<div class="hdr"><h1>Instellingen</h1><span class="d" onclick="goTab('menu')" style="cursor:pointer">← menu</span></div>
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
-<<<<<<< Updated upstream
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261018-0949'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
-=======
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261018-1006'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
->>>>>>> Stashed changes
+  <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261018-1021'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -483,15 +477,9 @@ function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 
 setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-<<<<<<< Updated upstream
-const BUILD = '20261018-0949'; let UPDATE_SEEN = false;
+const BUILD = '20261018-1021'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261018-0949' || UPDATE_SEEN) return;
-=======
-const BUILD = '20261018-1006'; let UPDATE_SEEN = false;
-async function checkUpdate(){
-  if(BUILD === '20261018-1006' || UPDATE_SEEN) return;
->>>>>>> Stashed changes
+  if(BUILD === '20261018-1021' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true; const el = document.getElementById('upd'); el.classList.add('on'); } }catch(e){}
 }
