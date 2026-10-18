@@ -1,9 +1,5 @@
 // Minimale service worker: de app-bestanden offline, data altijd vers (via de synccode).
-<<<<<<< Updated upstream
-const C = 'pt-app-20261018-0948';
-=======
 const C = 'pt-app-20261018-0949';
->>>>>>> Stashed changes
 const FILES = ['./index.html', './manifest.json', './icon.png', './runner-purple.png', './gymrace-logo.png', './singelloop-beeldmerk.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
