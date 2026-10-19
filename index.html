@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-0904">
+<meta name="app-build" content="20261019-0939">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -69,7 +69,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .grp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:700;padding:12px 0 4px}.grp:first-child{padding-top:0}
 .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600}
 .pill.q{background:var(--q-bg);color:var(--q)}.pill.e{background:var(--e-bg);color:var(--e)}.pill.s{background:var(--s-bg);color:var(--s)}.pill.ok{background:var(--green-bg);color:var(--green);text-shadow:var(--glow)}.pill.warn{background:var(--amber-bg);color:var(--amber)}.pill.r{background:var(--surface2);color:var(--ink2)}
-.seg{display:flex;gap:4px;margin-top:6px}.seg span{flex:1;text-align:center;padding:7px 0;border-radius:8px;background:var(--surface2);font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer}.seg span.on{background:var(--accent);color:#fff}.hab{padding:8px 0}.hab+.hab{border-top:1px solid var(--line)}.hab-t{display:flex;align-items:baseline;gap:10px}.hab-t b{font-size:26px;font-weight:800;letter-spacing:-.5px;min-width:34px}.hab-t span{font-size:13px;color:var(--ink2)}.dots{display:flex;gap:3px;margin-top:8px}.dots i{flex:1;height:8px;border-radius:2px;background:var(--surface2)}.dots i.y{background:var(--green)}.dots i.n{background:var(--red)}.dots i.na{background:var(--surface2)}
+.seg{display:flex;gap:4px;margin-top:6px}.seg span{flex:1;text-align:center;padding:7px 0;border-radius:8px;background:var(--surface2);font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer}.seg span.on{background:var(--accent);color:#fff}.seg.lock span{opacity:.55;cursor:default}.seg.lock span.on{opacity:1}.toggle.lock{opacity:.55;cursor:default}.hab{padding:8px 0}.hab+.hab{border-top:1px solid var(--line)}.hab-t{display:flex;align-items:baseline;gap:10px}.hab-t b{font-size:26px;font-weight:800;letter-spacing:-.5px;min-width:34px}.hab-t span{font-size:13px;color:var(--ink2)}.dots{display:flex;gap:3px;margin-top:8px}.dots i{flex:1;height:8px;border-radius:2px;background:var(--surface2)}.dots i.y{background:var(--green)}.dots i.n{background:var(--red)}.dots i.na{background:var(--surface2)}
 .seg span.prev{box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--accent)}.btn:disabled{opacity:.6}
 .btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;background:var(--accent);color:#fff;font-size:16px;font-weight:700;margin-top:10px;cursor:pointer}.btn.ghost{background:var(--surface2);color:var(--ink)}.btn:disabled{opacity:.6}
 .list{margin:0;padding:0;list-style:none}.list li{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}.list li:first-child{border-top:0}.list li.done{background:var(--green-bg);border-radius:10px;padding-left:8px;padding-right:8px;margin:2px -8px;border-top:0}.list li.done+li{border-top:0}.list li.rest .day b,.list li.rest .li-main b{color:var(--ink2)}.list li.rest .li-main span{font-size:12px}.list li.done .li-main b{color:var(--green);text-shadow:var(--glow)}.ttl-tick{width:18px;height:18px;line-height:16px;font-size:10px;color:#06130E;vertical-align:middle}.card h2 .ttl-tick{text-shadow:none}.list li.done .sw svg{stroke:var(--green);filter:drop-shadow(0 0 6px rgba(61,255,176,.6))}.list li.done .sw span b{color:var(--green);text-shadow:var(--glow)}.list li.past{opacity:.45}.list li.today .day b{color:var(--accent);text-shadow:0 0 8px rgba(124,103,242,.6)}.list li.tap{cursor:pointer}
@@ -172,14 +172,26 @@ function render(){
 }
 let LAST_TAB = null;
 let REFRESHING = false; let COACHING = false;
-async function requestCoach(){
+function syncAgeMin(x){ return x ? (Date.now() - new Date(x).getTime())/60000 : Infinity; }
+function watchToday(){ const w = D.markers && D.markers.sync && D.markers.sync.watch; if(!w) return false; const d = new Date(w); const n = new Date(); return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth() && d.getDate()===n.getDate(); }
+function requestCoach(){
+  const s = (D.markers && D.markers.sync) || {}; const oA = syncAgeMin(s.oura), gA = syncAgeMin(s.garmin); const wt = watchToday();
+  const stale = oA > 10 || gA > 10;
+  if(!stale && wt){ coachGo(); return; }
+  let h = `<h3>Eerst even controleren</h3>`;
+  if(!wt) h += `<p style="margin-top:8px"><b>Je horloge is vandaag nog niet gesynchroniseerd</b> (laatste keer ${s.watch?esc(new Date(s.watch).toLocaleString('nl-NL',{weekday:'short',hour:'2-digit',minute:'2-digit'})):'onbekend'}). Zonder die sync ontbreken de stappen, de slaap van het horloge en eventueel de workout van gisteren in het rapport. Open Garmin Connect op je telefoon zodat het horloge synchroniseert, kom dan terug en genereer opnieuw.</p>`;
+  if(stale) h += `<p style="margin-top:8px">De Oura- en Garmin-gegevens op de server zijn ${Math.round(Math.max(oA,gA))} minuten oud; de server ververst ze vóór het rapport automatisch (dat duurt zo'n halve minuut extra).</p>`;
+  h += `<div style="margin-top:14px">${!wt?`<button class="btn" onclick="closeModal();toast('Synchroniseer het horloge en genereer daarna opnieuw')">Eerst horloge synchroniseren</button>`:''}<button class="btn ${!wt?'ghost':''}" onclick="closeModal();coachGo()">${!wt?'Toch genereren':'Verversen en genereren'}</button><button class="btn ghost" onclick="closeModal()">Annuleren</button></div>`;
+  document.getElementById('mbody').innerHTML = h; document.getElementById('modal').classList.add('open');
+}
+async function coachGo(){
   if(COACHING) return; COACHING = true; const before = D && D._updated; render();
-  try{ if(CI_TIMER){ clearTimeout(CI_TIMER); CI_TIMER=null; await ciSave(); } await api('PUT','/input',{day:new Date().toISOString().slice(0,10), kind:'coach', data:{at:new Date().toISOString()}}); toast('Coach analyseert gisteren…'); }
+  try{ if(CI_TIMER){ clearTimeout(CI_TIMER); CI_TIMER=null; await ciSave(); } await api('PUT','/input',{day:new Date().toISOString().slice(0,10), kind:'coach', data:{at:new Date().toISOString()}}); toast('Server ververst Oura en Garmin en maakt het rapport…'); }
   catch(e){ toast('Verzoek mislukt: '+e.message); COACHING=false; render(); return; }
   const t0 = Date.now();
-  while(Date.now()-t0 < 180000){
+  while(Date.now()-t0 < 240000){
     await new Promise(r=>setTimeout(r,5000));
-    try{ const r = await api('GET','/state'); if(r && r.payload && r.updated_at !== before){ D = r.payload; D._updated = r.updated_at; LS.set('pt_snapshot', D); COACHING=false; render(); toast('Coachrapport klaar'); return; } }catch(e){}
+    try{ const r = await api('GET','/state'); if(r && r.payload && r.updated_at !== before){ D = r.payload; D._updated = r.updated_at; LS.set('pt_snapshot', D); COACHING=false; CI_UNLOCK=false; render(); toast('Coachrapport klaar'); return; } }catch(e){}
   }
   COACHING=false; render(); toast('Geen antwoord van de server; probeer het later opnieuw');
 }
@@ -252,27 +264,31 @@ function markerRows(rows){
 }
 
 // ---------------------------------------------------------------- check-in
-let CI = null;
+let CI = null; let CI_DAY = null; let CI_UNLOCK = false;
 function vCheckin(){
   const m = D.markers; const w = m.wellness || {}; const pw = m.wellness_prev || {}; const prev = D.today_block.coach || {};
+  if(CI_DAY !== D.today){ CI = null; CI_DAY = D.today; CI_UNLOCK = false; }   // nieuwe dag: leeg beginnen, nooit de waarden van gisteren
+  const LOCKED = !!(prev.generated_at && String(prev.generated_at).slice(0,10) === D.today) && !CI_UNLOCK;
   if(!CI) CI = { soreness: w.soreness||null, fatigue: w.fatigue||null, stress: w.stress||null, mood: w.mood||null, motivation: w.motivation||null, alcohol: !!w.alcohol, evening_snack: !!w.evening_snack, pain: !!w.pain, pain_note: w.pain_note||'', symptoms: !!w.symptoms, appetite_low: !!w.appetite_low, text: m.personal||'' };
-  const seg = (k, v) => `<div class="seg">${[1,2,3,4,5,6,7].map(i=>`<span class="${v===i?'on':(pw[k]===i?'prev':'')}" onclick="ciSet('${k}',${i})">${i}</span>`).join('')}</div>`;
+  const seg = (k, v) => `<div class="seg ${LOCKED?'lock':''}">${[1,2,3,4,5,6,7].map(i=>`<span class="${v===i?'on':(pw[k]===i?'prev':'')}" ${LOCKED?'':`onclick="ciSet('${k}',${i})"`}>${i}</span>`).join('')}</div>`;
+  const tog = (k) => `<span class="toggle ${CI[k]?'':'off'} ${LOCKED?'lock':''}" ${LOCKED?'':`onclick="ciToggle('${k}')"`}></span>`;
   return `<div class="ci"><div class="hdr"><h1>Reflect</h1><span class="date">${esc(D.timeline.yesterday_txt||D.timeline.today_txt)} <span class="gear" id="rf-btn" onclick="requestRefresh()" title="Verversen">${REFRESHING?'⟳':'↻'}</span></span></div>
   <div class="card"><h2 class="info" onclick="showInfo('biomarkers')">Bio markers <span class="n muted">(vannacht en gisteren)</span></h2>${markerRows(m.rows)}</div>
   ${syncLine('margin:-4px 0 12px')}
   <div class="card"><h2 class="info" onclick="showInfo('wellness')">Wellness report <span class="n muted">(invullen vóór workout)</span></h2>
+    ${LOCKED?`<div class="small" style="margin:-4px 0 8px;color:var(--green)">Ingevuld en verwerkt in het coachrapport van vandaag. <span style="color:var(--accent);cursor:pointer;font-weight:700" onclick="CI_UNLOCK=true;render()">Toch wijzigen</span></div>`:''}
     <div class="muted">Spierpijn</div>${seg('soreness', CI.soreness)}
     <div class="muted" style="margin-top:8px">Vermoeidheid</div>${seg('fatigue', CI.fatigue)}
     <div class="muted" style="margin-top:8px">Stress</div>${seg('stress', CI.stress)}
     <div class="muted" style="margin-top:8px">Stemming <span class="n">(1 = opgewekt, 7 = prikkelbaar of somber)</span></div>${seg('mood', CI.mood)}
     <div class="muted" style="margin-top:8px">Zin om te trainen <span class="n">(1 = geen zin, 7 = veel zin)</span></div>${seg('motivation', CI.motivation)}
     ${(pw.soreness||pw.fatigue||pw.stress||pw.mood||pw.motivation)?'<div class="small" style="margin-top:6px">Paarse omtrek = uw waarde van gisteren.</div>':''}
-    <div class="setrow" style="margin-top:6px"><div><b>Pijn aan gewricht of pees</b><span>geen spierpijn: knie, scheen, achilles, heup, rug</span></div><span class="toggle ${CI.pain?'':'off'}" onclick="ciToggle('pain')"></span></div>
+    <div class="setrow" style="margin-top:6px"><div><b>Pijn aan gewricht of pees</b><span>geen spierpijn: knie, scheen, achilles, heup, rug</span></div>${tog('pain')}</div>
     ${CI.pain?`<input class="inp" style="margin:0 0 8px" placeholder="Waar? (bijv. linkerknie)" value="${esc(CI.pain_note||'')}" oninput="CI.pain_note=this.value;ciQueue(1200)">`:''}
-    <div class="setrow"><div><b>Ziektesymptomen</b><span>keel, neus, hoest, rillerig</span></div><span class="toggle ${CI.symptoms?'':'off'}" onclick="ciToggle('symptoms')"></span></div>
-    <div class="setrow"><div><b>Eetlust minder</b><span>minder trek dan normaal</span></div><span class="toggle ${CI.appetite_low?'':'off'}" onclick="ciToggle('appetite_low')"></span></div>
-    <div class="setrow"><div><b>Alcohol</b><span>gisteravond</span></div><span class="toggle ${CI.alcohol?'':'off'}" onclick="ciToggle('alcohol')"></span></div>
-    <div class="setrow"><div><b>Avondsnack</b><span>gesnackt na het avondeten (chips, koek, …)</span></div><span class="toggle ${CI.evening_snack?'':'off'}" onclick="ciToggle('evening_snack')"></span></div>
+    <div class="setrow"><div><b>Ziektesymptomen</b><span>keel, neus, hoest, rillerig</span></div>${tog('symptoms')}</div>
+    <div class="setrow"><div><b>Eetlust minder</b><span>minder trek dan normaal</span></div>${tog('appetite_low')}</div>
+    <div class="setrow"><div><b>Alcohol</b><span>gisteravond</span></div>${tog('alcohol')}</div>
+    <div class="setrow"><div><b>Avondsnack</b><span>gesnackt na het avondeten (chips, koek, …)</span></div>${tog('evening_snack')}</div>
   </div>
   <div class="card"><h2 class="info" onclick="showInfo('personal')">Personal input <span class="n muted">(over gisteren)</span></h2><textarea class="inp" id="ci-text" placeholder="Hoe ging het gisteren? Bijzonderheden, pijntjes, reistijd, werkdruk…" oninput="CI.text=this.value;ciQueue(1500)">${esc(CI.text)}</textarea><div class="small" id="ci-status" style="margin-top:8px">${CI_STATUS}</div></div>
   <button class="btn" onclick="requestCoach()" ${COACHING?'disabled':''}>${COACHING?'Coach is bezig…':'Coachrapport genereren'}</button>
@@ -467,7 +483,7 @@ function vMeer(){
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-0904'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-0939'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -478,9 +494,9 @@ function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 
 setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-0904'; let UPDATE_SEEN = false;
+const BUILD = '20261019-0939'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261019-0904' || UPDATE_SEEN) return;
+  if(BUILD === '20261019-0939' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true; const el = document.getElementById('upd'); el.classList.add('on'); } }catch(e){}
 }
