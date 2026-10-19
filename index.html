@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-1140">
+<meta name="app-build" content="20261019-1145">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -93,7 +93,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .wtab td.r{width:30px;text-align:right;color:var(--accent);font-weight:700;white-space:nowrap}.wtab td.t{width:70px;white-space:nowrap;font-weight:600}.wtab td.d{width:48px;text-align:right;white-space:nowrap}.wtab td.z{white-space:nowrap}.wtab td.n{color:var(--ink2)}
 .wtab tr.rep td{background:var(--q-bg)}.wtab tr.rep td.r{box-shadow:inset 3px 0 var(--accent)}.wtab tr.cont td{border-top:0}.wtab tr.mid td{color:var(--amber)}
 .coach.hl{background:var(--q-bg);border:1.5px solid var(--accent);box-shadow:var(--shadow)}.coach.hl h2{color:var(--accent);font-size:13px}.coach.hl p{font-size:15px;line-height:1.55;color:var(--ink)}.coach.hl .small{color:var(--ink2)}
-.coach p{font-size:15px;line-height:1.55;margin:0 0 6px;color:var(--ink)}.fb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}.fb .fbl{font-size:11.5px;color:var(--ink3);margin-right:2px}.fbb{width:30px;height:30px;border-radius:50%;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.fbb svg{width:16px;height:16px;fill:none;stroke:var(--ink2);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}.fbb.on{background:var(--green-bg)}.fbb.on svg{stroke:var(--green)}.fbb.on.dn{background:var(--red-bg)}.fbb.on.dn svg{stroke:var(--red)}.fb .fbt{width:100%;min-height:64px;margin-top:4px}.fbrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}.btn.mini{width:auto;padding:8px 16px;font-size:14px;margin:0}.fb .fbq{flex-basis:100%;font-size:12.5px;color:var(--ink2);font-style:italic}
+.coach p{font-size:15px;line-height:1.55;margin:0 0 6px;color:var(--ink)}.fb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}.fb .fbl{font-size:11.5px;color:var(--ink3);margin-right:2px}.fbb{width:30px;height:30px;border-radius:50%;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.fbb svg{width:16px;height:16px;fill:none;stroke:var(--ink2);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}.fbb.on{background:var(--green-bg)}.fbb.on svg{stroke:var(--green)}.fbb.on.dn{background:var(--red-bg)}.fbb.on.dn svg{stroke:var(--red)}.fb .fbt{width:100%;min-height:64px;margin-top:4px}.fbrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}.btn.mini{width:auto;padding:8px 16px;font-size:14px;margin:0}input.inp{border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--ink);font:16px -apple-system,system-ui,sans-serif;padding:8px 10px}input.inp.tm{width:auto;font-size:20px;font-weight:700}.card.rem{padding-bottom:10px}.fb .fbq{flex-basis:100%;font-size:12.5px;color:var(--ink2);font-style:italic}
 .concl{border-radius:12px;padding:10px 12px;margin:8px 0 10px;background:var(--surface2)}.concl.ok{background:var(--green-bg)}.concl.warn{background:var(--amber-bg)}.concl.r{background:var(--red-bg)}.concl ul,.concl-l{margin:4px 0 0;padding-left:16px;font-size:15px;line-height:1.55}.concl li,.concl-l li{margin-bottom:4px}.concl li b,.concl-l li b{font-weight:800}.concl-l{margin:0 0 10px;padding-left:16px}.coach .more{margin-top:8px}.coach .more summary{padding:9px 0;font-size:15px}.coach .morebody p{font-size:15px}
 .coach p.kop{font-size:13px;color:var(--ink2);margin-bottom:4px}.coach.hl b.t{color:var(--accent)}.coach b.t{display:block;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);margin:8px 0 2px}
 textarea.inp{width:100%;min-height:72px;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--ink);font:15px/1.55 -apple-system,system-ui,sans-serif;padding:10px;resize:none}
@@ -162,8 +162,8 @@ function render(){
     ['plan','Plan','<path d="M4 6h16M4 12h16M4 18h10"/>'],
     ['inzicht','Inzicht','<path d="M3 18l5-6 4 3 4-7 5 4"/>'],
     ['menu','Menu','<path d="M4 7h16M4 12h16M4 17h16"/>']];
-  const screens = {checkin: vCheckin, vandaag: vVandaag, doel: vDoel, plan: vPlan, inzicht: vInzicht, menu: vMenu, log: vLog, meer: vMeer};
-  const tabOf = {log:'menu', meer:'menu'}; const cur = tabOf[TAB] || TAB;
+  const screens = {checkin: vCheckin, vandaag: vVandaag, doel: vDoel, plan: vPlan, inzicht: vInzicht, menu: vMenu, log: vLog, meer: vMeer, reminders: vReminders};
+  const tabOf = {log:'menu', meer:'menu', reminders:'menu'}; const cur = tabOf[TAB] || TAB;
   const old = document.getElementById('screen'); const keep = (old && LAST_TAB===TAB) ? old.scrollTop : 0;
   const oldChips = document.querySelector('.chips'); const keepX = (oldChips && LAST_TAB===TAB) ? oldChips.scrollLeft : 0;
   document.getElementById('app').innerHTML = vTimeline() + `<div class="screen" id="screen">${(screens[TAB]||vVandaag)()}</div>` +
@@ -786,8 +786,55 @@ function vMenu(){
   return `<div class="hdr"><h1>Menu</h1></div>
   <div class="card"><ul class="list">
     <li class="tap" onclick="goTab('log')"><div class="li-main"><b>Log</b><span>per dag · workouts, challenge, wellness en coach</span></div><div class="li-r">${CHEV}</div></li>
+    <li class="tap" onclick="goTab('reminders')"><div class="li-main"><b>Herinneringen</b><span>meldingen op vaste tijden, bijv. geen avondsnack</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('meer')"><div class="li-main"><b>Instellingen</b><span>synccode, zones, app-informatie</span></div><div class="li-r">${CHEV}</div></li>
   </ul></div>`;
+}
+// ---- herinneringen (Web Push) ----
+let REM = null; let REM_TIMER = null; let PUSH_STATE = null;
+const DAYS_NL = ['ma','di','wo','do','vr','za','zo'];
+function b64ToU8(b){ const p='='.repeat((4-b.length%4)%4); const s=(b+p).replace(/-/g,'+').replace(/_/g,'/'); const r=atob(s); return Uint8Array.from([...r].map(c=>c.charCodeAt(0))); }
+async function pushStatus(){
+  if(!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) return {ok:false, why:'Deze browser ondersteunt geen meldingen. Op de iPhone werkt het alleen als de app op het beginscherm staat (Deel → Zet op beginscherm) en vanuit dat icoon is geopend.'};
+  const perm = Notification.permission; const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription();
+  return {ok:true, perm, subscribed: !!sub, standalone: !!(window.navigator.standalone || matchMedia('(display-mode: standalone)').matches)};
+}
+async function pushEnable(){
+  try{
+    const key = D.push && D.push.public_key; if(!key){ toast('Server heeft nog geen push-sleutel'); return; }
+    const perm = await Notification.requestPermission(); if(perm !== 'granted'){ toast('Meldingen niet toegestaan'); PUSH_STATE = await pushStatus(); render(); return; }
+    const reg = await navigator.serviceWorker.ready; let sub = await reg.pushManager.getSubscription();
+    if(!sub) sub = await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey: b64ToU8(key)});
+    await api('PUT','/input',{day:new Date().toISOString().slice(0,10), kind:'push', data:{subscription: sub.toJSON()}});
+    toast('Meldingen ingeschakeld'); PUSH_STATE = await pushStatus(); render();
+  }catch(e){ toast('Inschakelen mislukt: '+e.message); }
+}
+async function pushTest(){ try{ const reg = await navigator.serviceWorker.ready; await reg.showNotification('Trainer', {body:'Zo ziet een herinnering eruit.', tag:'test', icon:'./icon.png'}); }catch(e){ toast('Test mislukt: '+e.message); } }
+function remInit(){ if(REM) return; REM = ((D.push && D.push.reminders) || []).map(r=>Object.assign({}, r)); }
+function remAdd(){ remInit(); REM.push({id:'r'+Date.now().toString(36), time:'20:30', text:'Geen avondsnack: een glas water of thee, en de keuken dicht.', days:[], on:true}); render(); remQueue(); }
+function remDel(id){ REM = REM.filter(r=>r.id!==id); render(); remQueue(); }
+function remSet(id, k, v){ const r = REM.find(x=>x.id===id); if(!r) return; r[k] = v; if(k!=='text') render(); remQueue(); }
+function remDay(id, d){ const r = REM.find(x=>x.id===id); if(!r) return; r.days = r.days||[]; r.days = r.days.includes(d) ? r.days.filter(x=>x!==d) : r.days.concat([d]); render(); remQueue(); }
+function remQueue(){ clearTimeout(REM_TIMER); REM_TIMER = setTimeout(remSave, 900); }
+async function remSave(){ try{ await api('PUT','/input',{day:new Date().toISOString().slice(0,10), kind:'reminders', data:{items: REM}}); if(D.push){ D.push.reminders = REM.map(r=>Object.assign({}, r)); LS.set('pt_snapshot', D); } const el=document.getElementById('rem-status'); if(el) el.textContent='Opgeslagen ✓ · de server verstuurt op de ingestelde tijd'; }catch(e){ toast('Opslaan mislukt'); } }
+function vReminders(){
+  remInit(); if(PUSH_STATE===null){ PUSH_STATE = {}; pushStatus().then(s=>{ PUSH_STATE = s; render(); }); }
+  const s = PUSH_STATE || {};
+  let st;
+  if(s.ok===false) st = `<div class="muted">${esc(s.why)}</div>`;
+  else if(s.perm==='granted' && s.subscribed) st = `<div class="setrow"><div><b>Meldingen</b><span style="color:var(--green)">ingeschakeld op dit apparaat${D.push&&D.push.subscriptions?` · ${D.push.subscriptions} apparaat${D.push.subscriptions===1?'':'en'} bekend bij de server`:''}</span></div><span class="muted" onclick="pushTest()" style="cursor:pointer">test</span></div>`;
+  else if(s.perm==='denied') st = `<div class="muted">Meldingen zijn geweigerd voor deze app. Zet ze aan via iPhone-instellingen → Meldingen → Trainer, en kom dan terug.</div>`;
+  else st = `${s.standalone===false?'<div class="muted" style="margin-bottom:8px">Op de iPhone werken meldingen alleen vanuit de app op het beginscherm (Deel → Zet op beginscherm).</div>':''}<button class="btn" onclick="pushEnable()">Meldingen inschakelen</button>`;
+  const rows = REM.map(r=>`<div class="card rem"><div class="setrow" style="border:0;padding:0 0 6px"><input type="time" class="inp tm" value="${esc(r.time||'20:30')}" onchange="remSet('${r.id}','time',this.value)"><span class="toggle ${r.on?'':'off'}" onclick="remSet('${r.id}','on',${r.on?'false':'true'})"></span></div>
+    <textarea class="inp" style="min-height:56px" placeholder="Tekst van de melding" oninput="remSet('${r.id}','text',this.value)">${esc(r.text||'')}</textarea>
+    <div class="chips" style="padding:8px 0 4px">${DAYS_NL.map(d=>`<span class="${(r.days||[]).length===0||(r.days||[]).includes(d)?'on':''}" onclick="remDay('${r.id}','${d}')">${d}</span>`).join('')}</div>
+    <div class="small" style="display:flex;justify-content:space-between"><span>${(r.days||[]).length===0?'elke dag':'alleen op de gekozen dagen'}</span><span style="color:var(--red);cursor:pointer" onclick="remDel('${r.id}')">verwijderen</span></div></div>`).join('');
+  const last = (D.push && D.push.last && D.push.last[0]) ? `<div class="small" style="margin-top:6px">Laatst verstuurd: ${esc(String(D.push.last[0].sent_at).replace('T',' ').slice(0,16))}</div>` : '';
+  return `<div class="hdr"><h1>Herinneringen</h1><span class="d" onclick="goTab('menu')" style="cursor:pointer">← menu</span></div>
+  <div class="card">${st}${last}</div>
+  ${rows}
+  <button class="btn ghost" onclick="remAdd()">+ Herinnering toevoegen</button>
+  <div class="small" id="rem-status" style="margin:8px 0 10px;text-align:center">De server (altijd aan) verstuurt de melding op de ingestelde tijd, ook als de app dicht is.</div>`;
 }
 function vMeer(){
   const z = D.zones; const t = D._updated ? new Date(D._updated).toLocaleString('nl-NL',{weekday:'short',hour:'2-digit',minute:'2-digit'}) : '–';
@@ -795,7 +842,7 @@ function vMeer(){
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1140'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1145'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -806,9 +853,9 @@ function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 
 setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-1140'; let UPDATE_SEEN = false;
+const BUILD = '20261019-1145'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261019-1140' || UPDATE_SEEN) return;
+  if(BUILD === '20261019-1145' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true; const el = document.getElementById('upd'); el.classList.add('on'); } }catch(e){}
 }
