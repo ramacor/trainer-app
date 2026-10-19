@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-1324">
+<meta name="app-build" content="20261019-1330">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -88,6 +88,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .modal h3{font-size:18px;margin:4px 0 2px}.modal .meta{color:var(--ink2);font-size:12.5px;margin:0 0 10px}.modal h4{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:12px 0 4px;font-weight:700}
 .modal p{font-size:14px;line-height:1.5;margin:0}.infobody{margin-top:14px}details.more{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:0 14px}details.more summary{cursor:pointer;padding:12px 0;font-weight:700;color:var(--accent);list-style:none;display:flex;justify-content:space-between;align-items:center}details.more summary::-webkit-details-marker{display:none}details.more summary::after{content:'+';font-size:18px;color:var(--ink3)}details.more[open] summary::after{content:'−'}.morebody{padding-bottom:6px}.morebody h4:first-child{margin-top:4px}
 .valbox{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--surface2)}.valbox.ok{background:var(--green-bg)}.valbox.warn{background:var(--amber-bg)}.valbox.bad{background:var(--red-bg)}.valbox h4{margin:0 0 6px;color:var(--ink)}.valbox.ok h4{color:var(--green)}.valbox.warn h4{color:var(--amber)}.valbox.bad h4{color:var(--red)}.valbox p{margin:0 0 6px}.infobody p{margin:0 0 10px}.infobody h4{margin:16px 0 4px}.infobody h4:first-child{margin-top:6px}.infobody ul{margin:0 0 10px;padding-left:18px;font-size:14px;line-height:1.5}.modal ul{margin:0;padding:0 0 0 16px;font-size:13.5px;line-height:1.5}
+.gtab{width:100%;border-collapse:collapse;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--surface2);border-radius:10px;overflow:hidden;margin-top:6px}.gtab td{padding:6px 6px;vertical-align:top;border-top:1px solid var(--line);line-height:1.4}.gtab tr:first-child td{border-top:0}.gtab td.r{width:24px;text-align:right;color:var(--accent);font-weight:700;white-space:nowrap}.gtab td.ex{font-weight:600}.gtab td.ex small,.gtab td.s small{display:block;font-weight:400;color:var(--ink2);font-size:11px;margin-top:2px}.gtab td.s{width:84px;white-space:nowrap;text-align:right}.gtab td.s small{color:var(--amber)}.gtab td.rest{width:56px;white-space:nowrap;text-align:right;color:var(--ink2)}.gtab tr.ss.g1 td{background:var(--q-bg)}.gtab tr.ss.g1 td:first-child{border-left:3px solid var(--accent)}.gtab tr.ss.g0 td{background:var(--green-bg)}.gtab tr.ss.g0 td:first-child{border-left:3px solid var(--green)}.gtab tr.sshead td{font-family:-apple-system,system-ui,sans-serif;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;padding:7px 6px 3px}.gtab tr.sshead.g1 td{color:var(--accent);background:var(--q-bg)}.gtab tr.sshead.g0 td{color:var(--green);background:var(--green-bg)}.gtab tr.head td{font-family:-apple-system,system-ui,sans-serif;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);padding:6px 6px 4px;background:var(--surface)}
 .wtab{width:100%;border-collapse:collapse;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--surface2);border-radius:10px;overflow:hidden;margin-top:6px}
 .wtab td{padding:5px 6px;vertical-align:top;border-top:1px solid var(--line);line-height:1.4}.wtab tr:first-child td{border-top:0}
 .wtab td.r{width:30px;text-align:right;color:var(--accent);font-weight:700;white-space:nowrap}.wtab td.t{width:70px;white-space:nowrap;font-weight:600}.wtab td.d{width:48px;text-align:right;white-space:nowrap}.wtab td.z{white-space:nowrap}.wtab td.n{color:var(--ink2)}
@@ -670,6 +671,16 @@ function syncLine(style){ const m=D.markers.sync||{}; const watch = m.watch ? ` 
 function stopwatch(x){ return `<div class="sw"><svg viewBox="0 0 24 26"><path d="M10 1.5h4M12 1.5v2.5M18.5 6l1.5-1.5"/><circle cx="12" cy="14" r="9.5"/><text x="12" y="17.2" text-anchor="middle">${x.minutes}</text></svg><span>${x.km?`<b>${nl(x.km)} KM</b>`:''}</span></div>`; }
 function reviewLine(x){ const r=x.result; if(!r||!r.review) return ''; const first = r.review.split(/(?<=[.!?])\s+/).slice(0,2).join(' '); return `<span class="rev">${esc(first)}</span>`; }
 function resultLine(x){ const r=x.result; if(!r) return ''; const parts=[]; if(r.distance_km) parts.push(nl(r.distance_km)+' km'); parts.push(r.duration); if(r.pace) parts.push(r.pace); if(r.avg_hr) parts.push('HR '+Math.round(r.avg_hr)+(r.max_hr?' / max '+Math.round(r.max_hr):'')+(r.hr_source==='wrist'?' (pols)':'')); if(r.self_effort) parts.push('zwaarte '+r.self_effort+'/10'); if(r.self_feel) parts.push('gevoel '+r.self_feel+'/5'); return `<span style="color:var(--green);font-weight:600">✓ ${esc(parts.join(' · '))}</span>`; }
+function gymTable(rows){
+  let h = '<table class="gtab"><tr class="head"><td></td><td>oefening</td><td style="text-align:right">sets × herh.</td><td style="text-align:right">rust</td></tr>'; let grp = null; let gi = 0;
+  rows.forEach(r=>{
+    if(r.superset && r.group !== grp){ grp = r.group; gi++; const pause = (rows.find(q=>q.group===grp && q.rest!=='superset')||{}).rest || ''; h += `<tr class="sshead g${gi%2}"><td></td><td colspan="3">Superset ${esc(grp)}${pause?` · rust ${esc(pause)} na het paar`:''}</td></tr>`; }
+    if(!r.superset) grp = null;
+    const cls = r.superset ? `ss g${gi%2}` : '';
+    h += `<tr class="${cls}"><td class="r">${esc(r.num)}</td><td class="ex">${esc(r.name)}${r.note?`<small>${esc(r.note)}</small>`:''}</td><td class="s">${esc(r.reps)}${r.rir?`<small>${esc(r.rir)}</small>`:''}</td><td class="rest">${r.rest==='superset'?'':esc(r.rest)}</td></tr>`;
+  });
+  return h + '</table><div class="small" style="margin-top:6px">RIR = herhalingen in reserve. Gekleurde band = superset: a en b afwisselen, rust na het paar.</div>';
+}
 function resultBlock(x){ const r=x.result; if(!r) return ''; let h = `<h4>Resultaat · ${esc(new Date(r.start).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}))}</h4><p>${resultLine(x).replace('✓ ','')}${r.training_load?` · belasting ${r.training_load}`:''}</p>`;
   if(r.review) h += `<div class="card coach hl" style="margin:10px 0"><h2>Coach over deze sessie</h2><p>${esc(r.review)}</p>${fbBar('review:'+r.activity_id)}</div>`;
   if(r.laps && r.laps.length){ h += `<table class="wtab" style="margin-top:8px">${r.laps.map(l=>`<tr class="${l.type==='midpoint'?'mid':''}"><td class="t">${esc(l.type)}</td><td class="d">${esc(l.duration)}</td><td class="d">${l.distance_m?l.distance_m+' m':''}</td><td class="z">${esc(l.pace||'')}</td><td class="n">${l.avg_hr?'HR '+Math.round(l.avg_hr)+(l.max_hr?' / '+Math.round(l.max_hr):''):''}</td></tr>`).join('')}</table>`; }
@@ -680,7 +691,8 @@ function showWorkout(x){
   h += resultBlock(x);
   if(x.purpose) h += `<h4>Doel</h4><p>${esc(x.purpose.replace(/^Doel:\s*/,''))}</p>`;
   if(x.steps) h += `<h4>Opbouw</h4><table class="wtab">${x.steps.map(r=>`<tr class="${r[0]?'rep':''}${r[0]==='|'?' cont':''}${r[1]==='other'?' mid':''}"><td class="r">${r[0]==='|'?'':esc(r[0])}</td><td class="t">${r[1]==='other'?'midpoint':esc(r[1])}</td><td class="d">${esc(r[2])}</td><td class="z">${esc(r[3])}</td><td class="n">${esc(r[4])}</td></tr>`).join('')}</table>`;
-  if(x.exercises) h += `<h4>Oefeningen</h4><ul>${x.exercises.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`;
+  if(x.exercise_rows && x.exercise_rows.length) h += `<h4>Oefeningen</h4>${gymTable(x.exercise_rows)}`;
+  else if(x.exercises) h += `<h4>Oefeningen</h4><ul>${x.exercises.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`;
   document.getElementById('mbody').innerHTML = h; document.getElementById('modal').classList.add('open');
 }
 function closeModal(){ document.getElementById('modal').classList.remove('open'); }
@@ -842,7 +854,7 @@ function vMeer(){
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1324'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1330'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -853,9 +865,9 @@ function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 
 setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-1324'; let UPDATE_SEEN = false;
+const BUILD = '20261019-1330'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261019-1324' || UPDATE_SEEN) return;
+  if(BUILD === '20261019-1330' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true;
       // automatisch bijwerken zodra dat veilig is (niets aan het opslaan of genereren, geen open invoerveld); anders de balk tonen
