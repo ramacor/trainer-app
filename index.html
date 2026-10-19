@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-1450">
+<meta name="app-build" content="20261019-1459">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -863,7 +863,7 @@ function vMeer(){
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1450'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1459'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Scherm</b><span>${esc(shellDiag())}</span></div></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
@@ -880,15 +880,15 @@ function shellHeight(){
   return h;
 }
 function fitShell(){ const h = shellHeight(); if(h > 200) document.documentElement.style.setProperty('--vh', h + 'px'); }
-function shellDiag(){ const vv = window.visualViewport; const os = (navigator.userAgent.match(/OS (\d+[_.]\d+(?:[_.]\d+)?)/)||['',''])[1].replace(/_/g,'.'); return `${navigator.standalone===true?'beginscherm':'browser'} · iOS ${os||'?'} · venster ${window.innerWidth}×${window.innerHeight} · zichtbaar ${vv?Math.round(vv.width)+'×'+Math.round(vv.height):'–'} · scherm ${screen.width}×${screen.height} · schil ${shellHeight()}`; }
+function shellDiag(){ const vv = window.visualViewport; const os = (navigator.userAgent.match(/OS (\d+[_.]\d+(?:[_.]\d+)?)/)||['',''])[1].replace(/_/g,'.'); return `${location.host} · ${navigator.standalone===true?'beginscherm':'browser'} · iOS ${os||'?'} · venster ${window.innerWidth}×${window.innerHeight} · zichtbaar ${vv?Math.round(vv.width)+'×'+Math.round(vv.height):'–'} · scherm ${screen.width}×${screen.height} · schil ${shellHeight()}`; }
 fitShell(); ['resize','orientationchange','pageshow','focus'].forEach(e=>window.addEventListener(e, fitShell));
 if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-1450'; let UPDATE_SEEN = false;
+const BUILD = '20261019-1459'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261019-1450' || UPDATE_SEEN) return;
+  if(BUILD === '20261019-1459' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true;
       // automatisch bijwerken zodra dat veilig is (niets aan het opslaan of genereren, geen open invoerveld); anders de balk tonen
