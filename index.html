@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-1027">
+<meta name="app-build" content="20261019-1038">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -86,7 +86,8 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .modal .box{background:var(--bg);border-radius:0;padding:calc(env(safe-area-inset-top) + 10px) 16px calc(76px + env(safe-area-inset-bottom));height:100%;overflow-y:auto;width:100%}
 .grab{width:38px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 10px}
 .modal h3{font-size:18px;margin:4px 0 2px}.modal .meta{color:var(--ink2);font-size:12.5px;margin:0 0 10px}.modal h4{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:12px 0 4px;font-weight:700}
-.modal p{font-size:14px;line-height:1.5;margin:0}.infobody{margin-top:14px}.valbox{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--surface2)}.valbox.ok{background:var(--green-bg)}.valbox.warn{background:var(--amber-bg)}.valbox.bad{background:var(--red-bg)}.valbox h4{margin:0 0 6px;color:var(--ink)}.valbox.ok h4{color:var(--green)}.valbox.warn h4{color:var(--amber)}.valbox.bad h4{color:var(--red)}.valbox p{margin:0 0 6px}.infobody p{margin:0 0 10px}.infobody h4{margin:16px 0 4px}.infobody h4:first-child{margin-top:6px}.infobody ul{margin:0 0 10px;padding-left:18px;font-size:14px;line-height:1.5}.modal ul{margin:0;padding:0 0 0 16px;font-size:13.5px;line-height:1.5}
+.modal p{font-size:14px;line-height:1.5;margin:0}.infobody{margin-top:14px}details.more{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:0 14px}details.more summary{cursor:pointer;padding:12px 0;font-weight:700;color:var(--accent);list-style:none;display:flex;justify-content:space-between;align-items:center}details.more summary::-webkit-details-marker{display:none}details.more summary::after{content:'+';font-size:18px;color:var(--ink3)}details.more[open] summary::after{content:'−'}.morebody{padding-bottom:6px}.morebody h4:first-child{margin-top:4px}
+.valbox{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--surface2)}.valbox.ok{background:var(--green-bg)}.valbox.warn{background:var(--amber-bg)}.valbox.bad{background:var(--red-bg)}.valbox h4{margin:0 0 6px;color:var(--ink)}.valbox.ok h4{color:var(--green)}.valbox.warn h4{color:var(--amber)}.valbox.bad h4{color:var(--red)}.valbox p{margin:0 0 6px}.infobody p{margin:0 0 10px}.infobody h4{margin:16px 0 4px}.infobody h4:first-child{margin-top:6px}.infobody ul{margin:0 0 10px;padding-left:18px;font-size:14px;line-height:1.5}.modal ul{margin:0;padding:0 0 0 16px;font-size:13.5px;line-height:1.5}
 .wtab{width:100%;border-collapse:collapse;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--surface2);border-radius:10px;overflow:hidden;margin-top:6px}
 .wtab td{padding:5px 6px;vertical-align:top;border-top:1px solid var(--line);line-height:1.4}.wtab tr:first-child td{border-top:0}
 .wtab td.r{width:30px;text-align:right;color:var(--accent);font-weight:700;white-space:nowrap}.wtab td.t{width:70px;white-space:nowrap;font-weight:600}.wtab td.d{width:48px;text-align:right;white-space:nowrap}.wtab td.z{white-space:nowrap}.wtab td.n{color:var(--ink2)}
@@ -374,6 +375,150 @@ Een getrainde man van begin veertig bouwt met drie gymsessies per week en voldoe
 ## Waarom het telt
 Spiermassa is het fundament onder de Gymrace en beschermt tegen het spierverlies dat bij afvallen en bij veel duurtraining dreigt; zware krachttraining verbetert bovendien de loopeconomie met twee tot acht procent (Blagrove 2018). Groen bij een stijging ten opzichte van de vorige weging.`],
 };
+const MORE = {
+ 'HRV 7 d': `## Waarom meer variatie juist goed is
+Het hart heeft een eigen gangmaker, de sinusknoop, die uit zichzelf vrij regelmatig klopt, rond de honderd slagen per minuut. Daaroverheen sturen twee takken van het autonome zenuwstelsel: het sympathische deel (het gaspedaal, vechten of vluchten) en het parasympathische deel (de rem, via de nervus vagus: rust, verteren, herstellen). De rem werkt in milliseconden. Bij elke inademing laat hij iets los en versnelt het hart, bij elke uitademing trekt hij aan en vertraagt het. Dat golfje heet de respiratoire sinusaritmie. Een sterk werkende rem geeft dus veel variatie tussen opeenvolgende slagen; het gaspedaal werkt veel trager en vlakt die golf juist uit.
+
+Hoge HRV in rust betekent daarom: de rem is dominant, het lichaam staat in de herstelstand en kan snel schakelen. Lage HRV betekent: het gaspedaal staat open, door training die nog niet verwerkt is, stress, alcohol, ziekte of slaaptekort, en de rem komt er niet tussen. Een uniform kloppend hart in rust is geen teken van gezondheid maar van een lichaam dat paraat staat en niet herstelt. In grote bevolkingsstudies hangt lage HRV samen met hart- en vaatziekten en vroegtijdige sterfte (Framingham, Tsuji 1996).
+
+## Variatie is geen ritmestoornis
+HRV beschrijft kleine verschillen van tientallen milliseconden tussen normale slagen, aangestuurd door de ademhaling. Dat is iets anders dan hartritmestoornissen zoals boezemfibrilleren, waar slagen echt chaotisch uitvallen; die worden uit de meting gefilterd.
+
+## Waarom 's nachts en tegen uw eigen baseline
+Overdag overheerst het gaspedaal door alles wat u doet; in de diepe slaap is de rem het zuiverst zichtbaar. De absolute hoogte van HRV is grotendeels genetisch en leeftijdsgebonden en verschilt enorm tussen mensen, dus vergelijkt de app alleen met uw eigen gemiddelde. De maat die de ring rapporteert is rMSSD, de wortel uit het gemiddelde kwadraat van de verschillen tussen opeenvolgende slagen; die maat vangt vrijwel alleen de parasympathische activiteit en is daarom de standaard in sportonderzoek (Plews 2013; Buchheit 2014).
+
+## Wat de protocollen precies doen
+In de studies van Kiviniemi (2007), Vesterinen (2016) en Nuuttila (2017) kregen lopers hun harde sessie alleen als de HRV binnen de eigen band lag en anders een rustige. De HRV-groep deed minder harde sessies en verbeterde meer. Een meta-analyse van acht studies (Manresa-Rocamora 2021) vond het duidelijkste effect in het aantal niet-responders: 14 procent tegenover 38 procent bij vaste schema's.`,
+ 'Laagste HR 7 d': `## Wat de rusthartslag vertelt
+In rust pompt het hart het bloed rond dat het lichaam nodig heeft; hoeveel slagen dat kost hangt af van het slagvolume, de hoeveelheid bloed per slag. Duurtraining vergroot de linkerkamer en het bloedvolume, zodat het hart per slag meer rondpompt en in rust minder vaak hoeft te kloppen. Daarom hebben getrainde duursporters rustwaarden van 40 tot 50, soms lager, zonder dat er iets mis is. Ook de rem van het autonome zenuwstelsel, dezelfde als bij HRV, drukt de rusthartslag.
+
+## Waarom een stijging belangrijker is dan de hoogte
+De absolute waarde verschilt per persoon; de verandering ten opzichte van uw eigen normaal is het signaal. Een stijging van drie tot vijf procent over een paar dagen betekent dat het lichaam in rust harder werkt: het immuunsysteem bij beginnende ziekte, de afbraak van alcohol, de vertering van een late maaltijd, uitdroging bij warmte, of de nasleep van een zware belasting. In de TemPredict-studie (Mason 2022) was de nachthartslag een van de vier signalen die een infectie gemiddeld bijna drie dagen vooruit zagen.
+
+## Waarom de laagste waarde en niet het gemiddelde
+Het gemiddelde van de nacht wordt vertroebeld door de eerste uren na het eten en door onrustige fases; de laagste waarde, meestal in de tweede nachthelft, is de meest zuivere rusthartslag en daardoor het best vergelijkbaar van nacht tot nacht.`,
+ 'HR op 7:15 p/km': `## Het principe
+Als u een vast tempo loopt, is de hartslag die u daarvoor nodig heeft een directe maat voor hoe efficiënt het hart-longsysteem werkt. Fitter worden betekent dat het hart per slag meer bloed rondpompt en de spieren meer zuurstof uit dat bloed halen, dus hetzelfde tempo kost minder slagen. Dit is in feite een veldversie van de klassieke submaximale inspanningstest uit het laboratorium.
+
+## Het onderzoek
+Vesterinen (2014) toonde dat zo'n hartslag-snelheidsindex, berekend uit gewone trainingen van recreatieve lopers, de vooruitgang over een trainingsblok even goed volgt als een laboratoriumtest (correlaties van 0,43 tot 0,61 met de verbetering van de 3000 m-tijd). Lamberts ontwikkelde een gestandaardiseerde submaximale test (LSCT) met dezelfde logica. Buchheit (2014) laat zien dat de hartslag bij een vaste inspanning van dag tot dag zo'n drie procent varieert en dat een stijging van meer dan vier procent vermoeidheid of een beginnende infectie verraadt.
+
+## Wat de meting vertroebelt
+Warmte, vochttekort, cafeïne, slaaptekort, een helling of zachte ondergrond en een polsmeting in plaats van een borstband. Daarom gebruikt de app alleen lopen met borstband, middelt over 14 dagen en vergelijkt met de 14 dagen ervoor. Bij extreme hitte zegt een hogere hartslag niets over de conditie.`,
+ 'Welzijn': `## Waarom gevoel meetbaar is
+Subjectieve vragenlijsten hebben een lange geschiedenis in de sportwetenschap: de POMS-stemmingsvragenlijst in de jaren zeventig, de Hooper-index bij Australische zwemmers (Hooper 1995), waar dagelijkse welzijnsscores driekwart van de variatie in 'staleness' verklaarden, en de korte lijst van McLean (2010) in het profrugby. Het overzicht van Saw, Main en Gastin (2016, 56 studies) is de standaardreferentie: subjectieve maten reageerden gevoeliger en consistenter op acute en chronische belasting dan HRV, hartslag, cortisol of spierenzymen.
+
+## Waarom juist deze vier
+Vermoeidheid, stemming en stress bleken in dat overzicht de meest belastinggevoelige schalen; spierpijn is de beste maat voor lokale spierschade. Zelf beoordeelde slaapkwaliteit was de enige schaal die niet meebewoog met de belasting, en die laat de app daarom weg; de slaapduur komt objectief van de ring.
+
+## Hoe het telt
+De app neemt de slechtste van de vier als welzijnsscore. Boven 5 op de 7-puntsschaal is de praktijkconventie voor afwijkend; de consensus over monitoring (Thornton 2019, Coutts 2017) adviseert zulke stoplichtregels, met de kanttekening dat de grens individueel is. Omdat subjectieve en objectieve maten elkaar aanvullen en niet sterk correleren, weegt de app ze naast elkaar: bij trainingsbelasting wint het gevoel, bij ziekte de objectieve signalen.`,
+ 'Pijn of ziekte': `## Pezen en botten passen zich traag aan
+Spieren reageren binnen weken op training, pezen en botten hebben maanden nodig (Magnusson en Kjaer 2019). Daarom ontstaan de meeste loopblessures, zoals scheenbeenklachten, achillespees- en knieproblemen, juist in de weken waarin de conditie snel toeneemt en de kilometers oplopen. Pijn aan een pees of gewricht is dus een ander signaal dan spierpijn: spierpijn hoort bij adaptatie, peespijn bij overbelasting van weefsel dat nog niet zover is.
+
+## De nekregel
+Uit de sportgeneeskunde: bij klachten boven de nek (loopneus, keelpijn) mag licht getraind worden; bij klachten onder de nek (hoest op de borst, koorts, spierpijn over het hele lichaam, rillingen) niet. Trainen met koorts verlengt de ziekte, en bij virusinfecties kan het de hartspier belasten. De IOC-consensus over belasting en ziekte (Schwellnus 2016) adviseert een geleidelijke terugkeer: eerst een korte, rustige proefsessie na 24 uur klachtenvrij, daarna per koortsdag ongeveer twee rustige dagen.
+
+## Eetlust
+Verminderde eetlust staat in de gezamenlijke consensus van de Europese en Amerikaanse sportwetenschappers over overtraining (Meeusen 2013) in de lijst van vroege tekenen, naast slaapproblemen, prikkelbaarheid en motivatieverlies. Op zichzelf licht bewijs, maar in combinatie met andere signalen waardevol.`,
+ 'Temperatuur': `## Hoe de ring meet
+De ring meet de huidtemperatuur aan de vinger de hele nacht en vergelijkt die met uw eigen gemiddelde over de voorgaande weken. De absolute waarde zegt niets (de huid is altijd koeler dan de kern), de afwijking wel, omdat uw nachttemperatuur normaal binnen een paar tienden van een graad stabiel is.
+
+## Waarom koorts vroeg zichtbaar is
+Bij een beginnende infectie verhoogt het immuunsysteem het streefpunt van de lichaamstemperatuur, en dat gebeurt eerder dan u zich ziek voelt. In de TemPredict-studie (Mason 2022, ruim 63.000 ringdragers) voegde temperatuur ongeveer vijf procent voorspellende waarde toe aan hartslag, HRV en ademfrequentie; samen zag het algoritme een infectie gemiddeld 2,75 dagen vóór een positieve test, met 82 procent gevoeligheid en 63 procent specificiteit. Die laatste waarde is de reden dat de app temperatuur alleen als cluster gebruikt: alleen temperatuur geeft te veel vals alarm.
+
+## Andere oorzaken van een hogere nachttemperatuur
+Een warme slaapkamer, een zware avondmaaltijd, alcohol, een sauna of een late zware training. Daarom telt de app pas vanaf een halve graad, en pas echt bij twee nachten op rij of in combinatie met hartslag en ademfrequentie.`,
+ 'Slaap': `## Wat er in de slaap gebeurt
+In de diepe slaap van de eerste nachthelft komt het meeste groeihormoon vrij, dat spierherstel en weefselopbouw aanstuurt. De REM-slaap later in de nacht verwerkt het geleerde, ook de motorische patronen van een training. Wie kort slaapt, knipt vooral de laatste uren af en verliest daarmee onevenredig veel REM.
+
+## Het bewijs
+Milewski (2014) vond bij jonge atleten een 1,7 keer hoger blessurerisico bij minder dan acht uur slaap. De consensus van Walsh (2021) noemt onder de zeven uur voor volwassen sporters een tekort. Mah (2011) liet basketballers vijf weken lang tien uur in bed liggen: snellere sprints, betere schotpercentages en een betere stemming. Eén korte nacht kost nauwelijks kracht maar verhoogt de ervaren inspanning: hetzelfde tempo voelt zwaarder en de hartslag ligt iets hoger.
+
+## Wat topsporters doen
+Eliud Kipchoge slaapt naar eigen zeggen acht uur per nacht en nog een tot twee uur overdag. Veel profteams plannen slaap als onderdeel van de training, met vaste bedtijden, een koele donkere kamer en geen schermen in het laatste uur. Een middagdutje van twintig tot dertig minuten is bewezen effectief voor alertheid zonder de nachtslaap te storen.
+
+## Over slaapkwaliteit
+De slaapfasen die de ring rapporteert zijn schattingen uit beweging en hartslag en komen maar matig overeen met een slaaplaboratorium. De totale slaaptijd is wel betrouwbaar; daarom gebruikt de app alleen de duur en vergelijkt die met uw 14-daags gemiddelde.`,
+ 'Laagste HR': `## Waarom de nacht de zuiverste meting is
+Overdag bepalen houding, beweging, eten, cafeïne en emoties de hartslag. In de tweede helft van de nacht valt dat allemaal weg en blijft alleen over wat het lichaam zelf nodig heeft. Die laagste waarde is daarom van nacht tot nacht goed vergelijkbaar, veel beter dan een ochtendmeting op de rand van het bed.
+
+## Hoe de verstoorders werken
+Alcohol wordt afgebroken tot acetaldehyde, dat het sympathische zenuwstelsel activeert; het hart klopt sneller, de HRV daalt en de lichaamstemperatuur stijgt licht, dosisafhankelijk en uren na het laatste glas (Pietilä 2018). Een late maaltijd houdt de spijsvertering en daarmee de doorbloeding van de darmen actief. Warmte en vochttekort verkleinen het bloedvolume, waardoor het hart vaker moet pompen. Een infectie verhoogt de stofwisseling nog voordat er klachten zijn. Een zware training laat op de dag laat het lichaam in de herstelstand met een verhoogde hartslag achter.
+
+## Wat dat voor het herstel betekent
+Elke slag extra per minuut in rust is energie die niet naar herstel gaat. Bij een hogere nachthartslag zijn de diepe slaapfases korter en is de HRV lager: de nacht heeft minder opgeleverd dan de duur suggereert. Daarom is één avond zonder alcohol of late snack vóór een kwaliteitssessie meer waard dan een extra uur in bed.`,
+ 'Ademfrequentie': `## Hoe de ring het meet
+De ademhaling moduleert het hartritme (de respiratoire sinusaritmie uit de uitleg bij HRV) en de bloedvaten in de vinger. Daaruit leidt de ring het aantal ademhalingen per minuut af, zonder sensor op de borst. Bij gezonde volwassenen ligt de nachtwaarde tussen 12 en 20 en is hij per persoon opvallend stabiel, meestal binnen één ademhaling per minuut.
+
+## Waarom het een ziektesignaal is
+Bij koorts en luchtweginfecties neemt de zuurstofbehoefte toe en wordt de ademhaling sneller en oppervlakkiger. In de TemPredict-studie (Mason 2022) was de ademfrequentie een van de vier signalen die samen een infectie dagen vooruit zagen. Alleen ademfrequentie is niet specifiek genoeg; samen met temperatuur en hartslag wel.
+
+## Andere oorzaken
+Een verstopte neus, alcohol, een hoge slaapkamertemperatuur en slaapapneu verhogen de nachtwaarde ook. Een structureel hoge waarde zonder andere signalen is daarom iets om met een arts te bespreken, geen trainingsbesluit.`,
+ 'Gewicht': `## Wat het getal schommelt
+Het lichaam bevat 55 tot 60 procent water, en dat varieert per dag met zout, koolhydraten en vocht: elke gram opgeslagen glycogeen bindt ongeveer drie gram water, zodat een koolhydraatrijke dag en een zware training het gewicht een kilo heen en weer laten gaan zonder dat er vet bij of af kwam. Nuchter wegen na het toilet, op hetzelfde moment, haalt het grootste deel van die ruis weg.
+
+## Tempo en spierbehoud
+Een energietekort van ongeveer 500 kilocalorieën per dag geeft een half kilo vetverlies per week. Sneller dan een procent lichaamsgewicht per week kost merkbaar spiermassa en herstel, zeker in combinatie met duurtraining (Helms 2014). Voldoende eiwit, rond 1,6 gram per kilo per dag, en krachttraining zijn de twee factoren die spier beschermen tijdens afvallen (Morton 2018).
+
+## Waarom het voor het lopen telt
+Elke kilo minder is minder massa die bij elke stap moet worden opgevangen en afgezet; vuistregel is twee tot drie seconden per kilometer per kilo bij gelijke conditie, en een lagere belasting op pezen en gewrichten.`,
+ 'Lichaamsvet': `## Hoe bio-impedantie werkt
+De weegschaal stuurt een zwakke wisselstroom door de voeten en meet de weerstand. Spier en bloed bevatten veel water en geleiden goed; vet geleidt slecht. Uit de weerstand, uw lengte, gewicht, leeftijd en geslacht schat een formule de samenstelling. De meting loopt alleen door de benen en de romp; de armen worden geschat.
+
+## Hoe betrouwbaar
+De herhaalbaarheid is goed zolang de omstandigheden gelijk zijn, maar de absolute waarde kan enkele procenten afwijken van een DEXA-scan, de gouden standaard. Vocht is de grootste stoorzender: na een training of een avond alcohol is het lichaam droger en leest de schaal een hoger vetpercentage. Daarom alleen nuchter, op hetzelfde moment, en alleen de trend over vier weken.
+
+## Wat realistisch is
+Van 27 naar 20 procent bij 95 kilo is ruim zes kilo vet minder. Met een half kilo per week is dat ongeveer drie maanden netto, in de praktijk langer omdat herstelweken en wedstrijden ertussen zitten. De app zet de doellijn daarom over de hele missie.`,
+ 'Spiermassa': `## Hoe spier groeit
+Elke krachtsessie verhoogt de spiereiwitsynthese, het aanmaken van nieuw spiereiwit, gedurende 24 tot 48 uur (Phillips 1997; Damas 2016). Groei ontstaat als die aanmaak over weken groter is dan de afbraak, wat voldoende eiwit (rond 1,6 gram per kilo per dag, verdeeld over de dag) en voldoende volume vraagt: tien tot zestien zware sets per spiergroep per week (Schoenfeld 2017; Pelland 2024). Herhalingen in reserve van één tot twee geven vrijwel dezelfde groei als trainen tot falen, met minder vermoeidheid (Helms 2018).
+
+## Wat realistisch is
+Een getrainde man van begin veertig bouwt realistisch een kwart tot een halve kilo spier per maand; de leeftijd remt pas duidelijk vanaf zestig. Dat tempo valt binnen de dagelijkse ruis van een bio-impedantieschaal, dus de schaal bevestigt het pas na twee tot drie maanden. De betrouwbaardere maat is de kracht: de geschatte één-herhalingsmaximum uit de top-set (Epley met herhalingen in reserve) als trend over vier weken, en herhalingsrecords op een vast gewicht.
+
+## Lopen en spier
+Kracht en hardlopen in dezelfde week remmen de spiergroei niet, zolang er een paar uur, liever een dag, tussen zit (Schumann 2022, 43 studies). Andersom verbetert kracht de loopeconomie met twee tot acht procent (Blagrove 2018). Alleen een ijsbad direct na de gym dempt de groei (Roberts 2015).`,
+ 'Hersteltrend': `## De statistiek erachter
+Een nachtwaarde van HRV heeft een typische meetfout van ongeveer twaalf procent, de rusthartslag van ongeveer tien procent (Buchheit 2014). De kleinste betekenisvolle verandering is veel kleiner: drie procent voor HRV, twee procent voor hartslag. Een enkele nacht kan dus nooit een verandering van die grootte laten zien; het gemiddelde over zeven nachten wel, mits er minstens drie tot vier geldige nachten in zitten (Plews 2014).
+
+## De band van een halve standaarddeviatie
+De protocollen van Vesterinen en Nuuttila berekenen over vier weken het gemiddelde en de spreiding van het 7-daags gemiddelde, en noemen alles buiten een halve standaarddeviatie afwijkend, zowel eronder als erboven. Die band is dus persoonlijk en beweegt mee met uw fitheid; na elke vier weken wordt hij herberekend.
+
+## Waarom drie markers en niet één
+HRV meet vooral de rem van het zenuwstelsel, de rusthartslag het hart zelf, en de hartslag op een vast tempo de prestatie. Ze reageren op verschillende verstoorders en bevestigen of weerleggen elkaar; Buchheit beschrijft de combinatie van hartslag en HRV als een tweedimensionaal beeld dat meer zegt dan elk apart.`,
+ 'Stopsignalen': `## De logica van twee signalen
+Elk afzonderlijk signaal, een warme nacht, een hogere hartslag, een slechte stemming, komt vaak genoeg door toeval voor dat handelen op één signaal te veel vals alarm geeft. Twee onafhankelijke signalen tegelijk, of hetzelfde signaal twee dagen op rij, verkleinen die kans sterk. Dat is de kern van het TemPredict-algoritme (Mason 2022) en van de stoplichtsystemen die Robertson (2017) en Thornton (2019) voor topteams beschrijven.
+
+## Welk signaal wint
+De app hanteert een vaste volgorde: een ziektecluster (temperatuur plus hartslag of ademhaling) gaat vóór alles; dan pijn en symptomen; dan uw eigen vermoeidheid, spierpijn en stemming, die bij trainingsbelasting gevoeliger zijn dan de ring; dan een nacht die door alcohol of een late maaltijd verklaard is; en pas daarna een losse afwijkende nacht zonder verklaring, die vrijwel altijd ruis is.
+
+## Omkeerbaarheid
+Stopsignalen veranderen het plan nooit; ze veranderen alleen de sessie van vandaag, en wel zo dat de prikkel terugkomt zodra het signaal weg is. Dat is bewust: een kwaliteitssessie een dag opschuiven kost niets, een verkoudheid die een week wordt kost veel.`,
+ 'Weegschaal': `## Waarom de weegschaal apart staat
+Gewicht, vet en spier zeggen niets over het herstel van vandaag; ze zeggen iets over de richting over maanden. Daarom tellen ze niet mee in het stoplicht en staan ze in Inzicht als doellijnen.
+
+## Hoe u de ruis klein houdt
+Nuchter, na het toilet, vóór het douchen, op hetzelfde moment en met dezelfde hydratatie. Niet wegen na een avond alcohol of een lange duurloop: de schaal leest dan een hoger vetpercentage omdat het lichaam droger is. Het weekgemiddelde is de maat, de dagwaarde niet.`,
+ 'wellness': `## Waar de vragen vandaan komen
+De Hooper-index (1995) vroeg zwemmers dagelijks naar slaap, stress, vermoeidheid en spierpijn op een schaal van 1 tot 7 en verklaarde daarmee driekwart van de variatie in 'staleness'. McLean (2010) voegde stemming toe en gebruikte een 5-puntsschaal in het profrugby. Het overzicht van Saw (2016) bevestigde dat deze korte lijsten gevoeliger zijn dan objectieve maten. De app combineert beide lijsten, laat zelf beoordeelde slaapkwaliteit weg omdat die niet meebeweegt met belasting, en voegt motivatie, pijn, symptomen en eetlust toe uit de overtrainingsconsensus (Meeusen 2013).
+
+## Waarom vóór de workout
+Het gevoel van de ochtend beschrijft de nacht en de dag ervoor; na een training is het al gekleurd door de sessie. Daarom het verzoek het vóór de workout in te vullen, en daarom staat het formulier op slot zodra het coachrapport ermee is gemaakt.`,
+ 'biomarkers': `## Waarom geen fabrikantenscores
+Oura's Readiness, Garmins Body Battery en Training Readiness zijn samengestelde scores met niet-gepubliceerde formules. Ze zijn handig als indruk, maar niet herleidbaar en niet gevalideerd tegen prestatie. De app gebruikt daarom de onderliggende metingen (nacht-HRV, laagste hartslag, slaapduur, temperatuur, ademfrequentie) en de regels uit gepubliceerd onderzoek, zodat elke kleur uit te leggen is.
+
+## Hoe de bronnen zich verhouden
+De ring is voor de nacht het betrouwbaarst (HRV en hartslag vergelijkbaar met een ECG-band); het horloge voor de training (met borstband) en de dag (stappen, trappen, water, weegschaal). Polsmetingen van de hartslag tijdens intervallen en bij kou zijn onbetrouwbaar; daarom vraagt de app bij kwaliteitssessies om de band.`,
+ 'coach': `## De principes achter de teksten
+Hattie en Timperley (2007) vonden dat feedback het meest werkt als hij drie vragen beantwoordt: waar ga ik heen, hoe doe ik het, wat is de volgende stap. Feedback op de taak en het proces helpt; lof op de persoon helpt niet. Kluger en DeNisi lieten zien dat feedback over verandering ten opzichte van de vorige keer sterker werkt dan absolute scores, en dat weinig feedback meer effect heeft dan veel. Mageau en Vallerand (2003) beschreven autonomie-ondersteunend coachen: uitleg van het waarom, keuzes bieden, geen controlerende taal.
+
+## Wat de coach bewust niet doet
+Geen diagnoses, geen angsttaal, geen oordeel over één afwijkende nacht, geen samengestelde scores als argument, geen herhaling van cijfers die u al ziet, hooguit één vraag per rapport en één actie per dag.`,
+ 'personal': `## Waarom vrije tekst
+Cijfers vertellen wat er gebeurde, niet waarom. Een gemiste sessie door tijdgebrek vraagt iets anders dan een gemiste sessie door een pijntje, en dat onderscheid staat in geen enkele meetwaarde. Coaches noemen het gesprek de plek waar de data betekenis krijgt (Buchheit); uw notitie is dat gesprek.`,
+};
 function infoHtml(txt){ return txt.split(/\n\n+/).map(b=>{ const lines = b.split('\n'); let h=''; let para=[], list=[];
   const flush=()=>{ if(para.length){ h+=`<p>${esc(para.join(' '))}</p>`; para=[]; } if(list.length){ h+=`<ul>${list.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>`; list=[]; } };
   lines.forEach(l=>{ if(l.startsWith('## ')){ flush(); h+=`<h4>${esc(l.slice(3))}</h4>`; } else if(l.startsWith('• ')){ if(para.length){ h+=`<p>${esc(para.join(' '))}</p>`; para=[]; } list.push(l.slice(2)); } else { if(list.length){ h+=`<ul>${list.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`; list=[]; } para.push(l); } });
@@ -402,7 +547,7 @@ function valueNow(key){
   }
   return `<div class="valbox ${r.status}"><h4>Uw waarde nu · ${esc(stat)}</h4>${lines.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`;
 }
-function showInfo(key){ const i = INFO[key]; if(!i) return; document.getElementById('mbody').innerHTML = `<h3>${esc(i[0])}</h3><div class="infobody">${infoHtml(i[1])}${valueNow(key)}</div>`; document.getElementById('modal').classList.add('open'); }
+function showInfo(key){ const i = INFO[key]; if(!i) return; const more = MORE[key] ? `<details class="more"><summary>Meer informatie</summary><div class="morebody">${infoHtml(MORE[key])}</div></details>` : ''; document.getElementById('mbody').innerHTML = `<h3>${esc(i[0])}</h3><div class="infobody">${infoHtml(i[1])}${more}${valueNow(key)}</div>`; document.getElementById('modal').classList.add('open'); }
 function markerRows(rows){
   let out='', grp='';
   rows.forEach(r=>{ if(r.group!==grp){ grp=r.group; const [gn, gs] = grp.split(' · '); out+=`<div class="grp info" onclick="showInfo('${esc(gn)}')">${esc(gn)}${gs?` <span class="gsub">(${esc(gs)})</span>`:''}</div>`; }
@@ -634,7 +779,7 @@ function vMeer(){
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1027'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1038'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -645,9 +790,9 @@ function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 
 setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-1027'; let UPDATE_SEEN = false;
+const BUILD = '20261019-1038'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261019-1027' || UPDATE_SEEN) return;
+  if(BUILD === '20261019-1038' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true; const el = document.getElementById('upd'); el.classList.add('on'); } }catch(e){}
 }
