@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-1808">
+<meta name="app-build" content="20261019-2158">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -543,7 +543,7 @@ Eiwit 2,1 g per kilo in het tekort (Helms 2014: 2,3 tot 3,1 g per kilo vetvrije 
 ## Onderhoud in plaats van tekort
 Lichte weken zijn dieetpauzes: in ICECAP (Peos 2021) gaf drie weken tekort en één week onderhoud evenveel vetverlies met minder honger. Taper- en wedstrijdweken, rode of zieke dagen en het bereiken van het doelgewicht zetten de doelen ook op onderhoud.`,
  'Eetmomenten': `## Vier tot vijf eiwitmomenten
-De spier reageert per maaltijd op ongeveer 0,4 g eiwit per kilo en is na een sessie 24 tot 48 uur gevoeliger; het totaal van de dag en de verdeling tellen zwaarder dan de klok (Aragon en Schoenfeld 2013; Kerksick 2017). Het ontbijt met ≥ 35 g eiwit vermindert de trek in de avond (Leidy 2013); de kwark voor het slapen (≈ 40 g caseïne) verhoogt de spieropbouw in de nacht na krachttraining (Res 2012) en is meteen de geplande avondsnack.
+De spier reageert per maaltijd op ongeveer 0,4 g eiwit per kilo en is na een sessie 24 tot 48 uur gevoeliger; het totaal van de dag en de verdeling tellen zwaarder dan de klok (Aragon en Schoenfeld 2013; Kerksick 2017). Het ontbijt met ≥ 35 g eiwit vermindert de trek in de avond (Leidy 2013); de kwark voor het slapen (≈ 40 g eiwit, grotendeels caseïne: 250 g kwark met een halve schep whey) verhoogt de spieropbouw in de nacht na krachttraining (Res 2012) en is meteen de geplande avondsnack.
 
 ## Rond de sessie
 Vóór kwaliteit en duurloop koolhydraten (1 tot 1,5 g per kilo, 1,5 tot 3 uur vooraf, weinig vezels en vet); vóór een rustige loop een kleine snack of nuchter met 20 g eiwit; vóór de gym eiwit. Erna binnen twee uur de gewone maaltijd met een volle eiwitportie; de timing telt vooral als morgen weer een sessie staat of bij twee sessies op een dag (Jeukendrup). Onderweg alleen bij duurlopen vanaf 45 minuten: 30 tot 60 g koolhydraat per uur.
@@ -960,7 +960,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-1808'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261019-2158'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
