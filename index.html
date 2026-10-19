@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-1415">
+<meta name="app-build" content="20261019-1425">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -26,7 +26,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 input,textarea,select,button{font-size:16px}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;height:100%;overflow:hidden;overscroll-behavior:none}
-#app{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden}
+#app{position:relative;display:flex;flex-direction:column;height:100%;height:var(--vh,100%);overflow:hidden}
 .timeline{padding:calc(env(safe-area-inset-top) + 8px) 16px 12px;background:var(--bg)}
 .tl{position:relative;height:28px;margin:6px 0 0}
 .tl .ln{position:absolute;left:0;right:0;top:14px;height:1px;background:var(--line)}
@@ -863,7 +863,7 @@ function vMeer(){
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1415'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1425'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -872,11 +872,17 @@ function vMeer(){
 function setTheme(t){ t = t==='light' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', t); LS.set('pt_theme', t); document.querySelectorAll('meta[name=theme-color]').forEach(m=>{ m.removeAttribute('media'); m.content = t==='dark' ? '#000000' : '#F4F5F8'; }); }
 function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 'dark'); render(); }
 setTheme(LS.get('pt_theme', 'dark'));
+// ---- schil op de echte vensterhoogte: iOS rekent de viewport bij het starten en na het inklappen van de browserbalk soms verkeerd,
+//      en een vaste container ter grootte van de viewport laat dan een zwarte strook onderin staan (WebKit-bug in iOS 26); daarom meten ----
+function fitShell(){ const h = window.innerHeight; if(h > 200) document.documentElement.style.setProperty('--vh', h + 'px'); }
+fitShell(); ['resize','orientationchange','pageshow','focus'].forEach(e=>window.addEventListener(e, fitShell));
+if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
+document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-1415'; let UPDATE_SEEN = false;
+const BUILD = '20261019-1425'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261019-1415' || UPDATE_SEEN) return;
+  if(BUILD === '20261019-1425' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true;
       // automatisch bijwerken zodra dat veilig is (niets aan het opslaan of genereren, geen open invoerveld); anders de balk tonen
