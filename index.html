@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-1204">
+<meta name="app-build" content="20261019-1324">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -69,7 +69,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .grp{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);font-weight:700;padding:12px 0 4px}.grp .gsub{text-transform:none;letter-spacing:0;font-weight:500;color:var(--ink3)}.grp:first-child{padding-top:0}
 .pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600}
 .pill.q{background:var(--q-bg);color:var(--q)}.pill.e{background:var(--e-bg);color:var(--e)}.pill.s{background:var(--s-bg);color:var(--s)}.pill.ok{background:var(--green-bg);color:var(--green);text-shadow:var(--glow)}.pill.warn{background:var(--amber-bg);color:var(--amber)}.pill.r{background:var(--surface2);color:var(--ink2)}
-.seg{display:flex;gap:4px;margin-top:6px}.seg span{flex:1;text-align:center;padding:7px 0;border-radius:8px;background:var(--surface2);font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer}.seg span.on{background:var(--accent);color:#fff}.seg.lock span{opacity:.55;cursor:default}.seg.lock span.on{opacity:1}.toggle.lock{opacity:.55;cursor:default}.toggle.prev{box-shadow:0 0 0 1.5px var(--accent)}.hab{padding:8px 0}.hab+.hab{border-top:1px solid var(--line)}.hab-t{display:flex;align-items:baseline;gap:10px}.hab-t b{font-size:26px;font-weight:800;letter-spacing:-.5px;min-width:34px}.hab-t span{font-size:13px;color:var(--ink2)}.dots{display:flex;gap:3px;margin-top:8px}.dots i{flex:1;height:8px;border-radius:2px;background:var(--surface2)}.dots i.y{background:var(--green)}.dots i.n{background:var(--red)}.dots i.na{background:var(--surface2)}
+.seg{display:flex;gap:4px;margin-top:6px}.seg span{flex:1;text-align:center;padding:7px 0;border-radius:8px;background:var(--surface2);font-size:13px;font-weight:600;color:var(--ink2);cursor:pointer}.seg span.on{background:var(--accent);color:#fff}.lockline{display:flex;align-items:flex-start;gap:8px;margin:-4px 0 10px;color:var(--green)}.lockline svg{width:16px;height:16px;flex:0 0 auto;margin-top:1px;fill:none;stroke:var(--green);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.seg.lock span{opacity:.55;cursor:default}.seg.lock span.on{opacity:1}.toggle.lock{opacity:.55;cursor:default}.toggle.prev{box-shadow:0 0 0 1.5px var(--accent)}.hab{padding:8px 0}.hab+.hab{border-top:1px solid var(--line)}.hab-t{display:flex;align-items:baseline;gap:10px}.hab-t b{font-size:26px;font-weight:800;letter-spacing:-.5px;min-width:34px}.hab-t span{font-size:13px;color:var(--ink2)}.dots{display:flex;gap:3px;margin-top:8px}.dots i{flex:1;height:8px;border-radius:2px;background:var(--surface2)}.dots i.y{background:var(--green)}.dots i.n{background:var(--red)}.dots i.na{background:var(--surface2)}
 .seg span.prev{box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--accent)}.btn:disabled{opacity:.6}
 .btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;background:var(--accent);color:#fff;font-size:16px;font-weight:700;margin-top:10px;cursor:pointer}.btn.ghost{background:var(--surface2);color:var(--ink)}.btn:disabled{opacity:.6}
 .list{margin:0;padding:0;list-style:none}.list li{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}.list li:first-child{border-top:0}.list li.done{background:var(--green-bg);border-radius:10px;padding-left:8px;padding-right:8px;margin:2px -8px;border-top:0}.list li.done+li{border-top:0}.list li.rest .day b,.list li.rest .li-main b{color:var(--ink2)}.list li.rest .li-main span{font-size:12px}.list li.done .li-main b{color:var(--green);text-shadow:var(--glow)}.ttl-tick{width:18px;height:18px;line-height:16px;font-size:10px;color:#06130E;vertical-align:middle}.card h2 .ttl-tick{text-shadow:none}.list li.done .sw svg{stroke:var(--green);filter:drop-shadow(0 0 6px rgba(61,255,176,.6))}.list li.done .sw span b{color:var(--green);text-shadow:var(--glow)}.list li.past{opacity:.45}.list li.today .day b{color:var(--accent);text-shadow:0 0 8px rgba(124,103,242,.6)}.list li.tap{cursor:pointer}
@@ -582,7 +582,7 @@ function vCheckin(){
   <div class="card"><h2 class="info" onclick="showInfo('biomarkers')">Bio markers <span class="n muted">(vannacht en gisteren)</span></h2>${markerRows(m.rows)}</div>
   ${syncLine('margin:-4px 0 12px')}
   <div class="card"><h2 class="info" onclick="showInfo('wellness')">Wellness report <span class="n muted">(invullen vóór workout)</span></h2>
-    ${LOCKED?`<div class="small" style="margin:-4px 0 8px;color:var(--green)">Ingevuld en verwerkt in het coachrapport van vandaag. <span style="color:var(--accent);cursor:pointer;font-weight:700" onclick="CI_UNLOCK=true;render()">Toch wijzigen</span></div>`:''}
+    ${LOCKED?`<div class="small lockline"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Ingevuld en verwerkt in het coachrapport van vandaag. <span style="color:var(--accent);cursor:pointer;font-weight:700" onclick="CI_UNLOCK=true;render()">Toch wijzigen</span></span></div>`:''}
     <div class="muted">Spierpijn</div>${seg('soreness', CI.soreness)}
     <div class="muted" style="margin-top:8px">Vermoeidheid</div>${seg('fatigue', CI.fatigue)}
     <div class="muted" style="margin-top:8px">Stress</div>${seg('stress', CI.stress)}
@@ -842,7 +842,7 @@ function vMeer(){
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1204'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1324'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -853,9 +853,9 @@ function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 
 setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-1204'; let UPDATE_SEEN = false;
+const BUILD = '20261019-1324'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261019-1204' || UPDATE_SEEN) return;
+  if(BUILD === '20261019-1324' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true;
       // automatisch bijwerken zodra dat veilig is (niets aan het opslaan of genereren, geen open invoerveld); anders de balk tonen
