@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-1000">
+<meta name="app-build" content="20261019-1003">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -235,7 +235,7 @@ const INFO = {
  'Hersteltrend': ['Hersteltrend', 'Drie markers die niet één nacht maar een trend beschrijven: het 7-daags gemiddelde van HRV en laagste hartslag tegen uw eigen band, en de hartslag op een vast rustig looptempo over 14 dagen. Ze zeggen of het lichaam de training verwerkt en bepalen samen met welzijn het stoplicht.'],
  'Stopsignalen': ['Stopsignalen', 'Directe signalen van gisteren en vannacht die het stoplicht kunnen overrulen: welzijn, pijn of ziekte, temperatuur, slaap, nachthartslag en ademfrequentie. Eén afwijking is vaak ruis; twee tegelijk of twee dagen op rij is een reden om de sessie aan te passen.'],
  'Weegschaal': ['Weegschaal', 'Gewicht, vetpercentage en spiermassa van de Garmin-weegschaal, nuchter gewogen. Eén meting schommelt met vocht en eten; alleen het gemiddelde over weken telt. Grijs zolang er vandaag niet gewogen is; kleur op de richting ten opzichte van de vorige weging.'],
- 'wellness': ['Wellness report', 'Uw eigen beoordeling van hoe het lichaam en het hoofd zich voelen. Uit 56 studies blijkt dat dit gevoeliger reageert op trainingsbelasting dan HRV of hartslag (Saw 2016). Spierpijn, vermoeidheid en stress boven 5 en stemming onder 3 tellen als afwijkend; pijn aan een gewricht of pees en ziektesymptomen zetten een groene ochtend op oranje.'],
+ 'wellness': ['Wellness report', 'Uw eigen beoordeling van hoe lichaam en hoofd zich voelen, elke ochtend vóór de workout. Uit 56 studies blijkt dat dit gevoeliger reageert op trainingsbelasting dan HRV of hartslag (Saw 2016).\n\nSchalen van 1 tot 7:\n• Spierpijn: 1 = geen, 7 = overal pijnlijk. Boven 5 telt als afwijkend; 5 of hoger vóór een kwaliteitsloop geeft een keuze of een rustige variant.\n• Vermoeidheid: 1 = fris, 7 = uitgeput. Boven 5 telt als afwijkend.\n• Stress: 1 = ontspannen, 7 = gespannen. Boven 5 telt als afwijkend.\n• Stemming: 1 = somber of prikkelbaar, 7 = opgewekt. Onder 3 telt als afwijkend.\n• Motivatie: 1 = geen zin om te trainen, 7 = veel zin. Weegt mee in fris of vermoeid; 2 of lager is een vroeg teken van te veel belasting.\n\nVinkjes: pijn aan gewricht of pees (geen spierpijn) en ziektesymptomen zetten een groene ochtend op oranje; eetlust minder is een licht signaal; alcohol verklaart een slechte nacht; avondsnack is een gewoonte, geen herstelmaat.\n\nPaarse omtrek om een cijfer = uw waarde van gisteren. Nog een keer tikken op een cijfer maakt de keuze ongedaan. Na het coachrapport staat het formulier op slot tot u op Toch wijzigen tikt.'],
  'personal': ['Personal input', 'Vrije tekst over gisteren: wat er speelde, hoe het voelde, een pijntje, werkdruk, reistijd. De coach gebruikt het om te begrijpen waarom iets wel of niet gelukt is en neemt het mee in het dagrapport.'],
  'coach': ['Coach', 'Het dagrapport: wat gisteren betekende, wat de nacht zegt, hoe u ervoor staat voor de sessie van vandaag en wat eraan komt. Gemaakt op verzoek met de knop, zodat uw wellness report erin zit. Beoordeel het met de duimen; dat stuurt de coach bij.'],
  'HRV 7 d': ['HRV 7 d', 'Hartritmevariabiliteit: de kleine verschillen tussen opeenvolgende hartslagen in de nacht, gemeten door de ring. Meer variatie betekent meer herstel (het parasympathische zenuwstelsel, de rem, heeft de overhand). Omdat één nacht 10 tot 20 procent ruis heeft, telt het 7-daags gemiddelde tegen uw eigen band van ±0,5 standaarddeviatie rond een baseline van 28 nachten. Eronder: vermoeidheid of ziekte; ver erboven: ook een signaal. Beide maken een kwaliteitssessie rustig (Vesterinen 2016).'],
@@ -251,7 +251,7 @@ const INFO = {
  'Lichaamsvet': ['Lichaamsvet', 'Vetpercentage geschat via bio-impedantie (elektrische weerstand). Eén meting kan 2 tot 3 procent afwijken; alleen de trend over vier weken telt. Groen bij een daling ten opzichte van de vorige weging.'],
  'Spiermassa': ['Spiermassa', 'Geschatte spiermassa in kilo van dezelfde weegschaal. Realistisch is een kwart tot een halve kilo per maand erbij; dat valt binnen de ruis van de schaal, dus pas na twee tot drie maanden zichtbaar. Groen bij een stijging ten opzichte van de vorige weging.'],
 };
-function showInfo(key){ const i = INFO[key]; if(!i) return; document.getElementById('mbody').innerHTML = `<h3>${esc(i[0])}</h3><p style="margin-top:8px">${esc(i[1])}</p>`; document.getElementById('modal').classList.add('open'); }
+function showInfo(key){ const i = INFO[key]; if(!i) return; document.getElementById('mbody').innerHTML = `<h3>${esc(i[0])}</h3><p style="margin-top:8px;white-space:pre-line">${esc(i[1])}</p>`; document.getElementById('modal').classList.add('open'); }
 function markerRows(rows){
   let out='', grp='';
   rows.forEach(r=>{ if(r.group!==grp){ grp=r.group; out+=`<div class="grp info" onclick="showInfo('${esc(grp.split(' · ')[0])}')">${esc(grp)}</div>`; }
@@ -280,9 +280,8 @@ function vCheckin(){
     <div class="muted">Spierpijn</div>${seg('soreness', CI.soreness)}
     <div class="muted" style="margin-top:8px">Vermoeidheid</div>${seg('fatigue', CI.fatigue)}
     <div class="muted" style="margin-top:8px">Stress</div>${seg('stress', CI.stress)}
-    <div class="muted" style="margin-top:8px">Stemming <span class="n">(1 = somber of prikkelbaar, 7 = opgewekt)</span></div>${seg('mood', CI.mood)}
-    <div class="muted" style="margin-top:8px">Zin om te trainen <span class="n">(1 = geen zin, 7 = veel zin)</span></div>${seg('motivation', CI.motivation)}
-    ${(pw.soreness||pw.fatigue||pw.stress||pw.mood||pw.motivation)?'<div class="small" style="margin-top:6px">Paarse omtrek = uw waarde van gisteren.</div>':''}
+    <div class="muted" style="margin-top:8px">Stemming</div>${seg('mood', CI.mood)}
+    <div class="muted" style="margin-top:8px">Motivatie</div>${seg('motivation', CI.motivation)}
     <div class="setrow" style="margin-top:6px"><div><b>Pijn aan gewricht of pees</b><span>geen spierpijn: knie, scheen, achilles, heup, rug</span></div>${tog('pain')}</div>
     ${CI.pain?`<input class="inp" style="margin:0 0 8px" placeholder="Waar? (bijv. linkerknie)" value="${esc(CI.pain_note||'')}" oninput="CI.pain_note=this.value;ciQueue(1200)">`:''}
     <div class="setrow"><div><b>Ziektesymptomen</b><span>keel, neus, hoest, rillerig</span></div>${tog('symptoms')}</div>
@@ -459,7 +458,7 @@ function vLog(){
     const stepsOk = (L.steps||0) >= 10000 || !!L.alt || !!CK.beweging, flOk = (L.floors||0) >= 10 || !!CK.trappen, waOk = (L.water_ml||0) >= 2000 || !!CK.water;
     const ch = L.challenge ? `<ul class="trk chal sm">${['push-ups','sit-ups','tibialis raises','calf raises'].filter(k=>k in cnt).map(k=>{ const ok = L.challenge_done || !!CK[k]; return lrow(esc(k[0].toUpperCase()+k.slice(1)), `${ok?cnt[k]:0} / ${cnt[k]}`, ok); }).join('')}
       ${lrow('Beweging', L.alt?`${L.alt} ✓`:`${(L.steps||0).toLocaleString('nl-NL')} / 10k`, stepsOk)}${lrow('Trappen', `${Math.round(L.floors||0)} / 10`, flOk)}${lrow('Water', `${L.water_ml?nl(L.water_ml/1000):'–'} / 2 l`, waOk)}</ul>` : '';
-    const w = L.wellness ? `<span>welzijn ${L.wellness.soreness||'–'}/${L.wellness.fatigue||'–'}/${L.wellness.stress||'–'}${L.wellness.mood?`/${L.wellness.mood}`:''}${L.wellness.motivation?` · zin ${L.wellness.motivation}`:''}${L.wellness.pain?` · pijn${L.wellness.pain_note?' ('+esc(L.wellness.pain_note)+')':''}`:''}${L.wellness.symptoms?' · symptomen':''}${L.wellness.appetite_low?' · eetlust':''}${L.wellness.alcohol?' · alcohol':''}${L.wellness.evening_snack?' · snack':''}</span>` : '';
+    const w = L.wellness ? `<span>welzijn ${L.wellness.soreness||'–'}/${L.wellness.fatigue||'–'}/${L.wellness.stress||'–'}${L.wellness.mood?`/${L.wellness.mood}`:''}${L.wellness.motivation?` · motivatie ${L.wellness.motivation}`:''}${L.wellness.pain?` · pijn${L.wellness.pain_note?' ('+esc(L.wellness.pain_note)+')':''}`:''}${L.wellness.symptoms?' · symptomen':''}${L.wellness.appetite_low?' · eetlust':''}${L.wellness.alcohol?' · alcohol':''}${L.wellness.evening_snack?' · snack':''}</span>` : '';
     const dec = L.decision ? `<span class="pill ${L.decision==='GREEN'?'ok':L.decision==='AMBER'?'warn':'r'}">${L.decision}</span>` : '';
     return `<div class="dayhdr"><b>${esc(L.date_txt)}</b><span>${L.week?`week ${L.week}`:''} ${dec}</span></div><div class="card">
       ${(planned||acts)?`<ul class="list">${planned}${acts}</ul>`:`<div class="muted">${L.blocked?`Rustperiode (${esc(L.blocked[0])})`:'Geen sessie gepland'}${L.activities.length?'':' · geen activiteit'}</div>`}
@@ -483,7 +482,7 @@ function vMeer(){
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1000'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1003'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -494,9 +493,9 @@ function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 
 setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-1000'; let UPDATE_SEEN = false;
+const BUILD = '20261019-1003'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261019-1000' || UPDATE_SEEN) return;
+  if(BUILD === '20261019-1003' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true; const el = document.getElementById('upd'); el.classList.add('on'); } }catch(e){}
 }
