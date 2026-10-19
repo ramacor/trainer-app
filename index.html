@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-2158">
+<meta name="app-build" content="20261019-2227">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -543,13 +543,13 @@ Eiwit 2,1 g per kilo in het tekort (Helms 2014: 2,3 tot 3,1 g per kilo vetvrije 
 ## Onderhoud in plaats van tekort
 Lichte weken zijn dieetpauzes: in ICECAP (Peos 2021) gaf drie weken tekort en één week onderhoud evenveel vetverlies met minder honger. Taper- en wedstrijdweken, rode of zieke dagen en het bereiken van het doelgewicht zetten de doelen ook op onderhoud.`,
  'Eetmomenten': `## Vier tot vijf eiwitmomenten
-De spier reageert per maaltijd op ongeveer 0,4 g eiwit per kilo en is na een sessie 24 tot 48 uur gevoeliger; het totaal van de dag en de verdeling tellen zwaarder dan de klok (Aragon en Schoenfeld 2013; Kerksick 2017). Het ontbijt met ≥ 35 g eiwit vermindert de trek in de avond (Leidy 2013); de kwark voor het slapen (≈ 40 g eiwit, grotendeels caseïne: 250 g kwark met een halve schep whey) verhoogt de spieropbouw in de nacht na krachttraining (Res 2012) en is meteen de geplande avondsnack.
+De spier reageert per maaltijd op ongeveer 0,4 g eiwit per kilo en is na een sessie 24 tot 48 uur gevoeliger; het totaal van de dag en de verdeling tellen zwaarder dan de klok (Aragon en Schoenfeld 2013; Kerksick 2017). Het ontbijt met ≥ 35 g eiwit vermindert de trek in de avond (Leidy 2013); een portie caseïne voor het slapen verhoogt de spieropbouw in de nacht (Res 2012), maar levert over een hele trainingsperiode niets extra's op als het dagtotaal klopt (Joy 2018); daarom staat hij niet in het schema.
 
 ## Rond de sessie
 Vóór kwaliteit en duurloop koolhydraten (1 tot 1,5 g per kilo, 1,5 tot 3 uur vooraf, weinig vezels en vet); vóór een rustige loop een kleine snack of nuchter met 20 g eiwit; vóór de gym eiwit. Erna binnen twee uur de gewone maaltijd met een volle eiwitportie; de timing telt vooral als morgen weer een sessie staat of bij twee sessies op een dag (Jeukendrup). Onderweg alleen bij duurlopen vanaf 45 minuten: 30 tot 60 g koolhydraat per uur.
 
 ## De tijden
-De tijden volgen het gebruikelijke tijdstip van je sessies (uit eerdere starttijden) en je bedtijd; verschuift de sessie, schuif de maaltijden mee. De producten zijn voorbeelden van Albert Heijn; wissel binnen dezelfde groep (eiwit, koolhydraat, vet, groente en fruit) zonder de doelen te raken.`,
+Ontbijt 8:00, lunch 12:30 en avondeten 18:00 staan vast; de snack vóór de sessie en de shake erna volgen het gebruikelijke tijdstip van je sessies (uit Garmin-starttijden en de tijden die je bij handmatig afgevinkte gymsessies invult). Valt de sessie na het avondeten, dan is het avondeten de maaltijd vooraf en komt erna alleen een lichte shake: geen maaltijd meer vlak voor het slapen, want eiwit in de nacht is niet nodig als het dagtotaal klopt (Joy 2018; Snijders 2019) en een late maaltijd kost slaap. De producten zijn voorbeelden van Albert Heijn; wissel binnen dezelfde groep (eiwit, koolhydraat, vet, groente en fruit) zonder de doelen te raken.`,
  'Supplementen': `## Wat bewezen werkt
 Van alle supplementen hebben volgens het IOC (2018) alleen cafeïne, creatine, buffers (bicarbonaat, bèta-alanine) en nitraat goed bewijs. Creatine monohydraat 5 g per dag geeft bij vijftigplussers met krachttraining 1,4 kg extra spiermassa (Chilibeck 2017); laden is niet nodig, de eerste weken komt er een halve tot een hele kilo water bij. Vitamine D3 van oktober tot april: 70 % van de Nederlandse sporters zit eind winter te laag (Backx 2016). Cafeïne 2 tot 3 mg per kilo een uur vóór intervallen of een tijdrit (Guest 2021), nooit binnen zes uur van bedtijd (Drake 2013).
 
@@ -716,7 +716,8 @@ const syncT = x => x ? new Date(x).toLocaleTimeString('nl-NL',{hour:'2-digit',mi
 function syncLine(style){ const m=D.markers.sync||{}; const watch = m.watch ? ` · horloge ${syncT(m.watch)}` : ''; return `<div class="small" style="text-align:center;${style||''}">Laatste sync · Oura ${syncT(m.oura)} <span style="color:var(--green)">✓</span> · Garmin ${syncT(m.garmin)} <span style="color:var(--green)">✓</span>${watch}</div>`; }
 function stopwatch(x){ return `<div class="sw"><svg viewBox="0 0 24 26"><path d="M10 1.5h4M12 1.5v2.5M18.5 6l1.5-1.5"/><circle cx="12" cy="14" r="9.5"/><text x="12" y="17.2" text-anchor="middle">${x.minutes}</text></svg><span>${x.km?`<b>${nl(x.km)} KM</b>`:''}</span></div>`; }
 function reviewLine(x){ const r=x.result; if(!r||!r.review) return ''; const first = r.review.split(/(?<=[.!?])\s+/).slice(0,2).join(' '); return `<span class="rev">${esc(first)}</span>`; }
-function resultLine(x){ const r=x.result; if(!r) return ''; if(r.manual) return `<span style="color:var(--green);font-weight:600">✓ handmatig afgevinkt${r.at?' · '+new Date(r.at).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}):''}</span>`; const parts=[]; if(r.distance_km) parts.push(nl(r.distance_km)+' km'); parts.push(r.duration); if(r.pace) parts.push(r.pace); if(r.avg_hr) parts.push('HR '+Math.round(r.avg_hr)+(r.max_hr?' / max '+Math.round(r.max_hr):'')+(r.hr_source==='wrist'?' (pols)':'')); if(r.self_effort) parts.push('zwaarte '+r.self_effort+'/10'); if(r.self_feel) parts.push('gevoel '+r.self_feel+'/5'); return `<span style="color:var(--green);font-weight:600">✓ ${esc(parts.join(' · '))}</span>`; }
+function tHM(s){ if(!s) return ''; const m = String(s).match(/T(\d{2}:\d{2})/); if(m) return m[1]; const d = new Date(s); return isNaN(d) ? '' : d.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}); }
+function resultLine(x){ const r=x.result; if(!r) return ''; if(r.manual) return `<span style="color:var(--green);font-weight:600">✓ handmatig afgevinkt${r.at?' · '+new Date(r.at).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}):''}</span>`; const parts=[]; if(r.start) parts.push(tHM(r.start)); if(r.distance_km) parts.push(nl(r.distance_km)+' km'); parts.push(r.duration); if(r.pace) parts.push(r.pace); if(r.avg_hr) parts.push('HR '+Math.round(r.avg_hr)+(r.max_hr?' / max '+Math.round(r.max_hr):'')+(r.hr_source==='wrist'?' (pols)':'')); if(r.self_effort) parts.push('zwaarte '+r.self_effort+'/10'); if(r.self_feel) parts.push('gevoel '+r.self_feel+'/5'); return `<span style="color:var(--green);font-weight:600">✓ ${esc(parts.join(' · '))}</span>`; }
 function gymTable(rows){
   let h = '<table class="gtab"><tr class="head"><td class="r"></td><td>oefening</td><td class="s">sets × herh.</td><td class="rest">rust</td></tr>'; let grp = null; let gi = 0;
   rows.forEach(r=>{
@@ -729,7 +730,7 @@ function gymTable(rows){
   });
   return h + '</table><div class="small" style="margin-top:6px">RIR = herhalingen in reserve. Gekleurde band = superset: a en b afwisselen, rust na het paar.</div>';
 }
-function resultBlock(x){ const r=x.result; if(!r) return ''; if(r.manual) return `<h4>Resultaat</h4><p>Handmatig op gedaan gezet${r.at?' · '+new Date(r.at).toLocaleString('nl-NL',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):''}, zonder horlogegegevens. De coach telt de sessie mee in het ritme, maar kan niets zeggen over duur en zwaarte.</p><button class="btn ghost" onclick="markDone('${esc(x.date)}','${esc(x.code)}',false)">Toch niet gedaan</button>`; let h = `<h4>Resultaat · ${esc(new Date(r.start).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}))}</h4><p>${resultLine(x).replace('✓ ','')}${r.training_load?` · belasting ${r.training_load}`:''}</p>`;
+function resultBlock(x){ const r=x.result; if(!r) return ''; if(r.manual) return `<h4>Resultaat</h4><p>Handmatig op gedaan gezet${r.at?' · begonnen om '+tHM(r.at):''}, zonder horlogegegevens. De coach telt de sessie mee in het ritme, maar kan niets zeggen over duur en zwaarte.</p><button class="btn ghost" onclick="markDone('${esc(x.date)}','${esc(x.code)}',false)">Toch niet gedaan</button>`; let h = `<h4>Resultaat · ${esc(new Date(r.start).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}))}</h4><p>${resultLine(x).replace('✓ ','')}${r.training_load?` · belasting ${r.training_load}`:''}</p>`;
   if(r.review) h += `<div class="card coach hl" style="margin:10px 0"><h2>Coach over deze sessie</h2><p>${esc(r.review)}</p>${fbBar('review:'+r.activity_id)}</div>`;
   if(r.laps && r.laps.length){ h += `<table class="wtab" style="margin-top:8px">${r.laps.map(l=>`<tr class="${l.type==='midpoint'?'mid':''}"><td class="t">${esc(l.type)}</td><td class="d">${esc(l.duration)}</td><td class="d">${l.distance_m?l.distance_m+' m':''}</td><td class="z">${esc(l.pace||'')}</td><td class="n">${l.avg_hr?'HR '+Math.round(l.avg_hr)+(l.max_hr?' / '+Math.round(l.max_hr):''):''}</td></tr>`).join('')}</table>`; }
   return h; }
@@ -738,7 +739,7 @@ function applyLocalDone(){ if(!D) return; const cut = new Date(Date.now()-5*8640
   Object.keys(MD).forEach(day=>{ if(day < cut){ delete MD[day]; return; } Object.entries(MD[day]).forEach(([code,v])=>{ const set = x=>{ if(!x || x.code!==code || x.date!==day) return; if(v.done && !x.result) x.result = {manual:true, at:v.at}; if(!v.done && x.result && x.result.manual) delete x.result; };
     (D.today_block.workouts||[]).forEach(set); (D.plan.weeks||[]).forEach(w=>w.sessions.forEach(set)); (D.log||[]).forEach(L=>{ if(L.day!==day) return; L.planned.forEach(pl=>{ if(pl.code===code) pl.manual_done = !!v.done; }); }); }); });
   LS.set('pt_done', MD); }
-async function markDone(day, code, done){ MD[day] = MD[day] || {}; MD[day][code] = {done: !!done, at: new Date().toISOString()}; LS.set('pt_done', MD);
+async function markDone(day, code, done){ const ti = document.getElementById('md-time'); const hhmm = (ti && /^\d{2}:\d{2}$/.test(ti.value)) ? ti.value : new Date().toTimeString().slice(0,5); MD[day] = MD[day] || {}; MD[day][code] = {done: !!done, at: `${day}T${hhmm}:00`}; LS.set('pt_done', MD);
   const set = x=>{ if(!x || x.code!==code || x.date!==day) return; if(done) x.result = {manual:true, at:MD[day][code].at}; else if(x.result && x.result.manual) delete x.result; };
   (D.today_block.workouts||[]).forEach(set); (D.plan.weeks||[]).forEach(w=>w.sessions.forEach(set)); (D.log||[]).forEach(L=>{ if(L.day===day) L.planned.forEach(pl=>{ if(pl.code===code) pl.manual_done = !!done; }); });
   LS.set('pt_snapshot', D); closeModal(); render();
@@ -747,7 +748,7 @@ function openWorkout(src, i){ const x = src==='today' ? D.today_block.workouts[i
 function showWorkout(x){
   let h = `<div style="display:flex;justify-content:space-between;align-items:baseline"><h3>${esc(wtitle(x))}</h3>${x.kind==='kracht'?`<span class="pill s">${esc(x.tag||'kracht')}</span>`:x.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</div><p class="meta">${esc(x.date_txt)} · ${x.minutes} min${x.km?` · ${nl(x.km)} km`:''}</p>`;
   h += resultBlock(x);
-  if(!x.result && x.kind==='kracht' && x.date && x.date <= D.today) h += `<div class="advice" style="margin:8px 0 4px"><b>Geen horlogegegevens</b>Gym gedaan zonder horloge of zonder de activiteit te starten? Zet hem dan hier op gedaan; hij telt dan mee in plan, log en coachrapport.<div style="margin-top:8px"><button class="btn" onclick="markDone('${esc(x.date)}','${esc(x.code)}',true)">Markeer als gedaan</button></div></div>`;
+  if(!x.result && x.kind==='kracht' && x.date && x.date <= D.today) h += `<div class="advice" style="margin:8px 0 4px"><b>Geen horlogegegevens</b>Gym gedaan zonder horloge of zonder de activiteit te starten? Zet hem dan hier op gedaan; hij telt dan mee in plan, log en coachrapport.<div style="display:flex;gap:10px;align-items:center;margin-top:8px"><label style="font-size:13px;color:var(--ink2)">Begonnen om <input type="time" id="md-time" value="${x.date===D.today?new Date(Date.now()-3600000).toTimeString().slice(0,5):'19:00'}" style="font-size:15px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--surface2);color:var(--ink)"></label></div><div style="margin-top:8px"><button class="btn" onclick="markDone('${esc(x.date)}','${esc(x.code)}',true)">Markeer als gedaan</button></div></div>`;
   if(x.purpose) h += `<h4>Doel</h4><p>${esc(x.purpose.replace(/^Doel:\s*/,''))}</p>`;
   if(x.steps) h += `<h4>Opbouw</h4><table class="wtab">${x.steps.map(r=>`<tr class="${r[0]?'rep':''}${r[0]==='|'?' cont':''}${r[1]==='other'?' mid':''}"><td class="r">${r[0]==='|'?'':esc(r[0])}</td><td class="t">${r[1]==='other'?'midpoint':esc(r[1])}</td><td class="d">${esc(r[2])}</td><td class="z">${esc(r[3])}</td><td class="n">${esc(r[4])}</td></tr>`).join('')}</table>`;
   if(x.exercise_rows && x.exercise_rows.length) h += `<h4>Oefeningen</h4>${gymTable(x.exercise_rows)}`;
@@ -960,7 +961,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-2158'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261019-2227'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
