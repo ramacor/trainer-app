@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-0939">
+<meta name="app-build" content="20261019-0953">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -244,7 +244,7 @@ const INFO = {
  'Welzijn': ['Welzijn', 'De hoogste score van spierpijn, vermoeidheid, stress en stemming uit uw wellness report (1 tot 7). Boven 5 geldt als afwijkend en maakt een kwaliteitssessie rustig. Het gevoel is bij trainingsbelasting het gevoeligste signaal dat er is; daarom telt het mee in het stoplicht én staat het bij de stopsignalen.'],
  'Pijn of ziekte': ['Pijn of ziekte', 'Uw vinkjes voor pijn aan een gewricht of pees, ziektesymptomen en minder eetlust. Pijn is iets anders dan spierpijn en betekent: geen kwaliteitsloop en geen zware benen. Symptomen zonder koorts volgen de nekregel (boven de nek mag rustig); met temperatuur of hartslagpiek erbij is het rust.'],
  'Temperatuur': ['Temperatuur', 'Afwijking van uw huidtemperatuur in de nacht ten opzichte van uw eigen gemiddelde, gemeten door de ring. Plus 0,5 graad of meer, zeker twee nachten op rij of samen met een hogere hartslag of ademhaling, is het patroon van beginnende ziekte, vaak een dag voordat u iets voelt. Dan geen harde training.'],
- 'Slaap': ['Slaap', 'Totale slaaptijd van vannacht tegen uw 14-daags gemiddelde. Onder de zes uur vóór een kwaliteitssessie maakt die sessie rustiger; chronisch onder de zeven uur verhoogt het blessurerisico. Slaap is het grootste deel van het herstel; de kwaliteit beoordeelt u beter zelf dan de ring.'],
+ 'Slaap': ['Slaap', 'Totale slaaptijd van vannacht; de delta is het verschil met uw 14-daags gemiddelde (bij de andere markers is dat de vorige meting). Onder de zes uur vóór een kwaliteitssessie maakt die sessie rustiger; chronisch onder de zeven uur verhoogt het blessurerisico. Slaap is het grootste deel van het herstel; de kwaliteit beoordeelt u beter zelf dan de ring.'],
  'Laagste HR': ['Laagste HR vannacht', 'De laagste hartslag van deze ene nacht. Een plotse piek van meer dan een paar slagen boven uw normaal is een stopsignaal: alcohol, late maaltijd, warmte of beginnende ziekte. Eén nacht telt als signaal, niet als trend; daarvoor is er de 7-daagse versie hierboven.'],
  'Ademfrequentie': ['Ademfrequentie', 'Ademhalingen per minuut in de nacht. Normaal 12 tot 20 en zeer stabiel per persoon; twee of meer boven uw eigen gemiddelde, samen met temperatuur of hartslag, hoort bij het ziektecluster. Alleen informatief, geen eigen oordeel.'],
  'Gewicht': ['Gewicht', 'Nuchter gewicht van de weegschaal. Doel: naar 88 kg over de missie, een halve tot een hele kilo per week is het haalbare tempo met behoud van spier. Groen bij een daling ten opzichte van de vorige weging; dagelijkse schommelingen van een kilo zijn vocht.'],
@@ -483,7 +483,7 @@ function vMeer(){
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-0939'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-0953'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -494,9 +494,9 @@ function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 
 setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-0939'; let UPDATE_SEEN = false;
+const BUILD = '20261019-0953'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261019-0939' || UPDATE_SEEN) return;
+  if(BUILD === '20261019-0953' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true; const el = document.getElementById('upd'); el.classList.add('on'); } }catch(e){}
 }
