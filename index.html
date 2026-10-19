@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-1019">
+<meta name="app-build" content="20261019-1020">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -86,7 +86,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .modal .box{background:var(--bg);border-radius:0;padding:calc(env(safe-area-inset-top) + 10px) 16px calc(76px + env(safe-area-inset-bottom));height:100%;overflow-y:auto;width:100%}
 .grab{width:38px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 10px}
 .modal h3{font-size:18px;margin:4px 0 2px}.modal .meta{color:var(--ink2);font-size:12.5px;margin:0 0 10px}.modal h4{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:12px 0 4px;font-weight:700}
-.modal p{font-size:14px;line-height:1.5;margin:0}.infobody p{margin:0 0 10px}.infobody h4{margin:14px 0 4px}.infobody h4:first-child{margin-top:6px}.infobody ul{margin:0 0 10px;padding-left:18px;font-size:14px;line-height:1.5}.modal ul{margin:0;padding:0 0 0 16px;font-size:13.5px;line-height:1.5}
+.modal p{font-size:14px;line-height:1.5;margin:0}.infobody{margin-top:14px}.infobody p{margin:0 0 10px}.infobody h4{margin:16px 0 4px}.infobody h4:first-child{margin-top:6px}.infobody ul{margin:0 0 10px;padding-left:18px;font-size:14px;line-height:1.5}.modal ul{margin:0;padding:0 0 0 16px;font-size:13.5px;line-height:1.5}
 .wtab{width:100%;border-collapse:collapse;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--surface2);border-radius:10px;overflow:hidden;margin-top:6px}
 .wtab td{padding:5px 6px;vertical-align:top;border-top:1px solid var(--line);line-height:1.4}.wtab tr:first-child td{border-top:0}
 .wtab td.r{width:30px;text-align:right;color:var(--accent);font-weight:700;white-space:nowrap}.wtab td.t{width:70px;white-space:nowrap;font-weight:600}.wtab td.d{width:48px;text-align:right;white-space:nowrap}.wtab td.z{white-space:nowrap}.wtab td.n{color:var(--ink2)}
@@ -609,7 +609,7 @@ function vMeer(){
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1019'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1020'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -620,9 +620,9 @@ function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 
 setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-1019'; let UPDATE_SEEN = false;
+const BUILD = '20261019-1020'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261019-1019' || UPDATE_SEEN) return;
+  if(BUILD === '20261019-1020' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true; const el = document.getElementById('upd'); el.classList.add('on'); } }catch(e){}
 }
