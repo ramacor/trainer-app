@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-1404">
+<meta name="app-build" content="20261019-1415">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -26,7 +26,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 input,textarea,select,button{font-size:16px}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;height:100%;overflow:hidden;overscroll-behavior:none}
-#app{position:fixed;inset:0;display:flex;flex-direction:column;height:100dvh;height:100%;overflow:hidden}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden}
 .timeline{padding:calc(env(safe-area-inset-top) + 8px) 16px 12px;background:var(--bg)}
 .tl{position:relative;height:28px;margin:6px 0 0}
 .tl .ln{position:absolute;left:0;right:0;top:14px;height:1px;background:var(--line)}
@@ -41,7 +41,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .tl s.next{border-color:var(--accent);box-shadow:0 0 0 3px var(--q-bg)}.tl s.last{transform:translate(-100%,-50%)}.tl s.done{border-color:var(--green)}
 .tl .brk{position:absolute;top:14px;transform:translateY(-50%);color:var(--ink3);font-size:11px;letter-spacing:2px;line-height:1;background:var(--bg);padding:0 2px}
 .timeline .lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-top:8px}.timeline .lbl .goal{color:var(--accent);font-weight:700}
-.screen{flex:1;overflow-y:auto;padding:0 16px 4px}
+.screen{flex:1;min-height:0;overflow-y:auto;padding:0 16px 4px}
 .hdr{display:flex;align-items:baseline;justify-content:space-between;margin:6px 0 12px}
 .hdr h1{font-size:30px;margin:0;letter-spacing:-.3px}.hdr h1 small{font-size:inherit;font-weight:inherit;color:inherit}.hdr .d{color:var(--ink2);font-size:13px}
 .gear{font-size:20px;color:var(--ink2);cursor:pointer;margin-left:8px;vertical-align:middle;display:inline-block}.gear.spin{animation:spin 1.2s linear infinite;color:var(--accent)}@keyframes spin{to{transform:rotate(360deg)}}.hdr .date{font-size:30px;font-weight:700;letter-spacing:-.3px;text-align:right;white-space:nowrap}
@@ -863,7 +863,7 @@ function vMeer(){
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1404'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1415'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -874,9 +874,9 @@ function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 
 setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-1404'; let UPDATE_SEEN = false;
+const BUILD = '20261019-1415'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261019-1404' || UPDATE_SEEN) return;
+  if(BUILD === '20261019-1415' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true;
       // automatisch bijwerken zodra dat veilig is (niets aan het opslaan of genereren, geen open invoerveld); anders de balk tonen
