@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261019-1039">
+<meta name="app-build" content="20261019-1046">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -93,9 +93,10 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-syst
 .wtab td.r{width:30px;text-align:right;color:var(--accent);font-weight:700;white-space:nowrap}.wtab td.t{width:70px;white-space:nowrap;font-weight:600}.wtab td.d{width:48px;text-align:right;white-space:nowrap}.wtab td.z{white-space:nowrap}.wtab td.n{color:var(--ink2)}
 .wtab tr.rep td{background:var(--q-bg)}.wtab tr.rep td.r{box-shadow:inset 3px 0 var(--accent)}.wtab tr.cont td{border-top:0}.wtab tr.mid td{color:var(--amber)}
 .coach.hl{background:var(--q-bg);border:1.5px solid var(--accent);box-shadow:var(--shadow)}.coach.hl h2{color:var(--accent);font-size:13px}.coach.hl p{font-size:15px;line-height:1.55;color:var(--ink)}.coach.hl .small{color:var(--ink2)}
-.coach p{font-size:13.5px;line-height:1.5;margin:0 0 6px}.fb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}.fb .fbl{font-size:11.5px;color:var(--ink3);margin-right:2px}.fbb{width:30px;height:30px;border-radius:50%;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.fbb svg{width:16px;height:16px;fill:none;stroke:var(--ink2);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}.fbb.on{background:var(--green-bg)}.fbb.on svg{stroke:var(--green)}.fbb.on.dn{background:var(--red-bg)}.fbb.on.dn svg{stroke:var(--red)}.fb .fbt{width:100%;min-height:64px;margin-top:4px}.fbrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}.btn.mini{width:auto;padding:8px 16px;font-size:14px;margin:0}.fb .fbq{flex-basis:100%;font-size:12.5px;color:var(--ink2);font-style:italic}
+.coach p{font-size:15px;line-height:1.55;margin:0 0 6px;color:var(--ink)}.fb{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}.fb .fbl{font-size:11.5px;color:var(--ink3);margin-right:2px}.fbb{width:30px;height:30px;border-radius:50%;background:var(--surface2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}.fbb svg{width:16px;height:16px;fill:none;stroke:var(--ink2);stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}.fbb.on{background:var(--green-bg)}.fbb.on svg{stroke:var(--green)}.fbb.on.dn{background:var(--red-bg)}.fbb.on.dn svg{stroke:var(--red)}.fb .fbt{width:100%;min-height:64px;margin-top:4px}.fbrow{flex-basis:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}.btn.mini{width:auto;padding:8px 16px;font-size:14px;margin:0}.fb .fbq{flex-basis:100%;font-size:12.5px;color:var(--ink2);font-style:italic}
+.concl{border-radius:12px;padding:10px 12px;margin:8px 0 10px;background:var(--surface2)}.concl.ok{background:var(--green-bg)}.concl.warn{background:var(--amber-bg)}.concl.r{background:var(--red-bg)}.concl ul,.concl-l{margin:4px 0 0;padding-left:16px;font-size:15px;line-height:1.55}.concl li,.concl-l li{margin-bottom:4px}.concl li b,.concl-l li b{font-weight:800}.concl-l{margin:0 0 10px;padding-left:16px}.coach .more{margin-top:8px}.coach .more summary{padding:9px 0;font-size:15px}.coach .morebody p{font-size:15px}
 .coach p.kop{font-size:13px;color:var(--ink2);margin-bottom:4px}.coach.hl b.t{color:var(--accent)}.coach b.t{display:block;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);margin:8px 0 2px}
-textarea.inp{width:100%;min-height:72px;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--ink);font:16px/1.5 -apple-system,system-ui,sans-serif;padding:10px;resize:none}
+textarea.inp{width:100%;min-height:72px;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--ink);font:15px/1.55 -apple-system,system-ui,sans-serif;padding:10px;resize:none}
 .setrow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line)}.setrow:first-child{border-top:0}.setrow b{font-weight:600;font-size:15px;display:block}.setrow span{font-size:12.5px;color:var(--ink2)}
 .toggle{width:46px;height:28px;border-radius:14px;background:var(--accent);position:relative;display:inline-block;cursor:pointer;flex:0 0 auto}.toggle::after{content:"";position:absolute;right:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff}
 .toggle.off{background:var(--surface2)}.toggle.off::after{right:auto;left:3px;background:var(--ink3)}
@@ -616,13 +617,20 @@ function fbText(t){ FB_OPEN[t] = !FB_OPEN[t]; fbRefresh(t); if(FB_OPEN[t]){ cons
 function fbNote(t, txt){ const f = Object.assign({}, fbGet(t)); f.text = txt; f.at = new Date().toISOString(); f.saved = false; FB[t] = f; LS.set('pt_fb', FB); const el=document.getElementById('fbs-'+t.replace(/[^a-z0-9]/gi,'_')); if(el) el.textContent='Nog niet opgeslagen'; fbQueue(1500); }
 function fbQueue(ms){ clearTimeout(FB_TIMER); FB_TIMER = setTimeout(fbSave, ms||400); }
 async function fbSave(){ try{ await api('PUT','/input',{day:new Date().toISOString().slice(0,10), kind:'feedback', data:{items: FB}}); Object.keys(FB).forEach(k=>{ FB[k].saved = true; }); LS.set('pt_fb', FB); if(D){ D.feedback = Object.assign({}, D.feedback||{}, FB); LS.set('pt_snapshot', D); } document.querySelectorAll('[id^=fbs-]').forEach(el=>el.textContent='Opgeslagen ✓'); return true; }catch(e){ toast('Beoordeling niet opgeslagen, probeer opnieuw'); return false; } }
+function coachToday(c){
+  const r = c.report; const col = r ? ({GREEN:'ok',GREEN_HOLD:'ok',AMBER:'warn',RED:'r',NO_DATA:'ok'}[r.colour]||'ok') : 'ok';
+  const concl = (r&&r.conclusie&&r.conclusie.length) ? `<div class="concl ${col}"><b class="t" style="margin-top:0">Vandaag rekening houden met</b><ul>${r.conclusie.map(x=>`<li><b>${esc(x.k)}</b> ${esc(x.t)}</li>`).join('')}</ul></div>` : '';
+  return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach · vandaag</h2>${concl}<b class="t">Vandaag</b><p>${esc(c.today||'Nog geen advies: genereer het coachrapport onder Reflect.')}</p>${c.day?fbBar('daily:'+c.day):''}</div>`;
+}
 function coachCard(prev){
   const r = prev.report;
   if(!r) return `<div class="card coach hl"><h2>Coach</h2><p>${esc(prev.analysis||'Nog geen rapport: vul het wellness report in en tik op "Coachrapport genereren".')}</p>${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}</div>`;
   const col = {GREEN:'ok',GREEN_HOLD:'ok',AMBER:'warn',RED:'r',NO_DATA:'ok'}[r.colour]||'ok';
   const sec = (t, x) => x ? `<b class="t">${t}</b><p>${esc(x)}</p>` : '';
+  const concl = (r.conclusie&&r.conclusie.length) ? `<div class="concl ${col}"><b class="t" style="margin-top:0">Vandaag rekening houden met</b><ul>${r.conclusie.map(c=>`<li><b>${esc(c.k)}</b> ${esc(c.t)}</li>`).join('')}</ul></div>` : '';
+  const deep = (r.verdieping&&r.verdieping.length) ? `<b class="t">Verdieping</b>${r.verdieping.map(d=>`<details class="more"><summary>${esc(d.title)}</summary><div class="morebody"><p>${esc(d.text)}</p></div></details>`).join('')}` : '';
   return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach</h2><p class="kop"><span class="pill ${col}">${esc((r.kop.match(/\. (Groen|Oranje|Rood)[^.]*/)||['',''])[1]||'')}</span> ${esc(r.kop)}</p>
-    ${sec('Gisteren', r.gisteren)}${sec('Vannacht', r.vannacht)}${sec('Vandaag', r.vandaag)}${sec('Vooruit', r.vooruit)}
+    ${concl}${sec('Gisteren', r.gisteren)}${sec('Vannacht', r.vannacht)}${sec('Vandaag', r.vandaag)}${sec('Vooruit', r.vooruit)}${deep}
     ${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}${fbBar('daily:'+prev.day)}</div>`;
 }
 let CI_STATUS = 'Wordt automatisch opgeslagen.'; let CI_TIMER = null;
@@ -654,7 +662,7 @@ function vVandaag(){
     ${crow('water', ICON_SELF,'Water','', `${nl((ch.water_ml||0)/1000)} <small>/ 2 l</small>`, waOk)}</ul><div class="small muted" style="margin-top:6px">Tik op een regel om af te vinken; beweging en trappen komen uit Garmin.</div></div>` : '';
   return `<div class="hdr"><h1>Vandaag</h1><span class="date">${esc(D.timeline.today_txt)} <span class="gear" onclick="requestRefresh()" title="Verversen">${REFRESHING?'⟳':'↻'}</span></span></div>
   ${decBanner()}
-  <div class="card coach"><h2>Coach · vandaag</h2><p style="margin-top:0">${esc(c.today||'Nog geen advies: genereer het coachrapport onder Reflect.')}</p>${c.day?fbBar('daily:'+c.day):''}</div>
+  ${coachToday(c)}
   ${w || `<div class="card"><h2>Geen sessie vandaag</h2><div class="advice"><b>Advies</b>${esc(tb.rest_advice||'')}</div></div>`}${chal}${syncLine('margin:4px 0 14px')}`;
 }
 const syncT = x => x ? new Date(x).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}) : '–';
@@ -787,7 +795,7 @@ function vMeer(){
   <div class="card"><div class="setrow"><div><b>Synccode</b><span>${esc(CODE.slice(0,7))}••••-••••</span></div><span class="muted" onclick="LS.set('pt_code','');CODE='';renderSetup()" style="cursor:pointer">wijzigen</span></div>
   <div class="setrow"><div><b>Laatste snapshot</b><span>${esc(t)} · gegenereerd ${esc(D.generated_at||'')}</span></div><span class="muted" onclick="load()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Coach-afstemming</b><span>${(D.today_block.coach&&D.today_block.coach.prefs)?`${D.today_block.coach.prefs.n} beoordelingen · ${(D.today_block.coach.prefs.notes||[]).join(', ')||'geen aanpassingen'}`:'nog geen beoordelingen'}</span></div></div>
-  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1039'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
+  <div class="setrow"><div><b>App-versie</b><span>${esc(BUILD==='20261019-1046'?'lokaal':BUILD)}</span></div><span class="muted" onclick="applyUpdate()" style="cursor:pointer">vernieuwen</span></div>
   <div class="setrow"><div><b>Donkere modus</b><span>${LS.get('pt_theme','dark')==='dark'?'aan · standaard':'uit · lichte modus'}</span></div><span class="toggle ${LS.get('pt_theme','dark')==='dark'?'':'off'}" onclick="themeToggle()"></span></div></div>
   <div class="card"><h2>Zones · maximum ${z.hrmax}</h2><ul class="list"><li><div class="li-main"><b>Rustig</b><span>${z.easy[0]}–${z.easy[1]} · plafond 155 · 7:00–7:45</span></div></li><li><div class="li-main"><b>Drempel</b><span>${z.threshold[0]}–${z.threshold[1]} · 5:50–6:05</span></div></li><li><div class="li-main"><b>Noorse 4×4</b><span>${z['4x4'][0]}–${z['4x4'][1]} · herstel ~135</span></div></li><li><div class="li-main"><b>Wedstrijdtempo</b><span>${z.race[0]}–${z.race[1]} · 5:45–6:00</span></div></li></ul></div>
   <div class="card"><h2>Gymregels</h2><ul style="margin:0;padding-left:16px;font-size:13px;line-height:1.5">${D.gym_rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
@@ -798,9 +806,9 @@ function themeToggle(){ setTheme(LS.get('pt_theme','dark')==='dark' ? 'light' : 
 setTheme(LS.get('pt_theme', 'dark'));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261019-1039'; let UPDATE_SEEN = false;
+const BUILD = '20261019-1046'; let UPDATE_SEEN = false;
 async function checkUpdate(){
-  if(BUILD === '20261019-1039' || UPDATE_SEEN) return;
+  if(BUILD === '20261019-1046' || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
     if(m && m[1] !== BUILD){ UPDATE_SEEN = true; const el = document.getElementById('upd'); el.classList.add('on'); } }catch(e){}
 }
