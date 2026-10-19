@@ -392,7 +392,10 @@ Een getrainde man van begin veertig bouwt met drie gymsessies per week en voldoe
 ## Waarom het telt
 Spiermassa is het fundament onder de Gymrace en beschermt tegen het spierverlies dat bij afvallen en bij veel duurtraining dreigt; zware krachttraining verbetert bovendien de loopeconomie met twee tot acht procent (Blagrove 2018). Groen bij een stijging ten opzichte van de vorige weging.`],
 };
-function infoHtml(txt){ return txt.split(/\n\n+/).map(b=>{ const lines = b.split('\n'); if(lines[0].startsWith('## ')) return `<h4>${esc(lines[0].slice(3))}</h4>` + (lines.slice(1).length? infoHtml(lines.slice(1).join('\n')) : ''); if(lines.every(l=>l.startsWith('• '))) return `<ul>${lines.map(l=>`<li>${esc(l.slice(2))}</li>`).join('')}</ul>`; return `<p>${esc(b)}</p>`; }).join(''); }
+function infoHtml(txt){ return txt.split(/\n\n+/).map(b=>{ const lines = b.split('\n'); let h=''; let para=[], list=[];
+  const flush=()=>{ if(para.length){ h+=`<p>${esc(para.join(' '))}</p>`; para=[]; } if(list.length){ h+=`<ul>${list.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>`; list=[]; } };
+  lines.forEach(l=>{ if(l.startsWith('## ')){ flush(); h+=`<h4>${esc(l.slice(3))}</h4>`; } else if(l.startsWith('• ')){ if(para.length){ h+=`<p>${esc(para.join(' '))}</p>`; para=[]; } list.push(l.slice(2)); } else { if(list.length){ h+=`<ul>${list.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`; list=[]; } para.push(l); } });
+  flush(); return h; }).join(''); }
 function showInfo(key){ const i = INFO[key]; if(!i) return; document.getElementById('mbody').innerHTML = `<h3>${esc(i[0])}</h3><div class="infobody">${infoHtml(i[1])}</div>`; document.getElementById('modal').classList.add('open'); }
 function markerRows(rows){
   let out='', grp='';
