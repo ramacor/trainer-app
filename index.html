@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261020-0835">
+<meta name="app-build" content="20261020-0921">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -340,7 +340,7 @@ Uw nachttemperatuur is zo stabiel dat een halve graad al betekenis heeft. In een
 
 ## Wanneer het niet goed is
 Plus 0,5 graad of meer, zeker twee nachten op rij of samen met een hogere nachthartslag of ademfrequentie: dan geen harde training, en bij koorts rust tot u 24 uur klachtenvrij bent.`],
- 'Slaap': ['Slaap', `De totale slaaptijd van vannacht volgens de ring. De delta is het verschil met uw 14-daags gemiddelde, want bij slaap gaat het om de afstand tot wat u nodig heeft, niet om het verschil met gisteren.
+ 'Slaap': ['Slaap', `De totale slaaptijd van vannacht volgens de ring, in uren en minuten. Het cijfer rechts is het verschil met de vorige nacht in minuten. Eén korte nacht werkt direct door op de dag erna; daarom staat hier de nacht zelf en niet een gemiddelde. Het 14-daags gemiddelde gebruikt het protocol alleen op de achtergrond voor een chronisch tekort (onder zeven uur).
 
 ## Waarom het belangrijk is
 Slaap is het grootste deel van het herstel: groeihormoon, spierherstel en het verwerken van de trainingsprikkel gebeuren vooral in de nacht. Jonge atleten met minder dan acht uur slaap hadden een 1,7 keer hoger blessurerisico (Milewski 2014); de consensus voor volwassen sporters noemt onder de zeven uur een tekort (Walsh 2021). Andersom werkt slaapverlenging als training: basketballers die vijf weken tien uur in bed lagen, sprintten sneller en schoten beter (Mah 2011). Eliud Kipchoge slaapt naar eigen zeggen acht uur per nacht en nog een tot twee uur overdag.
@@ -584,7 +584,7 @@ function valueNow(key){
   else {
     if(r.txt!=null) lines.push(`Nu: ${r.txt}.`);
     else lines.push(`Nu: ${f(r.value)}${u}.`);
-    const cmp = (r.prev!=null && r.ref) ? `Ter vergelijking: ${f(r.prev)}${u} (${r.ref})${r.delta!=null && r.delta!==0 ? `, dus ${r.delta>0?'+':''}${f(r.delta)}` : ', gelijk'}.` : '';
+    const cmp = (r.prev!=null && r.ref) ? `Ter vergelijking: ${r.prev_txt||(f(r.prev)+u)} (${r.ref})${r.delta!=null && r.delta!==0 ? `, dus ${r.delta>0?'+':''}${f(r.delta)}${r.delta_unit?' '+r.delta_unit:''}` : ', gelijk'}.` : '';
     if(key==='HRV 7 d'){
       if(r.lo!=null && r.hi!=null) lines.push(`Uw band is ${f(r.lo,0)}–${f(r.hi,0)} ms en het 7-daags gemiddelde ligt ${r.value<r.lo?'eronder: het lichaam is nog niet in de herstelstand':r.value>r.hi?'erboven: meestal diep herstel, soms overcompensatie':'erbinnen: normaal herstel'}. Dat bepaalt de kleur van de regel.`);
       if(cmp) lines.push(cmp + (r.delta!=null && r.delta!==0 ? ` Het cijfer rechts is die beweging: ${r.delta>0?'omhoog, dus groen':'omlaag, dus rood'}; het oordeel zit in de kleur van de regel.` : ''));
@@ -597,7 +597,7 @@ function valueNow(key){
     else if(key==='HR op 7:15 p/km'){ lines.push(`Vergeleken met de 14 dagen ervoor: ${r.delta==null?'nog geen vergelijking':(r.delta>=4?'meer dan 4 slagen hoger, dat telt als slechter':r.delta<=-4?'meer dan 4 slagen lager, dat is winst':'binnen de ruis van 4 slagen, dus gelijk')}.`); }
     else if(key==='Welzijn'){ lines.push(`Boven 5 geldt als afwijkend; uw hoogste score is ${f(r.value,0)}, dus ${stat}.`); }
     else if(key==='Temperatuur'){ lines.push(`De grens is +0,5 °C; uw afwijking is ${f(r.value)} °C, dus ${stat}.`); }
-    else if(key==='Slaap'){ lines.push(`${r.value<6?'Onder de zes uur: te kort voor een kwaliteitssessie.':r.value<7?'Onder de zeven uur, iets te kort.':'Zeven uur of meer, voldoende.'}`); }
+    else if(key==='Slaap'){ lines.push(`${r.value<6?'Onder de zes uur: te kort voor een kwaliteitssessie; die wordt vandaag rustig.':r.value<7?'Onder de zeven uur, iets te kort.':'Zeven uur of meer, voldoende.'}`); if(r.avg14!=null && r.avg14<7) lines.push(`Uw 14-daags gemiddelde is ${r.avg14_txt||f(r.avg14)}: onder de zeven uur telt het protocol dat als chronisch tekort.`); }
     else if(key==='Laagste HR'){ if(r.avg7!=null) lines.push(`Uw 7-daags gemiddelde is ${f(r.avg7)} bpm; vannacht ${r.value>r.avg7+2.5?'duidelijk daarboven, dat is de piek':'daar niet ver van'}, dus ${stat}.`); }
     else if(key==='Ademfrequentie'){ lines.push(`Twee of meer boven uw gemiddelde telt als signaal; nu ${stat}.`); }
     else if(['Gewicht','Lichaamsvet','Spiermassa'].includes(key)){ lines.push(r.status==='na' ? 'Grijs: vandaag nog niet gewogen; de kleur komt terug bij de volgende weging.' : `De kleur is alleen de richting ten opzichte van de vorige weging: ${r.delta==null||r.delta===0?'gelijk gebleven':(key==='Spiermassa'?(r.delta>0?'gestegen, dus groen (stijgen is goed)':'gedaald, dus oranje (stijgen is goed)'):(r.delta<0?'gedaald, dus groen (dalen is goed)':'gestegen, dus oranje (dalen is goed)'))}; één weging zegt weinig.`); }
@@ -612,7 +612,7 @@ function markerRows(rows){
   let out='', grp='';
   rows.forEach(r=>{ if(r.group!==grp){ grp=r.group; const [gn, gs] = grp.split(' · '); out+=`<div class="grp info" onclick="showInfo('${esc(gn)}')">${esc(gn)}${gs?` <span class="gsub">(${esc(gs)})</span>`:''}</div>`; }
     let dl='–', cls='';
-    if(r.delta!=null && r.delta!==0){ const good = r.lower_better ? r.delta<0 : r.delta>0; cls = good?'up':'dn'; dl=(r.delta>0?'+':'')+nl(r.delta, Number.isInteger(r.delta)?0:1); }
+    if(r.delta!=null && r.delta!==0){ const good = r.lower_better ? r.delta<0 : r.delta>0; cls = good?'up':'dn'; dl=(r.delta>0?'+':'')+nl(r.delta, Number.isInteger(r.delta)?0:1)+(r.delta_unit?' '+r.delta_unit:''); }
     else if(r.delta===0) dl='0';
     const val = r.txt!=null ? r.txt : (r.value==null ? '—' : (Number.isInteger(r.value)? r.value : nl(r.value, r.unit==='°C'?2:1)));
     MROWS[r.key||r.name] = r;
@@ -971,7 +971,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261020-0835'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261020-0921'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
