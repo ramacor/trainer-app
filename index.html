@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261020-1652">
+<meta name="app-build" content="20261020-1723">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -164,8 +164,8 @@ function render(){
     ['plan','Plan','<path d="M4 6h16M4 12h16M4 18h10"/>'],
     ['inzicht','Inzicht','<path d="M3 18l5-6 4 3 4-7 5 4"/>'],
     ['menu','Menu','<path d="M4 7h16M4 12h16M4 17h16"/>']];
-  const screens = {checkin: vCheckin, vandaag: vVandaag, doel: vDoel, plan: vPlan, inzicht: vInzicht, menu: vMenu, log: vLog, meer: vMeer, reminders: vReminders, voeding: vVoeding};
-  const tabOf = {log:'menu', meer:'menu', reminders:'menu', voeding:'menu'}; const cur = tabOf[TAB] || TAB;
+  const screens = {checkin: vCheckin, vandaag: vVandaag, doel: vDoel, plan: vPlan, inzicht: vInzicht, menu: vMenu, log: vLog, meer: vMeer, reminders: vReminders, voeding: vVoeding, zone2: vZone2};
+  const tabOf = {log:'menu', meer:'menu', reminders:'menu', voeding:'menu', zone2:'menu'}; const cur = tabOf[TAB] || TAB;
   const old = document.getElementById('screen'); const keep = (old && LAST_TAB===TAB) ? old.scrollTop : 0;
   const oldChips = document.querySelector('.chips'); const keepX = (oldChips && LAST_TAB===TAB) ? oldChips.scrollLeft : 0;
   document.getElementById('app').innerHTML = vTimeline() + `<div class="screen" id="screen">${(screens[TAB]||vVandaag)()}</div>` +
@@ -285,6 +285,7 @@ Pijn aan gewricht of pees (iets anders dan spierpijn) en ziektesymptomen zetten 
 ## Bediening
 Paarse omtrek om een cijfer is uw waarde van gisteren. Nog een keer tikken op een cijfer maakt de keuze ongedaan. Na het coachrapport staat het formulier op slot tot u op Toch wijzigen tikt.`],
  'personal': ['Personal input', `Vrije tekst over gisteren: wat er speelde, hoe het voelde, een pijntje, werkdruk, reistijd. De coach gebruikt het om te begrijpen waarom iets wel of niet gelukt is en haalt er de context uit die cijfers niet geven. Uit het onderzoek naar coachgesprekken blijkt dat juist dit de data betekenis geeft: het getal zegt wat, uw verhaal zegt waarom.`],
+ 'Zone 2': ['Zone 2', `Extra workouts op zone 2-intensiteit in andere sporten: indoor fietsen op de Tacx, zwemmen en roeien. Ze vullen de drie lopen aan met aerobe minuten zonder de stootbelasting van hardlopen.`],
  'Dagdoelen': ['Dagdoelen', `Wat u vandaag eet in kcal, eiwit, koolhydraten en vet, berekend uit uw vetvrije massa, de stappen, de sessie van vandaag ná de ochtendpoort en de fase van het plan (tekort of onderhoud).`],
  'Eetmomenten': ['Eetmomenten', `Vier tot vijf eetmomenten op tijden rond uw sessie, elk als gerecht met een korte bereiding en de ingrediënten (Albert Heijn) in grammen; samen komen ze op de dagdoelen uit. Richtwaarden, geen logboek.`],
  'Supplementen': ['Supplementen', `Het schema van vandaag: wat u neemt, wanneer en waarom, met alleen middelen waarvoor goed bewijs bestaat, en wat u beter laat.`],
@@ -566,6 +567,20 @@ Eiwitrijk mediterraan en de Schijf van Vijf: 250 g groente, 200 g fruit, volkore
 
 ## De lijst
 Een vaste kern van zo'n 27 producten, gegroepeerd per rol in de maaltijden. Eiwitbronnen met hoge kwaliteit (melkeiwit, ei, kip, vis; DIAAS ≥ 1), koolhydraten vooral volkoren behalve vlak vóór sessies (dan witbrood, banaan, dadels: weinig vezels), vet uit olijfolie, noten en vette vis. Whey is gemak, geen noodzaak. Rode biet alleen vóór een tijdrit.`,
+ 'Zone 2': `## Wat zone 2 is
+Zone 2 ligt onder de eerste ventilatoire drempel: de ademhaling is rustig, praten in hele zinnen lukt, en het lichaam haalt de energie vooral uit vet. De beste duursporters doen zo'n 80 procent van hun training op deze intensiteit (Seiler 2010); het traint de mitochondriën en de vetverbranding, precies het fundament onder een 10 km (San-Millán en Brooks 2018).
+
+## Waarom in andere sporten
+Je loopt drie keer per week; meer looptijd kost pezen en botten herstel, en die passen zich trager aan dan hart en longen (Magnusson en Kjaer 2019). Fietsen, zwemmen en roeien trainen hetzelfde aerobe systeem zonder de stootbelasting. Een deel van die winst gaat mee naar het lopen (centrale aanpassingen: hart, bloedvolume), het spierdeel blijft sportspecifiek.
+
+## De hartslaggrenzen
+Afgeleid van je rustige loopband (130–152 bij een maximale hartslag van 193) en gecorrigeerd per sport. Bij fietsen ligt de hartslag bij dezelfde inspanning 5 tot 10 slagen lager, door minder actieve spiermassa en de zittende houding (Millet 2009): zone 2 is 123–145. Bij roeien, met meer spiermassa, een paar slagen minder dan lopen: 127–148. Zwemmen gaat zonder borstband; optische hartslag aan de pols is in het water onbetrouwbaar, dus daar stuur je op gevoel: Borg 3–4 op 10, ademen om de drie slagen blijft makkelijk.
+
+## Fietsen op de Tacx
+De Edge stuurt de Tacx alleen bij een vermogensdoel (ERG-modus). Deze workouts hebben een hartslagdoel en een cadansdoel, dus je rijdt in de weerstands- of hellingsmodus en schakelt zelf om in de band te blijven. Na een paar ritten met de Tacx kan de app afleiden welk vermogen bij je zone 2-hartslag hoort; dan kunnen de workouts naar vermogen, en stuurt de trainer zelf.
+
+## Wanneer
+Op rustdagen of na een gymsessie, niet de dag vóór een kwaliteitsloop als je er moe van wordt. De coach ziet elke zone 2-workout als extra activiteit en weegt hem mee: binnen zone 2 telt hij als bonus zonder herstelkosten.`,
  'personal': `## Waarom vrije tekst
 Cijfers vertellen wat er gebeurde, niet waarom. Een gemiste sessie door tijdgebrek vraagt iets anders dan een gemiste sessie door een pijntje, en dat onderscheid staat in geen enkele meetwaarde. Coaches noemen het gesprek de plek waar de data betekenis krijgt (Buchheit); uw notitie is dat gesprek.`,
 };
@@ -897,12 +912,36 @@ function vVoeding(){
   ${sup}${shop}<div class="small muted" style="margin:4px 0 14px">Op basis van ${esc(N.sources)}.</div>`;
 }
 
+// ---------------------------------------------------------------- zone 2
+let Z2S = 'fiets';
+function z2Table(rows){ return `<table class="wtab">${rows.map(r=>`<tr class="${r[0]?'rep':''}${r[0]==='|'?' cont':''}"><td class="r">${r[0]==='|'?'':esc(r[0])}</td><td class="t">${esc(r[1])}</td><td class="d">${esc(r[2])}</td><td class="z">${esc(r[3])}</td><td class="n">${esc(r[4])}</td></tr>`).join('')}</table>`; }
+function showZ2(id){ const Z = D.zone2; const g = Z.groups.find(g=>g.items.some(x=>x.id===id)); const x = g.items.find(x=>x.id===id);
+  const today = D.today; const planned = x.scheduled_day===today;
+  let h = `<h3>${esc(x.name)}</h3><p class="meta">${esc(g.title)} · ${x.minutes} min${x.meters?` · ${x.meters} m`:''}</p><h4>Doel</h4><p>${esc(x.goal)}</p><h4>Opbouw</h4>${z2Table(x.rows)}`;
+  h += `<h4>Uitvoeren</h4><p>${esc(g.device)}.</p>`;
+  h += planned ? `<div class="advice" style="margin-top:10px"><b>Ingepland voor vandaag</b>Synchroniseer ${g.sport==='fiets'?'de Edge':'het horloge'} met Garmin Connect; de workout staat dan bij de training van vandaag.</div>`
+               : `<button class="btn" onclick="z2Plan('${esc(x.id)}')">Plan in voor vandaag</button><div class="small" style="margin-top:6px">Staat ook zonder inplannen in Garmin Connect onder Training › Workouts.</div>`;
+  document.getElementById('mbody').innerHTML = h; document.getElementById('modal').classList.add('open'); }
+async function z2Plan(id){ try{ await api('PUT','/input',{day:D.today, kind:'zone2', data:{id, day:D.today, at:new Date().toISOString()}}); D.zone2.groups.forEach(g=>g.items.forEach(x=>{ if(x.id===id) x.scheduled_day = D.today; })); LS.set('pt_snapshot', D); toast('Wordt ingepland in Garmin; binnen een halve minuut klaar'); showZ2(id); }catch(e){ toast('Inplannen mislukt, probeer opnieuw'); } }
+function vZ2Info(){ return `<p class="small" style="margin:0">Zone 2 is de bovenkant van rustig: onder de eerste ventilatoire drempel, praten in hele zinnen lukt. Extra aerobe minuten zonder de stootbelasting van lopen. Hartslag: fietsen 123–145, roeien 127–148 (bij dezelfde inspanning lager dan lopen); zwemmen zonder borstband op gevoel.</p>`; }
+function vZone2(){
+  const Z = D.zone2;
+  const head = `<div class="hdr"><h1>Zone 2</h1><span class="d" onclick="goTab('menu')" style="cursor:pointer">← menu</span></div>`;
+  if(!Z || Z.error) return head + `<div class="card"><p class="muted">Nog geen zone 2-workouts in de snapshot${Z&&Z.error?` (${esc(Z.error)})`:''}.</p></div>`;
+  const chips = `<div class="chips">${Z.groups.map(g=>`<span class="${Z2S===g.sport?'on':''}" onclick="Z2S='${g.sport}';render()">${{fiets:'Fietsen',zwem:'Zwemmen',roei:'Roeien'}[g.sport]}</span>`).join('')}</div>`;
+  const g = Z.groups.find(g=>g.sport===Z2S) || Z.groups[0];
+  const lists = [30, 60].map(m=>{ const it = g.items.filter(x=>x.minutes===m); if(!it.length) return '';
+    return `<div class="card"><h2>${m} minuten</h2><ul class="list">${it.map(x=>`<li class="tap" onclick="showZ2('${esc(x.id)}')"><div class="li-main"><b>${esc(x.name.replace(/^Z2 \S+ \d+ · /,''))}${x.scheduled_day===D.today?' <span class="pill e">vandaag</span>':''}</b><span>${esc(x.goal.split(/(?<=[.:])\s/)[0])}</span></div><div class="li-r">${CHEV}</div></li>`).join('')}</ul></div>`; }).join('');
+  return head + chips + `<div class="card"><h2 class="info" onclick="showInfo('Zone 2')">${esc(g.title)} ⓘ</h2>${vZ2Info()}</div>` + lists;
+}
+
 // ---------------------------------------------------------------- meer
 function vMenu(){
   return `<div class="hdr"><h1>Menu</h1></div>
   <div class="card"><ul class="list">
     <li class="tap" onclick="goTab('log')"><div class="li-main"><b>Log</b><span>per dag · workouts, challenge, wellness en coach</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('voeding')"><div class="li-main"><b>Voeding</b><span>dagdoelen, eetmomenten met AH-boodschappen, supplementen</span></div><div class="li-r">${CHEV}</div></li>
+    <li class="tap" onclick="goTab('zone2')"><div class="li-main"><b>Zone 2</b><span>extra workouts: fietsen (Tacx), zwemmen, roeien</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('reminders')"><div class="li-main"><b>Herinneringen</b><span>meldingen op vaste tijden, bijv. geen avondsnack</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('meer')"><div class="li-main"><b>Instellingen</b><span>synccode, zones, app-informatie</span></div><div class="li-r">${CHEV}</div></li>
   </ul></div>`;
@@ -982,7 +1021,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261020-1652'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261020-1723'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
