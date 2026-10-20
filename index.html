@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261020-1723">
+<meta name="app-build" content="20261020-1724">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -914,7 +914,7 @@ function vVoeding(){
 
 // ---------------------------------------------------------------- zone 2
 let Z2S = 'fiets';
-function z2Table(rows){ return `<table class="wtab">${rows.map(r=>`<tr class="${r[0]?'rep':''}${r[0]==='|'?' cont':''}"><td class="r">${r[0]==='|'?'':esc(r[0])}</td><td class="t">${esc(r[1])}</td><td class="d">${esc(r[2])}</td><td class="z">${esc(r[3])}</td><td class="n">${esc(r[4])}</td></tr>`).join('')}</table>`; }
+function z2Table(rows){ return `<table class="wtab z2t" style="table-layout:fixed;width:100%">${rows.map(r=>`<tr class="${r[0]?'rep':''}${r[0]==='|'?' cont':''}"><td class="r" style="width:34px">${r[0]==='|'?'':esc(r[0])}</td><td class="t" style="width:64px">${esc(r[1])}</td><td class="d" style="width:52px">${esc(r[2])}</td><td class="n" style="white-space:normal">${r[3]?`<b style="display:block;color:var(--ink)">${esc(r[3])}</b>`:''}${esc(r[4])}</td></tr>`).join('')}</table>`; }
 function showZ2(id){ const Z = D.zone2; const g = Z.groups.find(g=>g.items.some(x=>x.id===id)); const x = g.items.find(x=>x.id===id);
   const today = D.today; const planned = x.scheduled_day===today;
   let h = `<h3>${esc(x.name)}</h3><p class="meta">${esc(g.title)} · ${x.minutes} min${x.meters?` · ${x.meters} m`:''}</p><h4>Doel</h4><p>${esc(x.goal)}</p><h4>Opbouw</h4>${z2Table(x.rows)}`;
@@ -931,7 +931,7 @@ function vZone2(){
   const chips = `<div class="chips">${Z.groups.map(g=>`<span class="${Z2S===g.sport?'on':''}" onclick="Z2S='${g.sport}';render()">${{fiets:'Fietsen',zwem:'Zwemmen',roei:'Roeien'}[g.sport]}</span>`).join('')}</div>`;
   const g = Z.groups.find(g=>g.sport===Z2S) || Z.groups[0];
   const lists = [30, 60].map(m=>{ const it = g.items.filter(x=>x.minutes===m); if(!it.length) return '';
-    return `<div class="card"><h2>${m} minuten</h2><ul class="list">${it.map(x=>`<li class="tap" onclick="showZ2('${esc(x.id)}')"><div class="li-main"><b>${esc(x.name.replace(/^Z2 \S+ \d+ · /,''))}${x.scheduled_day===D.today?' <span class="pill e">vandaag</span>':''}</b><span>${esc(x.goal.split(/(?<=[.:])\s/)[0])}</span></div><div class="li-r">${CHEV}</div></li>`).join('')}</ul></div>`; }).join('');
+    return `<div class="card"><h2>${m} minuten</h2><ul class="list">${it.map(x=>`<li class="tap" onclick="showZ2('${esc(x.id)}')"><div class="li-main"><b>${esc(x.name.replace(/^Z2 \S+ \d+ · /,''))}${x.scheduled_day===D.today?' <span class="pill e">vandaag</span>':''}</b><span>${esc(x.goal.split(/(?<=\.)\s/)[0].split(': ')[0].replace(/[.:]$/,''))}</span></div><div class="li-r">${CHEV}</div></li>`).join('')}</ul></div>`; }).join('');
   return head + chips + `<div class="card"><h2 class="info" onclick="showInfo('Zone 2')">${esc(g.title)} ⓘ</h2>${vZ2Info()}</div>` + lists;
 }
 
@@ -1021,7 +1021,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261020-1723'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261020-1724'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
