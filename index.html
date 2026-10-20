@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261020-2253">
+<meta name="app-build" content="20261020-2255">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -940,7 +940,7 @@ function vVoeding(){
 }
 
 // ---------------------------------------------------------------- whitepapers (achter de synccode, niet in de openbare app)
-let WP_INDEX = LS.get('pt_wp_index', null), WP_DOC = {}, WP_CUR = null;
+let WP_INDEX = LS.get('pt_wp_index', null), WP_DOC = {}, WP_CUR = null, WP_FRESH = false;
 async function wpIndex(){ try{ const r = await api('GET','/doc/index'); if(r && r.payload){ WP_INDEX = r.payload; LS.set('pt_wp_index', WP_INDEX); if(TAB==='papers') render(); } }catch(e){} }
 async function wpOpen(slug){ WP_CUR = slug; TAB = 'paper'; LS.set('pt_tab', 'papers'); render();
   if(!WP_DOC[slug]){ const c = LS.get('pt_wp_'+slug, null); if(c) WP_DOC[slug] = c;
@@ -954,12 +954,12 @@ async function wpShare(slug){
     else { const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); }
   }catch(e){ if(e && e.name!=='AbortError') toast('Delen mislukt: '+(e.message||e)); } }
 function vPapers(){
-  if(!WP_INDEX) wpIndex();
+  if(!WP_FRESH){ WP_FRESH = true; wpIndex(); }
   const head = `<div class="hdr"><h1 style="display:flex;align-items:center;gap:10px"><img src="logo.svg" alt="" style="width:30px">Whitepapers</h1><span class="d" onclick="goTab('menu')" style="cursor:pointer">← menu</span></div>`;
   if(!WP_INDEX) return head + `<div class="card"><p class="muted">Laden…</p></div>`;
   const cats = []; WP_INDEX.items.forEach(d=>{ if(!cats.includes(d.category)) cats.push(d.category); });
   return head + `<p class="small" style="margin:-4px 0 12px">De onderzoeksrapporten waarop de app is gebouwd: literatuur, wetenschappelijke studies en de praktijk van coaches en topsporters. Alleen zichtbaar met jouw synccode.</p>` +
-    cats.map(c=>`<div class="card"><h2>${esc(c)}</h2><ul class="list">${WP_INDEX.items.filter(d=>d.category===c).map(d=>`<li class="tap" onclick="wpOpen('${esc(d.slug)}')"><div class="li-main"><b>${esc(d.title)}</b><span>${esc(d.core||d.headline)}</span><span style="color:var(--ink3)">samenvatting 1–2 min · rapport ± ${d.minutes} min</span></div><div class="li-r">${CHEV}</div></li>`).join('')}</ul></div>`).join('') +
+    cats.map(c=>`<div class="card"><h2>${esc(c)}</h2><ul class="list">${WP_INDEX.items.filter(d=>d.category===c).map(d=>`<li class="tap" onclick="wpOpen('${esc(d.slug)}')"><div class="li-main"><b>${esc(d.title)}</b><span>${esc(d.core||d.headline)}</span><span style="display:block;color:var(--ink3);margin-top:3px">samenvatting 1–2 min · rapport ± ${d.minutes} min</span></div><div class="li-r">${CHEV}</div></li>`).join('')}</ul></div>`).join('') +
     `<div class="small muted" style="margin:4px 0 14px">Bijgewerkt ${esc((WP_INDEX.updated_at||'').slice(0,10))}.</div>`;
 }
 function vPaper(){
@@ -1083,7 +1083,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261020-2253'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261020-2255'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
