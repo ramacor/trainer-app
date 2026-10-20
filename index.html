@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261020-0814">
+<meta name="app-build" content="20261020-0832">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -583,9 +583,17 @@ function valueNow(key){
   if(r.value==null && r.txt==null){ lines.push('Vandaag nog geen waarde' + (key==='HR op 7:15 p/km' ? ': er is nog geen loop met borstband op dit tempo in de laatste 14 dagen.' : key.startsWith('Weegschaal')||['Gewicht','Lichaamsvet','Spiermassa'].includes(key) ? ': nog niet gewogen vandaag.' : '.')); }
   else {
     if(r.txt!=null) lines.push(`Nu: ${r.txt}.`);
-    else lines.push(`Nu: ${f(r.value)}${u}` + (r.prev!=null ? `, tegenover ${f(r.prev)}${u} ${r.ref||'eerder'}` : '') + (r.delta!=null && r.delta!==0 ? ` (${r.delta>0?'+':''}${f(r.delta)})` : '') + '.');
-    if(key==='HRV 7 d'){ if(r.lo!=null && r.hi!=null) lines.push(`Uw band is ${f(r.lo,0)}–${f(r.hi,0)} ms. Het 7-daags gemiddelde ligt ${r.value<r.lo?'onder':r.value>r.hi?'boven':'binnen'} die band; dat bepaalt de kleur van de regel.`); if(r.delta!=null && r.delta!==0) lines.push(`Het cijfer rechts (${r.delta>0?'+':''}${f(r.delta)}) is alleen de richting ten opzichte van de vorige meting: ${r.delta>0?'een hogere HRV is op zich gunstig, dus het cijfer kleurt groen, ook als het gemiddelde daardoor net boven uw band uitkomt':'een lagere HRV is op zich ongunstig, dus het cijfer kleurt rood, ook als het gemiddelde gewoon binnen uw band blijft'}. De kleur van de regel is het oordeel, het cijfer de beweging.`); if(r.n7!=null && r.n7<5) lines.push(`Met ${r.n7} geldige nachten is de band nog in opbouw.`); }
-    else if(key==='Laagste HR 7 d'){ if(r.lo!=null && r.hi!=null) lines.push(`Uw band is ${f(r.lo,0)}–${f(r.hi,0)} bpm. Lager is beter; boven ${f(r.hi,0)} geldt als verhoogd en kleurt de regel.`); if(r.delta!=null && r.delta!==0) lines.push(`Het cijfer rechts (${r.delta>0?'+':''}${f(r.delta)}) is de beweging sinds de vorige meting: ${r.delta<0?'dalend, dus groen':'stijgend, dus rood'}; de kleur van de regel is het oordeel tegen uw band.`); }
+    else lines.push(`Nu: ${f(r.value)}${u}.`);
+    const cmp = (r.prev!=null && r.ref) ? `Ter vergelijking: ${f(r.prev)}${u} (${r.ref})${r.delta!=null && r.delta!==0 ? `, dus ${r.delta>0?'+':''}${f(r.delta)}` : ', gelijk'}.` : '';
+    if(key==='HRV 7 d'){
+      if(r.lo!=null && r.hi!=null) lines.push(`Uw band is ${f(r.lo,0)}–${f(r.hi,0)} ms en het 7-daags gemiddelde ligt ${r.value<r.lo?'eronder: het lichaam is nog niet in de herstelstand':r.value>r.hi?'erboven: meestal diep herstel, soms overcompensatie':'erbinnen: normaal herstel'}. Dat bepaalt de kleur van de regel.`);
+      if(cmp) lines.push(cmp + (r.delta!=null && r.delta!==0 ? ` Het cijfer rechts is die beweging: ${r.delta>0?'omhoog, dus groen':'omlaag, dus rood'}; het oordeel zit in de kleur van de regel.` : ''));
+      if(r.n7!=null && r.n7<5) lines.push(`Met ${r.n7} geldige nachten is de band nog in opbouw.`); }
+    else if(key==='Laagste HR 7 d'){
+      if(r.lo!=null && r.hi!=null) lines.push(`Uw band is ${f(r.lo,0)}–${f(r.hi,0)} bpm en het 7-daags gemiddelde ligt ${r.value>r.hi?'erboven: het lichaam werkt in rust harder dan normaal':r.value<r.lo?'eronder: lager dan uw normaal, dat is gunstig':'erbinnen: normaal'}. Dat bepaalt de kleur van de regel.`);
+      if(cmp) lines.push(cmp + (r.delta!=null && r.delta!==0 ? ` Het cijfer rechts is die beweging: ${r.delta<0?'omlaag, dus groen':'omhoog, dus rood'}.` : '')); }
+    else if(cmp && key!=='HR op 7:15 p/km') lines.push(cmp);
+    if(false){}
     else if(key==='HR op 7:15 p/km'){ lines.push(`Vergeleken met de 14 dagen ervoor: ${r.delta==null?'nog geen vergelijking':(r.delta>=4?'meer dan 4 slagen hoger, dat telt als slechter':r.delta<=-4?'meer dan 4 slagen lager, dat is winst':'binnen de ruis van 4 slagen, dus gelijk')}.`); }
     else if(key==='Welzijn'){ lines.push(`Boven 5 geldt als afwijkend; uw hoogste score is ${f(r.value,0)}, dus ${stat}.`); }
     else if(key==='Temperatuur'){ lines.push(`De grens is +0,5 °C; uw afwijking is ${f(r.value)} °C, dus ${stat}.`); }
@@ -961,7 +969,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261020-0814'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261020-0832'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
