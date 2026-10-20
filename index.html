@@ -9,11 +9,13 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261020-1724">
+<meta name="app-build" content="20261020-2225">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
 <style>
 :root{--bg:#F4F5F8;--surface:#FFFFFF;--surface2:#EBEDF2;--line:#E1E4EB;--ink:#1B1E27;--ink2:#5B6172;--ink3:#9AA0B1;
 --accent:#6C56E0;--q:#6C56E0;--q-bg:#EEEAFD;--e:#0C9A70;--e-bg:rgba(61,255,176,.22);--s:#A37D00;--s-bg:rgba(255,214,10,.22);
@@ -152,7 +154,7 @@ async function load(){
   try{ const r = await api('GET','/state'); if(r && r.payload){ D = r.payload; D._updated = r.updated_at; applyLocalDone(); LS.set('pt_snapshot', D); render(); } else if(!D){ renderSetup('Nog geen snapshot voor deze synccode. Draai de dagelijkse ronde op de Mac.'); } }
   catch(e){ if(!D) renderSetup('Kan de server niet bereiken: '+e.message); else toast('Offline: laatste snapshot getoond'); }
 }
-function renderSetup(msg){ document.getElementById('app').innerHTML = `<div class="setup"><h1 style="font-size:28px;margin:0 0 6px">Trainer</h1><p class="muted">Vul de synccode in die op de Mac in config/app_sync.json staat. De code is het enige geheim; uw gegevens staan achter die code.</p>${msg?`<p class="muted" style="color:var(--red)">${esc(msg)}</p>`:''}<input id="code" placeholder="PT-XXXX-XXXX-XXXX" value="${esc(CODE)}"><button class="btn" onclick="saveCode()">Verbinden</button></div>`; }
+function renderSetup(msg){ document.getElementById('app').innerHTML = `<div class="setup"><img src="logo.svg" alt="" style="width:72px;height:auto;margin:0 0 14px;display:block"><h1 style="font-size:28px;margin:0 0 6px">Trainer</h1><p class="muted">Vul de synccode in die op de Mac in config/app_sync.json staat. De code is het enige geheim; uw gegevens staan achter die code.</p>${msg?`<p class="muted" style="color:var(--red)">${esc(msg)}</p>`:''}<input id="code" placeholder="PT-XXXX-XXXX-XXXX" value="${esc(CODE)}"><button class="btn" onclick="saveCode()">Verbinden</button></div>`; }
 function saveCode(){ CODE = document.getElementById('code').value.trim().toUpperCase(); LS.set('pt_code', CODE); load(); }
 
 // ---------------------------------------------------------------- shell
@@ -937,7 +939,7 @@ function vZone2(){
 
 // ---------------------------------------------------------------- meer
 function vMenu(){
-  return `<div class="hdr"><h1>Menu</h1></div>
+  return `<div class="hdr"><h1 style="display:flex;align-items:center;gap:10px"><img src="logo.svg" alt="" style="width:34px;height:auto">Menu</h1></div>
   <div class="card"><ul class="list">
     <li class="tap" onclick="goTab('log')"><div class="li-main"><b>Log</b><span>per dag · workouts, challenge, wellness en coach</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('voeding')"><div class="li-main"><b>Voeding</b><span>dagdoelen, eetmomenten met AH-boodschappen, supplementen</span></div><div class="li-r">${CHEV}</div></li>
@@ -1021,7 +1023,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261020-1724'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261020-2225'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
