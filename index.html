@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261020-0832">
+<meta name="app-build" content="20261020-0835">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -603,6 +603,8 @@ function valueNow(key){
     else if(['Gewicht','Lichaamsvet','Spiermassa'].includes(key)){ lines.push(r.status==='na' ? 'Grijs: vandaag nog niet gewogen; de kleur komt terug bij de volgende weging.' : `De kleur is alleen de richting ten opzichte van de vorige weging: ${r.delta==null||r.delta===0?'gelijk gebleven':(key==='Spiermassa'?(r.delta>0?'gestegen, dus groen (stijgen is goed)':'gedaald, dus oranje (stijgen is goed)'):(r.delta<0?'gedaald, dus groen (dalen is goed)':'gestegen, dus oranje (dalen is goed)'))}; één weging zegt weinig.`); }
     else if(key==='Pijn of ziekte'){ lines.push(r.status==='bad' ? 'Rood: pijn of symptomen gemeld; geen kwaliteitsloop en geen zware benen vandaag.' : r.status==='warn' ? 'Oranje: minder eetlust gemeld, een licht signaal.' : 'Groen: niets gemeld.'); }
   }
+  if(r.src==='oura'){ const sy = (D.markers.sync||{}).oura; if(sy) lines.push(`Oura-gegevens zoals opgehaald om ${tHM(sy)}; de app rekent nooit zelf een waarde uit of schat er een.`);
+    const revs = (D.markers.revisions||[]).filter(v=>v.day===D.today); if(revs.length) lines.push('Oura heeft deze nacht na de eerste synchronisatie aangepast: ' + revs.map(v=>`${v.changes.join(', ')} (versie van ${v.fetched} vervangen om ${v.replaced})`).join('; ') + '.'); }
   return `<div class="valbox ${r.status}"><h4>Uw waarde nu · ${esc(stat)}</h4>${lines.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`;
 }
 function showInfo(key){ const i = INFO[key]; if(!i) return; const more = MORE[key] ? `<details class="more"><summary>Meer informatie</summary><div class="morebody">${infoHtml(MORE[key])}</div></details>` : ''; document.getElementById('mbody').innerHTML = `<h3>${esc(i[0])}</h3><div class="infobody">${infoHtml(i[1])}${more}${valueNow(key)}</div>`; document.getElementById('modal').classList.add('open'); }
@@ -969,7 +971,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261020-0832'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261020-0835'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
