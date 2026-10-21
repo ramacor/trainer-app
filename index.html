@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261021-1603">
+<meta name="app-build" content="20261021-1606">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -163,9 +163,10 @@ function render(){
   const tabs = [['checkin','Reflect','<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>'],
     ['vandaag','Vandaag','<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/>'],
     ['plan','Plan','<path d="M4 6h16M4 12h16M4 18h10"/>'],
+    ['voeding','Voeding','<path d="M7 3v8a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V3M9 13v8M17 3c-2 0-3 2-3 5s1 4 3 4v9"/>'],
     ['menu','Menu','<path d="M4 7h16M4 12h16M4 17h16"/>']];
   const screens = {checkin: vCheckin, vandaag: vVandaag, doel: vDoel, plan: vPlan, inzicht: vInzicht, menu: vMenu, log: vLog, meer: vMeer, reminders: vReminders, voeding: vVoeding, zone2: vZone2, papers: vPapers, paper: vPaper, voedpref: vVoedPref};
-  const tabOf = {doel:'menu', inzicht:'menu', log:'menu', meer:'menu', reminders:'menu', voeding:'menu', zone2:'menu', papers:'menu', paper:'menu', voedpref:'menu'}; const cur = tabOf[TAB] || TAB;
+  const tabOf = {doel:'menu', inzicht:'menu', log:'menu', meer:'menu', reminders:'menu', zone2:'menu', papers:'menu', paper:'menu', voedpref:'voeding'}; const cur = tabOf[TAB] || TAB;
   const old = document.getElementById('screen'); const keep = (old && LAST_TAB===TAB) ? old.scrollTop : 0;
   const oldChips = document.querySelector('.chips'); const keepX = (oldChips && LAST_TAB===TAB) ? oldChips.scrollLeft : 0;
   document.getElementById('app').innerHTML = vTimeline() + `<div class="screen" id="screen">${isStale()?`<div class="newday" onclick="requestRefresh(true)"><span class="nd-spin">${REFRESHING?'⟳':'↻'}</span><div><b>Nieuwe dag</b>${REFRESHING?'Oura en Garmin worden gesynchroniseerd; de gegevens van vandaag laden zo.':'Je ziet nog de gegevens van gisteren. Tik om Oura en Garmin te synchroniseren.'}</div></div>`:''}${(screens[TAB]||vVandaag)()}</div>` +
@@ -973,7 +974,7 @@ function mealCard(meals){ return meals.map(m=>`<div class="meal"><div class="mh"
 function macroTiles(tg){ return `<div class="macro"><div><b>${tg.kcal.toLocaleString('nl-NL')}</b><span>kcal</span><i>${tg.deficit?'−'+tg.deficit+' tekort':'onderhoud'}</i></div><div><b>${tg.p}</b><span>g eiwit</span><i>${nl(tg.p_per_kg,1)} g/kg</i></div><div><b>${tg.c}</b><span>g koolhydraat</span><i>${nl(tg.c_per_kg,1)} g/kg</i></div><div><b>${tg.f}</b><span>g vet</span><i>≥ 0,8 g/kg</i></div></div>`; }
 function vVoeding(){
   const N = D.nutrition;
-  if(!N || N.error) return `<div class="hdr"><h1>Voeding</h1><span class="d" onclick="goTab('menu')" style="cursor:pointer">← menu</span></div><div class="card"><p class="muted">Nog geen voedingsblok in de snapshot${N&&N.error?` (${esc(N.error)})`:''}; ververs via ↻ in Vandaag.</p></div>`;
+  if(!N || N.error) return `<div class="hdr"><h1>Voeding</h1></div><div class="card"><p class="muted">Nog geen voedingsblok in de snapshot${N&&N.error?` (${esc(N.error)})`:''}; ververs via ↻ in Vandaag.</p></div>`;
   const types = [['rust','Rust'],['kracht','Kracht'],['rustig','Rustige loop'],['kwaliteit','Intervallen'],['lang','Duurloop']];
   const cur = NV && N.variants[NV] ? N.variants[NV] : null;
   const tg = cur ? cur.targets : N.targets, meals = cur ? cur.meals : N.meals;
@@ -987,7 +988,7 @@ function vVoeding(){
   const P = N.prefs||{}; const nl_ = Object.values(P.likes||{}).filter(v=>v===1).length, nn_ = Object.values(P.likes||{}).filter(v=>v===-1).length;
   const storeNames = (P.stores||['ah']).map(k=>((N.stores||[]).find(s=>s.key===k)||{}).name||k).join(', ');
   const prefCard = `<div class="card"><h2>Voorkeuren</h2><ul class="list"><li class="tap" onclick="goTab('voedpref')"><div class="li-main"><b>${esc(storeNames)}</b><span>${nl_} lekker · ${nn_} niet lekker · het schema kiest gerechten op basis hiervan</span></div><div class="li-r">${CHEV}</div></li></ul></div>`;
-  return `<div class="hdr"><h1>Voeding</h1><span class="d" onclick="goTab('menu')" style="cursor:pointer">← menu</span></div>
+  return `<div class="hdr"><h1>Voeding</h1></div>
   ${chips}${prefCard}
   <div class="card"><h2 class="info" onclick="showInfo('Dagdoelen')">Dagdoelen ⓘ</h2>${head}${macroTiles(tg)}<div class="small">Eiwit in vier tot vijf porties van ≥ ${tg.p_per_meal} g; koolhydraten rond de sessie, vet nooit onder 0,8 g/kg.</div></div>
   <div class="card"><h2 class="info" onclick="showInfo('Eetmomenten')">Eetmomenten ⓘ</h2>${mealCard(meals)}<div class="small" style="margin-top:8px">De foto's geven een idee van het gerecht; ze komen van Wikimedia Commons en tonen niet precies jouw portie. Totaal ≈ ${(cur?cur.totals:N.totals).kcal.toLocaleString('nl-NL')} kcal · ${(cur?cur.totals:N.totals).p} g eiwit · ${(cur?cur.totals:N.totals).c} g koolhydraat · ${(cur?cur.totals:N.totals).f} g vet. Richtwaarden (etiket/NEVO), geen logboek; wissel producten binnen dezelfde groep.</div></div>
@@ -1074,7 +1075,6 @@ function vMenu(){
     <li class="tap" onclick="goTab('doel')"><div class="li-main"><b>Doel</b><span>missie, trainingsfases en milestones</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('inzicht')"><div class="li-main"><b>Inzicht</b><span>gewoontes, vet- en spiermassa, 10 km-prognose, herstel</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('log')"><div class="li-main"><b>Log</b><span>per dag · workouts, challenge, wellness en coach</span></div><div class="li-r">${CHEV}</div></li>
-    <li class="tap" onclick="goTab('voeding')"><div class="li-main"><b>Voeding</b><span>dagdoelen, eetmomenten met AH-boodschappen, supplementen</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('papers')"><div class="li-main"><b>Whitepapers</b><span>de onderzoeksrapporten achter de app, om rustig door te lezen</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('zone2')"><div class="li-main"><b>Zone 2</b><span>extra workouts: fietsen (Tacx), zwemmen, roeien</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('reminders')"><div class="li-main"><b>Herinneringen</b><span>meldingen op vaste tijden, bijv. geen avondsnack</span></div><div class="li-r">${CHEV}</div></li>
@@ -1157,7 +1157,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261021-1603'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261021-1606'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
