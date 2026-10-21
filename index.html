@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261021-1300">
+<meta name="app-build" content="20261021-1302">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -904,8 +904,10 @@ function vInzicht(){
   const I = D.insight; const d = s => new Date(s);
   const now = new Date(D.today); const kort = INZ==='kort';
   const START = new Date((I.weight_target[0]||{}).day || '2026-10-12');   // eerste waarde van de doellijn = linkerrand
-  const RX = kort ? {x0:new Date(Math.max(+START, +now - 56*86400000)), x1:new Date(+now + 28*86400000), today:now, pad:0.5} : {x0:START, x1:new Date('2027-10-03'), today:now};
-  const rng = `<div class="chips" style="margin:-4px 0 10px"><span class="${kort?'on':''}" onclick="INZ='kort';LS.set('pt_inz','kort');render()">Afgelopen weken</span><span class="${kort?'':'on'}" onclick="INZ='jaar';LS.set('pt_inz','jaar');render()">Heel jaar</span></div>`;
+  const goals = ((D.plan||{}).goals||[]).map(g=>new Date(g.date)).filter(x=>+x > +now + 14*86400000).sort((a,b)=>a-b);
+  const NEXT = goals[0] || new Date(+now + 28*86400000);   // eerstvolgende milestone (nu: 10 km op 31 januari)
+  const RX = kort ? {x0:new Date(Math.max(+START, +now - 56*86400000)), x1:NEXT, today:now, pad:0.5} : {x0:START, x1:new Date('2027-10-03'), today:now};
+  const rng = `<div class="chips" style="margin:-4px 0 10px"><span class="${kort?'on':''}" onclick="INZ='kort';LS.set('pt_inz','kort');render()">Tot de volgende milestone</span><span class="${kort?'':'on'}" onclick="INZ='jaar';LS.set('pt_inz','jaar');render()">Heel jaar</span></div>`;
   const r10 = I.run10k; const t10 = r10.target.map(p=>({x:d(p.day),y:p.t})), a10 = r10.actual.map(p=>({x:d(p.day),y:p.t10k}));
   const c1 = chart([{pts:a10, color:'var(--ink)', dots:true, r:3, op:.8},{pts:r10.realistic.map(p=>({x:d(p.day),y:p.t})), color:'var(--green)', dash:true},{pts:t10, color:'var(--accent)', w:2.5}], kort ? {...RX, yfmt:v=>mmss(v)} : {...RX, y0:44*60, y1:62*60, yfmt:v=>mmss(v)});
   const mt = I.muscle_target, sc = I.scale; const tM = mt.map(p=>({x:d(p.day),y:p.v})), aM = sc.map(p=>({x:d(p.day),y:p.muscle_mass_kg}));
@@ -923,7 +925,7 @@ function vInzicht(){
     const txt = h.n_known ? `${h.streak} ${h.streak===1?'avond':'avonden'} zonder ${name}${h.last_yes_txt?` · laatste keer ${esc(h.last_yes_txt)}`:h.since_txt?` · sinds ${esc(h.since_txt)}`:''}` : `nog niets ingevuld`;
     return `<div class="hab"><div class="hab-t"><b>${h.n_known?h.streak:'–'}</b><span>${txt}</span></div><div class="dots">${dots}</div></div>`; };
   const habits = `<div class="card"><h2>Gewoontes · avonden</h2>${hab('evening_snack','avondsnack')}${hab('alcohol','alcohol')}<div class="small" style="margin-top:8px">Laatste 30 avonden uit het wellness report: groen = niet, rood = wel, grijs = niet ingevuld. Teller loopt sinds de laatste gemelde keer.</div></div>`;
-  return `<div class="hdr"><h1>Inzicht</h1><span class="d">doelen en trends</span></div>${rng}
+  return `<div class="hdr"><h1>Inzicht</h1><span class="d">doelen en trends</span></div>${habits}${rng}
   <div class="card"><h2>10 km · prognose t.o.v. 50:00</h2>${c1}${vsLine(t10, a10, '', 0, true, v=>mmss(Math.round(v)))}${leg([['var(--accent)','lijn 1 · schema naar 50:00 (31 jan) en 45:00 (3 okt)'],['var(--green)','lijn 2 · realistisch'],['var(--ink)','lijn 3 · indicatie uit lopen ≥ 4,8 km (Riegel)']])}</div>
   <div class="card"><h2>Kracht · e1RM</h2><p class="muted">${esc(I.strength_kpi.note)}</p></div>
   <div class="card"><h2>Spiermassa (kg, weegschaal)</h2>${c2}${vsLine(tM, aM, ' kg', 1, false)}${leg([['var(--accent)','doel · 36,7 → 37,7 (feb) → 38,0 (jun) → 38,2'],['var(--ink)','werkelijk']])}</div>
@@ -932,7 +934,6 @@ function vInzicht(){
   <div class="card"><h2>HRV · nachten en 7-daags gemiddelde</h2>${c4}${leg([['var(--ink3)','nacht'],['var(--accent)','7 d'],['var(--e-bg)','band']])}</div>
   <div class="card"><h2>Laagste nachtelijke hartslag</h2>${c5}</div>
   <div class="card"><h2>Slaap · uren per nacht</h2>${c6}</div>
-  ${habits}
   <div class="card"><h2>Challenge · ${n} dagen</h2><ul class="trk"><li class="${ns>=n*0.7?'ok':'warn'}">${ICON_GARMIN}<div class="n">Stappen ≥ 10.000</div><div class="v">${ns} / ${n}</div><div class="dl">${n?Math.round(ns/n*100):0} %</div></li><li class="${nf>=n*0.7?'ok':'warn'}">${ICON_GARMIN}<div class="n">Trappen ≥ 10</div><div class="v">${nf} / ${n}</div><div class="dl">${n?Math.round(nf/n*100):0} %</div></li><li class="${nw>=n*0.7?'ok':'na'}">${ICON_GARMIN}<div class="n">Water ≥ 2 l</div><div class="v">${nw} / ${n}</div><div class="dl">${nw?Math.round(nw/n*100)+' %':'–'}</div></li></ul></div>`;
 }
 
@@ -1144,7 +1145,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261021-1300'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261021-1302'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
