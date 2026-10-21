@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261021-1302">
+<meta name="app-build" content="20261021-1305">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -906,16 +906,26 @@ function vInzicht(){
   const START = new Date((I.weight_target[0]||{}).day || '2026-10-12');   // eerste waarde van de doellijn = linkerrand
   const goals = ((D.plan||{}).goals||[]).map(g=>new Date(g.date)).filter(x=>+x > +now + 14*86400000).sort((a,b)=>a-b);
   const NEXT = goals[0] || new Date(+now + 28*86400000);   // eerstvolgende milestone (nu: 10 km op 31 januari)
-  const RX = kort ? {x0:new Date(Math.max(+START, +now - 56*86400000)), x1:NEXT, today:now, pad:0.5} : {x0:START, x1:new Date('2027-10-03'), today:now};
-  const rng = `<div class="chips" style="margin:-4px 0 10px"><span class="${kort?'on':''}" onclick="INZ='kort';LS.set('pt_inz','kort');render()">Tot de volgende milestone</span><span class="${kort?'':'on'}" onclick="INZ='jaar';LS.set('pt_inz','jaar');render()">Heel jaar</span></div>`;
+  const GOAL = I.target_reached ? new Date(I.target_reached) : NEXT;   // doeldatum vetverlies (88 kg / vetdoel)
+  const RX = kort ? {x0:START, x1:NEXT, today:now, pad:0.5} : {x0:START, x1:new Date('2027-10-03'), today:now};
+  const RB = kort ? {x0:START, x1:GOAL, today:now, pad:0.5} : RX;   // lichaamssamenstelling
+  const rng = `<div class="chips" style="margin:-4px 0 10px"><span class="${kort?'on':''}" onclick="INZ='kort';LS.set('pt_inz','kort');render()">Tot het doel</span><span class="${kort?'':'on'}" onclick="INZ='jaar';LS.set('pt_inz','jaar');render()">Heel jaar</span></div>`;
   const r10 = I.run10k; const t10 = r10.target.map(p=>({x:d(p.day),y:p.t})), a10 = r10.actual.map(p=>({x:d(p.day),y:p.t10k}));
   const c1 = chart([{pts:a10, color:'var(--ink)', dots:true, r:3, op:.8},{pts:r10.realistic.map(p=>({x:d(p.day),y:p.t})), color:'var(--green)', dash:true},{pts:t10, color:'var(--accent)', w:2.5}], kort ? {...RX, yfmt:v=>mmss(v)} : {...RX, y0:44*60, y1:62*60, yfmt:v=>mmss(v)});
   const mt = I.muscle_target, sc = I.scale; const tM = mt.map(p=>({x:d(p.day),y:p.v})), aM = sc.map(p=>({x:d(p.day),y:p.muscle_mass_kg}));
-  const c2 = chart([{pts:aM, color:'var(--ink)', dots:true, op:.75},{pts:tM, color:'var(--accent)', w:2.5}], kort ? {...RX, yfmt:v=>nl(v,1)} : {...RX, y0:35, y1:39.5, yfmt:v=>nl(v,1)});
+  const c2 = chart([{pts:aM, color:'var(--ink)', dots:true, op:.75},{pts:tM, color:'var(--accent)', w:2.5}], kort ? {...RB, yfmt:v=>nl(v,1)} : {...RB, y0:35, y1:39.5, yfmt:v=>nl(v,1)});
   const tW = I.weight_target.map(p=>({x:d(p.day),y:p.v})), aW = sc.map(p=>({x:d(p.day),y:p.weight_kg}));
-  const c3 = chart([{pts:aW, color:'var(--ink)', dots:true, op:.75},{pts:tW, color:'var(--accent)', w:2.5}], kort ? {...RX, yfmt:v=>nl(v,1)} : {...RX, y0:86, y1:97, yfmt:v=>nl(v,0)});
+  const c3 = chart([{pts:aW, color:'var(--ink)', dots:true, op:.75},{pts:tW, color:'var(--accent)', w:2.5}], kort ? {...RB, yfmt:v=>nl(v,1)} : {...RB, y0:86, y1:97, yfmt:v=>nl(v,0)});
   const tF = I.fat_target.map(p=>({x:d(p.day),y:p.v})), aF = sc.map(p=>({x:d(p.day),y:p.body_fat_pct}));
-  const c3b = chart([{pts:aF, color:'var(--ink)', dots:true, op:.75},{pts:tF, color:'var(--red)', dash:true, w:2.5}], kort ? {...RX, yfmt:v=>nl(v,1)+' %'} : {...RX, y0:18, y1:30, yfmt:v=>nl(v,0)+' %'});
+  const c3b = chart([{pts:aF, color:'var(--ink)', dots:true, op:.75},{pts:tF, color:'var(--red)', dash:true, w:2.5}], kort ? {...RB, yfmt:v=>nl(v,1)+' %'} : {...RB, y0:18, y1:30, yfmt:v=>nl(v,0)+' %'});
+  const tFk = (I.fatkg_target||[]).map(p=>({x:d(p.day),y:p.v})), aFk = sc.filter(p=>p.weight_kg&&p.body_fat_pct).map(p=>({x:d(p.day),y:p.weight_kg*p.body_fat_pct/100}));
+  const cFk = chart([{pts:aFk, color:'var(--ink)', dots:true, op:.75},{pts:tFk, color:'var(--green)', w:2.5}], kort ? {...RB, yfmt:v=>nl(v,1)} : {...RB, yfmt:v=>nl(v,0)});
+  // samenvatting t.o.v. de start: vet eraf, spier erbij (7-daags gemiddelde nu tegen de eerste week)
+  const avgOf = (arr, from, to) => { const a = arr.filter(p=>+p.x>=+from && +p.x<=+to && p.y!=null); return a.length ? a.reduce((s,p)=>s+p.y,0)/a.length : null; };
+  const lastX = aFk.length ? aFk[aFk.length-1].x : now;
+  const f0 = avgOf(aFk, START, new Date(+START+6*86400000)), f1 = avgOf(aFk, new Date(+lastX-6*86400000), lastX);
+  const m0 = avgOf(aM, START, new Date(+START+6*86400000)), m1 = avgOf(aM, new Date(+lastX-6*86400000), lastX);
+  const comp = (f0!=null && f1!=null) ? `<div class="card"><h2>Lichaamssamenstelling sinds de start</h2><div class="small" style="margin-bottom:6px">Het doel is vet kwijt, daarna spier erbij; gewicht volgt daaruit. Haal je 88 kg later omdat je spier opbouwt, dan is dat winst.</div><ul class="trk"><li class="${f1<=f0?'ok':'warn'}">${ICON_GARMIN}<div class="n">Vetmassa<span>doel ${nl(I.fat_mass_goal,1)} kg</span></div><div class="v"><span class="num">${nl(f1,1)}</span><small>kg</small></div><div class="dl ${Math.abs(f1-f0)<0.05?'':f1<=f0?'up':'dn'}">${Math.abs(f1-f0)<0.05?'0':(f1-f0>0?'+':'')+nl(f1-f0,1)}</div></li>${m0!=null&&m1!=null?`<li class="${m1>=m0-0.2?'ok':'warn'}">${ICON_GARMIN}<div class="n">Spiermassa<span>weegschaal</span></div><div class="v"><span class="num">${nl(m1,1)}</span><small>kg</small></div><div class="dl ${Math.abs(m1-m0)<0.05?'':m1>=m0?'up':'dn'}">${Math.abs(m1-m0)<0.05?'0':(m1-m0>0?'+':'')+nl(m1-m0,1)}</div></li>`:''}</ul><div class="small" style="margin-top:6px">Gemiddelde van de laatste week tegen de eerste week (${START.toLocaleDateString('nl-NL',{day:'numeric',month:'short'})}). De weegschaal schat vet en spier met elektrische weerstand: kijk naar de trend over weken, niet naar één meting.</div></div>` : '';
   const M = I.metrics; const bandLo = M.length?M[M.length-1].hrv_band_lo_ms:null, bandHi = M.length?M[M.length-1].hrv_band_hi_ms:null;
   const c4 = M.length ? chart([{pts:M.map(p=>({x:d(p.day),y:p.hrv_ms})), color:'var(--ink3)', dots:true, r:2},{pts:M.map(p=>({x:d(p.day),y:p.hrv_7d_ms})), color:'var(--accent)'}], {band: bandLo?[bandLo,bandHi]:null, yfmt:v=>nl(v,0)}) : '<p class="muted">Nog geen data.</p>';
   const c5 = M.length ? chart([{pts:M.map(p=>({x:d(p.day),y:p.rhr})), color:'var(--ink3)', dots:true, r:2},{pts:M.map(p=>({x:d(p.day),y:p.rhr_7d})), color:'var(--red)'}], {yfmt:v=>nl(v,0)}) : '';
@@ -926,11 +936,13 @@ function vInzicht(){
     return `<div class="hab"><div class="hab-t"><b>${h.n_known?h.streak:'–'}</b><span>${txt}</span></div><div class="dots">${dots}</div></div>`; };
   const habits = `<div class="card"><h2>Gewoontes · avonden</h2>${hab('evening_snack','avondsnack')}${hab('alcohol','alcohol')}<div class="small" style="margin-top:8px">Laatste 30 avonden uit het wellness report: groen = niet, rood = wel, grijs = niet ingevuld. Teller loopt sinds de laatste gemelde keer.</div></div>`;
   return `<div class="hdr"><h1>Inzicht</h1><span class="d">doelen en trends</span></div>${habits}${rng}
+  ${comp}
+  <div class="card"><h2>Vetmassa (kg) · hoofddoel</h2>${cFk}${vsLine(tFk, aFk, ' kg', 1, true)}${leg([['var(--green)',`doel · ${nl((tFk[0]||{}).y||26,1)} → ${nl(I.fat_mass_goal,1)} kg${I.target_reached?' rond '+new Date(I.target_reached).toLocaleDateString('nl-NL',{day:'numeric',month:'short'}):''}`],['var(--ink)','werkelijk (gewicht × vet%)']])}</div>
+  <div class="card"><h2>Spiermassa (kg, weegschaal)</h2>${c2}${vsLine(tM, aM, ' kg', 1, false)}${leg([['var(--accent)','doel · 36,7 → 37,7 (feb) → 38,0 (jun) → 38,2'],['var(--ink)','werkelijk']])}</div>
+  <div class="card"><h2>Lichaamsvet (%)</h2>${c3b}${vsLine(tF, aF, ' %', 1, true)}${leg([['var(--red)',`doel · 27,6 → ${((I.fat_target.find(p=>p.day===I.target_reached)||{}).v||22).toString().replace('.',',')} bij 88 kg → 20 (okt)`],['var(--ink)','werkelijk']])}</div>
+  <div class="card"><h2>Gewicht (kg) · volgt uit vet en spier</h2>${c3}${vsLine(tW, aW, ' kg', 1, true)}${leg([['var(--accent)',`doel · 0,5 kg/week in tekortweken, vlak in lichte en rustweken → 88 kg${I.target_reached?' rond '+new Date(I.target_reached).toLocaleDateString('nl-NL',{day:'numeric',month:'short'}):''}`],['var(--ink)','werkelijk']])}</div>
   <div class="card"><h2>10 km · prognose t.o.v. 50:00</h2>${c1}${vsLine(t10, a10, '', 0, true, v=>mmss(Math.round(v)))}${leg([['var(--accent)','lijn 1 · schema naar 50:00 (31 jan) en 45:00 (3 okt)'],['var(--green)','lijn 2 · realistisch'],['var(--ink)','lijn 3 · indicatie uit lopen ≥ 4,8 km (Riegel)']])}</div>
   <div class="card"><h2>Kracht · e1RM</h2><p class="muted">${esc(I.strength_kpi.note)}</p></div>
-  <div class="card"><h2>Spiermassa (kg, weegschaal)</h2>${c2}${vsLine(tM, aM, ' kg', 1, false)}${leg([['var(--accent)','doel · 36,7 → 37,7 (feb) → 38,0 (jun) → 38,2'],['var(--ink)','werkelijk']])}</div>
-  <div class="card"><h2>Gewicht (kg)</h2>${c3}${vsLine(tW, aW, ' kg', 1, true)}${leg([['var(--accent)',`doel · 0,5 kg/week in tekortweken, vlak in lichte en rustweken → 88 kg${I.target_reached?' rond '+new Date(I.target_reached).toLocaleDateString('nl-NL',{day:'numeric',month:'short'}):''}`],['var(--ink)','werkelijk']])}</div>
-  <div class="card"><h2>Lichaamsvet (%)</h2>${c3b}${vsLine(tF, aF, ' %', 1, true)}${leg([['var(--red)',`doel · 27,6 → ${((I.fat_target.find(p=>p.day===I.target_reached)||{}).v||22).toString().replace('.',',')} bij 88 kg → 20 (okt)`],['var(--ink)','werkelijk']])}</div>
   <div class="card"><h2>HRV · nachten en 7-daags gemiddelde</h2>${c4}${leg([['var(--ink3)','nacht'],['var(--accent)','7 d'],['var(--e-bg)','band']])}</div>
   <div class="card"><h2>Laagste nachtelijke hartslag</h2>${c5}</div>
   <div class="card"><h2>Slaap · uren per nacht</h2>${c6}</div>
@@ -1145,7 +1157,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261021-1302'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261021-1305'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
