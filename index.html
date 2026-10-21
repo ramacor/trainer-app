@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261021-1642">
+<meta name="app-build" content="20261021-1707">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -137,6 +137,11 @@ svg.chart{width:100%;height:130px;display:block}.legend{display:flex;gap:12px;fo
 .gimg{display:flex;align-items:center;gap:14px;margin:8px 0 4px}.seg2{display:flex;gap:6px}.seg2 span{flex:1;text-align:center;padding:9px 0;border-radius:10px;background:var(--surface2);color:var(--ink2);font-weight:700;font-size:14px;cursor:pointer}.seg2 span.on{background:var(--accent);color:#fff}
 .gedit input.inp{display:block;width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;background:var(--surface2);color:var(--ink);font:16px/1.4 -apple-system,system-ui,sans-serif;padding:10px;-webkit-appearance:none;appearance:none;min-height:44px}.gedit textarea.inp{font-size:16px}.gimg .btn.mini{width:auto;display:inline-block;padding:9px 14px;font-size:14px}
 .gimg label.btn{text-transform:none;letter-spacing:0;margin:0;font-weight:700;color:var(--ink2)}
+.trk.bm li{grid-template-columns:18px 1fr 40px auto auto;gap:6px}.trk.bm .n span{display:block;margin:1px 0 0;line-height:1.15}.trk.bm .v{grid-template-columns:50px 28px}.trk.bm .dl{width:45px;min-width:45px;overflow:visible}.trk.bm .pl{position:relative;height:6px;border-radius:3px;background:var(--bandtrk)}.trk.bm .pl.none{background:none}
+.trk.bm .pl i{position:absolute;top:0;bottom:0;border-radius:3px;background:var(--bandin)}.trk.bm .pl em{position:absolute;top:50%;width:2px;height:12px;border-radius:1px;transform:translate(-50%,-50%);background:var(--ink2)}
+.trk.bm li.ok .pl em{background:var(--green);box-shadow:var(--glow)}.trk.bm li.warn .pl em{background:var(--amber)}.trk.bm li.bad .pl em{background:var(--red)}
+:root{--bandtrk:rgba(27,30,39,.10);--bandin:rgba(27,30,39,.30)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bandtrk:rgba(233,235,242,.10);--bandin:rgba(233,235,242,.34)}}:root[data-theme="dark"]{--bandtrk:rgba(233,235,242,.10);--bandin:rgba(233,235,242,.34)}
 </style>
 </head>
 <body>
@@ -634,6 +639,12 @@ function valueNow(key){
   else {
     if(r.txt!=null) lines.push(`Nu: ${r.txt}.`);
     else lines.push(`Nu: ${f(r.value)}${u}.`);
+    if(r.band){ const b = r.band;
+      const why = {'HRV 7 d':`${f(b.lo,0)}–${f(b.hi,0)} ms, je eigen baseline plus en min een halve standaardafwijking`, 'Laagste HR 7 d':`${f(b.lo,1)}–${f(b.hi,1)} bpm, je eigen baseline plus en min een halve standaardafwijking`,
+        'Welzijn':'tot en met 5 op een schaal van 7; daarboven telt het als stopsignaal', 'Temperatuur':'−0,5 tot +0,5 °C; vanaf +0,5 °C telt het als stopsignaal',
+        'Slaap':'vanaf 6 uur; korter telt als korte nacht', 'Laagste HR':`tot ${f(b.hi,0)} bpm, je baseline plus 5; daarboven telt het als piek`,
+        'Ademfrequentie':`tot ${f(b.hi,1)} per minuut, 2 boven je gemiddelde van 3 weken`}[key];
+      if(why) lines.push(`In het balkje is de lichtere strook je bereik: ${why}. Het streepje is de waarde van nu.`); }
     const cmp = (r.prev!=null && r.ref) ? `Ter vergelijking: ${r.prev_txt||(f(r.prev)+u)} (${r.ref})${r.delta!=null && r.delta!==0 ? `, dus ${r.delta>0?'+':''}${f(r.delta)}${r.delta_unit?' '+r.delta_unit:''}` : ', gelijk'}.` : '';
     if(key==='HRV 7 d'){
       if(r.lo!=null && r.hi!=null) lines.push(`Uw band is ${f(r.lo,0)}–${f(r.hi,0)} ms en het 7-daags gemiddelde ligt ${r.value<r.lo?'eronder: het lichaam is nog niet in de herstelstand':r.value>r.hi?'erboven: meestal diep herstel, soms overcompensatie':'erbinnen: normaal herstel'}. Dat bepaalt de kleur van de regel.`);
@@ -666,8 +677,10 @@ function markerRows(rows){
     else if(r.delta===0) dl='0';
     const val = r.txt!=null ? r.txt : (r.value==null ? '—' : (Number.isInteger(r.value)? r.value : nl(r.value, r.unit==='°C'?2:1)));
     MROWS[r.key||r.name] = r;
-    out+=`<li class="${r.status} info" onclick="showInfo('${esc(r.key||r.name)}')">${SRC[r.src]||''}<div class="n">${esc(r.name)}${r.sub?`<span>${esc(r.sub)}</span>`:''}</div><div class="v"><span class="num">${val}</span><small>${r.unit?esc(r.unit):''}</small></div><div class="dl ${cls}">${dl}</div></li>`; });
-  return `<ul class="trk">${out}</ul>`;
+    const b = r.band; const pc = x => Math.max(0, Math.min(100, (x-b.min)/((b.max-b.min)||1)*100));
+    const pill = b && r.value!=null ? `<div class="pl" title="bereik ${nl(b.lo,1)}–${nl(b.hi,1)}"><i style="left:${pc(b.lo)}%;right:${100-pc(b.hi)}%"></i><em style="left:${pc(r.value)}%"></em></div>` : '<div class="pl none"></div>';
+    out+=`<li class="${r.status} info" onclick="showInfo('${esc(r.key||r.name)}')">${SRC[r.src]||''}<div class="n">${esc(r.name)}${r.sub?`<span>${esc(r.sub)}</span>`:''}</div>${pill}<div class="v"><span class="num">${val}</span><small>${r.unit?esc(r.unit):''}</small></div><div class="dl ${cls}">${dl}</div></li>`; });
+  return `<ul class="trk bm">${out}</ul>`;
 }
 
 // ---------------------------------------------------------------- check-in
@@ -1266,7 +1279,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261021-1642'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261021-1707'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
