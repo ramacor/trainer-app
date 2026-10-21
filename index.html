@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261021-1613">
+<meta name="app-build" content="20261021-1624">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -302,7 +302,7 @@ Paarse omtrek om een cijfer is uw waarde van gisteren. Nog een keer tikken op ee
  'Eetmomenten': ['Eetmomenten', `Vier tot vijf eetmomenten op tijden rond uw sessie, elk als gerecht met een korte bereiding en de ingrediënten (Albert Heijn) in grammen; samen komen ze op de dagdoelen uit. Richtwaarden, geen logboek.`],
  'Supplementen': ['Supplementen', `Het schema van vandaag: wat u neemt, wanneer en waarom, met alleen middelen waarvoor goed bewijs bestaat, en wat u beter laat.`],
  'Boodschappen': ['Boodschappen', `De vaste kern van producten waaruit alle voorbeeldmaaltijden zijn opgebouwd, gegroepeerd per rol.`],
- 'coach': ['Coach', `Het dagrapport: wat gisteren betekende, wat de nacht zegt, hoe u ervoor staat voor de sessie van vandaag, wat u vóór, tijdens en na die sessie eet en drinkt, en wat eraan komt. Het wordt alleen op uw verzoek gemaakt, zodat uw wellness report en de laatste synchronisatie erin zitten.
+ 'coach': ['Coach', `Het dagrapport in drie delen. Bij Reflect: wat gisteren betekende, wat de nacht zegt, hoe uw zelfrapportage zich verhoudt tot de meetwaarden, en in één of twee zinnen wat dat betekent voor het programma en de voeding. Bij Vandaag: het programma van vandaag en wat eraan komt. Bij Voeding: de voeding van vandaag, met dezelfde dagdoelen als het voedingsplan en wat u vóór, tijdens en na de sessie eet en drinkt. Het wordt alleen op uw verzoek gemaakt, zodat uw wellness report en de laatste synchronisatie erin zitten.
 
 ## Hoe het is opgebouwd
 De structuur volgt het onderzoek naar effectieve feedback (Hattie en Timperley 2007; Mageau en Vallerand 2003): verandering ten opzichte van uw eigen eerdere waarden in plaats van absolute cijfers, uitleg van het waarom, maximaal drie punten en één actie, geen lof zonder referent, geen diagnose. Feiten uit de sportwetenschap en uitspraken van atleten komen alleen als ze bij de dag passen.
@@ -700,25 +700,31 @@ function fbNote(t, txt){ const f = Object.assign({}, fbGet(t)); f.text = txt; f.
 function fbQueue(ms){ clearTimeout(FB_TIMER); FB_TIMER = setTimeout(fbSave, ms||400); }
 async function fbSave(){ try{ await api('PUT','/input',{day:todayNL(), kind:'feedback', data:{items: FB}}); Object.keys(FB).forEach(k=>{ FB[k].saved = true; }); LS.set('pt_fb', FB); if(D){ D.feedback = Object.assign({}, D.feedback||{}, FB); LS.set('pt_snapshot', D); } document.querySelectorAll('[id^=fbs-]').forEach(el=>el.textContent='Opgeslagen ✓'); return true; }catch(e){ toast('Beoordeling niet opgeslagen, probeer opnieuw'); return false; } }
 const FUEL_LBL = {voor:'Vóór', tijdens:'Tijdens', na:'Na', avond:'Vanavond', dag:'De dag'};
-function fuelBlock(r){
-  const v = r && r.voeding; if(!v || !v.titel) return '';
-  const rows = ['voor','tijdens','na','avond','dag'].filter(k=>v[k]).map(k=>`<li><b>${FUEL_LBL[k]}</b> ${esc(v[k])}</li>`).join('');
-  return `<div class="fuel"><b class="t" style="margin-top:0">${esc(v.titel)}</b><ul>${rows}</ul>${v.bron?`<div class="small muted" style="margin-top:6px">Op basis van ${esc(v.bron)}.</div>`:''}</div>`;
+function coachFood(c){
+  const r = c && c.report; const v = r && r.voeding;
+  if(!v || !v.titel) return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach · voeding</h2><p>Nog geen voedingsadvies voor vandaag: genereer het coachrapport onder Reflect.</p></div>`;
+  const rows = ['voor','tijdens','na','avond'].filter(k=>v[k]).map(k=>`<li><b>${FUEL_LBL[k]}</b> ${esc(v[k])}</li>`).join('');
+  return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach · voeding</h2><p class="kop">${esc(v.titel)}</p>
+    ${v.letop?`<div class="concl warn"><b class="t" style="margin-top:0">Let op</b><p style="margin:2px 0 0">${esc(v.letop)}</p></div>`:''}
+    ${v.dag?`<b class="t">De dag</b><p>${esc(v.dag)}</p>`:''}
+    ${rows?`<b class="t">Rond de sessie</b><ul class="concl-l">${rows}</ul>`:''}
+    ${v.feit?`<b class="t">Achtergrond</b><p>${esc(v.feit)}</p>`:''}
+    ${v.bron?`<div class="small" style="margin-top:6px">Op basis van ${esc(v.bron)}.</div>`:''}${c.day?fbBar('voeding:'+c.day):''}</div>`;
 }
 function coachToday(c){
   const r = c.report; const col = r ? ({GREEN:'ok',GREEN_HOLD:'ok',AMBER:'warn',RED:'r',NO_DATA:'ok'}[r.colour]||'ok') : 'ok';
   const concl = (r&&r.conclusie&&r.conclusie.length) ? `<div class="concl ${col}"><b class="t" style="margin-top:0">Vandaag rekening houden met</b><ul>${r.conclusie.map(x=>`<li><b>${esc(x.k)}</b> ${esc(x.t)}</li>`).join('')}</ul></div>` : '';
-  return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach · vandaag</h2>${concl}${fuelBlock(r)}<b class="t">Vandaag</b><p>${esc(c.today||'Nog geen advies: genereer het coachrapport onder Reflect.')}</p>${c.day?fbBar('daily:'+c.day):''}</div>`;
+  const vo = r && r.vooruit ? `<b class="t">Vooruit</b><p>${esc(r.vooruit)}</p>` : '';
+  return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach · vandaag</h2>${concl}<b class="t">Programma vandaag</b><p>${esc(c.today||'Nog geen advies: genereer het coachrapport onder Reflect.')}</p>${vo}${c.day?fbBar('vandaag:'+c.day):''}</div>`;
 }
 function coachCard(prev){
   const r = prev.report;
   if(!r) return `<div class="card coach hl"><h2>Coach</h2><p>${esc(prev.analysis||'Nog geen rapport: vul het wellness report in en tik op "Coachrapport genereren".')}</p>${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}</div>`;
   const col = {GREEN:'ok',GREEN_HOLD:'ok',AMBER:'warn',RED:'r',NO_DATA:'ok'}[r.colour]||'ok';
   const sec = (t, x) => x ? `<b class="t">${t}</b><p>${esc(x)}</p>` : '';
-  const concl = (r.conclusie&&r.conclusie.length) ? `<div class="concl ${col}"><b class="t" style="margin-top:0">Vandaag rekening houden met</b><ul>${r.conclusie.map(c=>`<li><b>${esc(c.k)}</b> ${esc(c.t)}</li>`).join('')}</ul></div>` : '';
   const deep = (r.verdieping&&r.verdieping.length) ? `<b class="t">Verdieping</b>${r.verdieping.map(d=>`<details class="more"><summary>${esc(d.title)}</summary><div class="morebody"><p>${esc(d.text)}</p></div></details>`).join('')}` : '';
   return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach</h2><p class="kop"><span class="pill ${col}">${esc((r.kop.match(/\. (Groen|Oranje|Rood)[^.]*/)||['',''])[1]||'')}</span> ${esc(r.kop)}</p>
-    ${concl}${sec('Gisteren', r.gisteren)}${sec('Vannacht', r.vannacht)}${sec('Vandaag', r.vandaag)}${fuelBlock(r)}${sec('Vooruit', r.vooruit)}${deep}
+    ${sec('Gisteren', r.gisteren)}${sec('Vannacht', r.vannacht)}${sec('Zelfrapportage', r.zelf)}${r.impact?`<div class="concl ${col}"><b class="t" style="margin-top:0">Wat dit betekent voor vandaag</b><p style="margin:2px 0 0">${esc(r.impact)}</p><div class="small" style="margin-top:6px"><span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="goTab('vandaag')">Programma ›</span>&nbsp;&nbsp;<span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="goTab('voeding')">Voeding ›</span></div></div>`:''}${deep}
     ${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}${fbBar('daily:'+prev.day)}</div>`;
 }
 let CI_STATUS = 'Wordt automatisch opgeslagen.'; let CI_TIMER = null;
@@ -989,7 +995,7 @@ function vVoeding(){
   const storeNames = (P.stores||['ah']).map(k=>((N.stores||[]).find(s=>s.key===k)||{}).name||k).join(', ');
   const prefCard = `<div class="card"><h2>Voorkeuren</h2><ul class="list"><li class="tap" onclick="goTab('voedpref')"><div class="li-main"><b>${esc(storeNames)}</b><span>${nl_} lekker · ${nn_} niet lekker · het schema kiest gerechten op basis hiervan</span></div><div class="li-r">${CHEV}</div></li></ul></div>`;
   return `<div class="hdr"><h1>Voeding</h1></div>
-  ${chips}${prefCard}
+  ${coachFood(D.today_block.coach||{})}${chips}${prefCard}
   <div class="card"><h2 class="info" onclick="showInfo('Dagdoelen')">Dagdoelen ⓘ</h2>${head}${macroTiles(tg)}<div class="small">Eiwit in vier tot vijf porties van ≥ ${tg.p_per_meal} g; koolhydraten rond de sessie, vet nooit onder 0,8 g/kg.</div></div>
   <div class="card"><h2 class="info" onclick="showInfo('Eetmomenten')">Eetmomenten ⓘ</h2>${mealCard(meals)}<div class="small" style="margin-top:8px">De foto's geven een idee van het gerecht; ze komen van Wikimedia Commons en tonen niet precies jouw portie. Totaal ≈ ${(cur?cur.totals:N.totals).kcal.toLocaleString('nl-NL')} kcal · ${(cur?cur.totals:N.totals).p} g eiwit · ${(cur?cur.totals:N.totals).c} g koolhydraat · ${(cur?cur.totals:N.totals).f} g vet. Richtwaarden (etiket/NEVO), geen logboek; wissel producten binnen dezelfde groep.</div></div>
   ${sup}${shop}<div class="small muted" style="margin:4px 0 14px">Op basis van ${esc(N.sources)}.</div>`;
@@ -1157,7 +1163,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261021-1613'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261021-1624'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
