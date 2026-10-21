@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261021-1913">
+<meta name="app-build" content="20261021-1924">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -188,8 +188,8 @@ function render(){
   if(!D){ document.getElementById('app').innerHTML = '<div class="setup"><p class="muted">Laden…</p></div>'; return; }
   const tabs = [['checkin','Reflect','<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>'],
     ['vandaag','Vandaag','<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/>'],
-    ['plan','Plan','<path d="M4 6h16M4 12h16M4 18h10"/>'],
     ['voeding','Voeding','<path d="M7 3v8a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V3M9 13v8M17 3c-2 0-3 2-3 5s1 4 3 4v9"/>'],
+    ['plan','Plan','<path d="M4 6h16M4 12h16M4 18h10"/>'],
     ['doel','Doel','<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>'],
     ['menu','Menu','<path d="M4 7h16M4 12h16M4 17h16"/>']];
   const screens = {checkin: vCheckin, vandaag: vVandaag, doel: vDoel, plan: vPlan, inzicht: vInzicht, menu: vMenu, log: vLog, meer: vMeer, reminders: vReminders, voeding: vVoeding, zone2: vZone2, papers: vPapers, paper: vPaper, voedpref: vVoedPref};
@@ -884,9 +884,9 @@ function coachFood(c){
 }
 function coachToday(c){
   const r = c.report; const col = r ? ({GREEN:'ok',GREEN_HOLD:'ok',AMBER:'warn',RED:'r',NO_DATA:'ok'}[r.colour]||'ok') : 'ok';
-  const concl = (r&&r.conclusie&&r.conclusie.length) ? `<div class="concl ${col}"><b class="t" style="margin-top:0">Vandaag rekening houden met</b><ul>${r.conclusie.map(x=>`<li><b>${esc(x.k)}</b> ${esc(x.t)}</li>`).join('')}</ul></div>` : '';
+  const concl = (r&&r.conclusie&&r.conclusie.length) ? `<div class="concl ${col}"><b class="t" style="margin-top:0">Aandachtspunten</b><ul>${r.conclusie.map(x=>`<li><b>${esc(x.k)}</b> ${esc(x.t)}</li>`).join('')}</ul></div>` : '';
   const vo = r && r.vooruit ? `<b class="t">Vooruit</b><p>${esc(r.vooruit)}</p>` : '';
-  return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach · vandaag</h2>${concl}<b class="t">Programma vandaag</b><p>${esc(c.today||'Nog geen advies: genereer het coachrapport onder Reflect.')}</p>${vo}${c.day?fbBar('vandaag:'+c.day):''}</div>`;
+  return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach</h2>${concl}<b class="t">Programma</b><p>${esc(c.today||'Nog geen advies: genereer het coachrapport onder Reflect.')}</p>${vo}${c.day?fbBar('vandaag:'+c.day):''}</div>`;
 }
 function coachCard(prev){
   const r = prev.report;
@@ -1422,7 +1422,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261021-1913'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261021-1924'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
