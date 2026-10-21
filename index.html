@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261021-1052">
+<meta name="app-build" content="20261021-1246">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -899,7 +899,8 @@ function vsLine(target, actual, unit, nd, lowerBetter, fmt){
 function vInzicht(){
   const I = D.insight; const d = s => new Date(s);
   const now = new Date(D.today); const kort = INZ==='kort';
-  const RX = kort ? {x0:new Date(Math.max(+new Date('2026-09-28'), +now - 56*86400000)), x1:new Date(+now + 28*86400000), today:now, pad:0.5} : {x0:new Date('2026-09-01'), x1:new Date('2027-10-03'), today:now};
+  const START = new Date((I.weight_target[0]||{}).day || '2026-10-12');   // eerste waarde van de doellijn = linkerrand
+  const RX = kort ? {x0:new Date(Math.max(+START, +now - 56*86400000)), x1:new Date(+now + 28*86400000), today:now, pad:0.5} : {x0:START, x1:new Date('2027-10-03'), today:now};
   const rng = `<div class="chips" style="margin:-4px 0 10px"><span class="${kort?'on':''}" onclick="INZ='kort';LS.set('pt_inz','kort');render()">Afgelopen weken</span><span class="${kort?'':'on'}" onclick="INZ='jaar';LS.set('pt_inz','jaar');render()">Heel jaar</span></div>`;
   const r10 = I.run10k; const t10 = r10.target.map(p=>({x:d(p.day),y:p.t})), a10 = r10.actual.map(p=>({x:d(p.day),y:p.t10k}));
   const c1 = chart([{pts:a10, color:'var(--ink)', dots:true, r:3, op:.8},{pts:r10.realistic.map(p=>({x:d(p.day),y:p.t})), color:'var(--green)', dash:true},{pts:t10, color:'var(--accent)', w:2.5}], kort ? {...RX, yfmt:v=>mmss(v)} : {...RX, y0:44*60, y1:62*60, yfmt:v=>mmss(v)});
@@ -1139,7 +1140,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261021-1052'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261021-1246'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
