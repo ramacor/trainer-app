@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261021-1558">
+<meta name="app-build" content="20261021-1603">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -162,12 +162,10 @@ function render(){
   if(!D){ document.getElementById('app').innerHTML = '<div class="setup"><p class="muted">Laden…</p></div>'; return; }
   const tabs = [['checkin','Reflect','<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/>'],
     ['vandaag','Vandaag','<rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/>'],
-    ['doel','Doel','<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>'],
     ['plan','Plan','<path d="M4 6h16M4 12h16M4 18h10"/>'],
-    ['inzicht','Inzicht','<path d="M3 18l5-6 4 3 4-7 5 4"/>'],
     ['menu','Menu','<path d="M4 7h16M4 12h16M4 17h16"/>']];
   const screens = {checkin: vCheckin, vandaag: vVandaag, doel: vDoel, plan: vPlan, inzicht: vInzicht, menu: vMenu, log: vLog, meer: vMeer, reminders: vReminders, voeding: vVoeding, zone2: vZone2, papers: vPapers, paper: vPaper, voedpref: vVoedPref};
-  const tabOf = {log:'menu', meer:'menu', reminders:'menu', voeding:'menu', zone2:'menu', papers:'menu', paper:'menu', voedpref:'menu'}; const cur = tabOf[TAB] || TAB;
+  const tabOf = {doel:'menu', inzicht:'menu', log:'menu', meer:'menu', reminders:'menu', voeding:'menu', zone2:'menu', papers:'menu', paper:'menu', voedpref:'menu'}; const cur = tabOf[TAB] || TAB;
   const old = document.getElementById('screen'); const keep = (old && LAST_TAB===TAB) ? old.scrollTop : 0;
   const oldChips = document.querySelector('.chips'); const keepX = (oldChips && LAST_TAB===TAB) ? oldChips.scrollLeft : 0;
   document.getElementById('app').innerHTML = vTimeline() + `<div class="screen" id="screen">${isStale()?`<div class="newday" onclick="requestRefresh(true)"><span class="nd-spin">${REFRESHING?'⟳':'↻'}</span><div><b>Nieuwe dag</b>${REFRESHING?'Oura en Garmin worden gesynchroniseerd; de gegevens van vandaag laden zo.':'Je ziet nog de gegevens van gisteren. Tik om Oura en Garmin te synchroniseren.'}</div></div>`:''}${(screens[TAB]||vVandaag)()}</div>` +
@@ -848,7 +846,7 @@ function missionCards(){
 }
 function vDoel(){
   const p = D.plan;
-  return `<div class="hdr"><h1>Doel</h1><span class="d">missie · ${p.pursuit.weeks} weken</span></div>${missionCards()}`;
+  return `<div class="hdr"><h1>Doel</h1><span class="d" onclick="goTab('menu')" style="cursor:pointer">← menu</span></div><p class="small" style="margin:-4px 0 12px">Missie · ${p.pursuit.weeks} weken</p>${missionCards()}`;
 }
 function vPlan(){
   const p = D.plan; if(PW==null) PW = (p.weeks.find(w=>w.current)||p.weeks[0]).week;
@@ -935,7 +933,7 @@ function vInzicht(){
     const txt = h.n_known ? `${h.streak} ${h.streak===1?'avond':'avonden'} zonder ${name}${h.last_yes_txt?` · laatste keer ${esc(h.last_yes_txt)}`:h.since_txt?` · sinds ${esc(h.since_txt)}`:''}` : `nog niets ingevuld`;
     return `<div class="hab"><div class="hab-t"><b>${h.n_known?h.streak:'–'}</b><span>${txt}</span></div><div class="dots">${dots}</div></div>`; };
   const habits = `<div class="card"><h2>Gewoontes · avonden</h2>${hab('evening_snack','avondsnack')}${hab('alcohol','alcohol')}<div class="small" style="margin-top:8px">Laatste 30 avonden uit het wellness report: groen = niet, rood = wel, grijs = niet ingevuld. Teller loopt sinds de laatste gemelde keer.</div></div>`;
-  return `<div class="hdr"><h1>Inzicht</h1><span class="d">doelen en trends</span></div>${habits}${rng}
+  return `<div class="hdr"><h1>Inzicht</h1><span class="d" onclick="goTab('menu')" style="cursor:pointer">← menu</span></div>${habits}${rng}
   ${comp}
   <div class="card"><h2>Vetmassa (kg) · hoofddoel</h2>${cFk}${vsLine(tFk, aFk, ' kg', 1, true)}${leg([['var(--green)',`doel · ${nl((tFk[0]||{}).y||26,1)} → ${nl(I.fat_mass_goal,1)} kg${I.target_reached?' rond '+new Date(I.target_reached).toLocaleDateString('nl-NL',{day:'numeric',month:'short'}):''}`],['var(--ink)','werkelijk (gewicht × vet%)']])}</div>
   <div class="card"><h2>Spiermassa (kg, weegschaal)</h2>${c2}${vsLine(tM, aM, ' kg', 1, false)}${leg([['var(--accent)','doel · 36,7 → 37,7 (feb) → 38,0 (jun) → 38,2'],['var(--ink)','werkelijk']])}</div>
@@ -1073,6 +1071,8 @@ function vZone2(){
 function vMenu(){
   return `<div class="hdr"><h1 style="display:flex;align-items:center;gap:10px"><img src="logo.svg" alt="" style="width:34px;height:auto">Menu</h1></div>
   <div class="card"><ul class="list">
+    <li class="tap" onclick="goTab('doel')"><div class="li-main"><b>Doel</b><span>missie, trainingsfases en milestones</span></div><div class="li-r">${CHEV}</div></li>
+    <li class="tap" onclick="goTab('inzicht')"><div class="li-main"><b>Inzicht</b><span>gewoontes, vet- en spiermassa, 10 km-prognose, herstel</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('log')"><div class="li-main"><b>Log</b><span>per dag · workouts, challenge, wellness en coach</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('voeding')"><div class="li-main"><b>Voeding</b><span>dagdoelen, eetmomenten met AH-boodschappen, supplementen</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('papers')"><div class="li-main"><b>Whitepapers</b><span>de onderzoeksrapporten achter de app, om rustig door te lezen</span></div><div class="li-r">${CHEV}</div></li>
@@ -1157,7 +1157,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261021-1558'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261021-1603'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
