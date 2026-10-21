@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261021-1842">
+<meta name="app-build" content="20261021-1902">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -465,6 +465,8 @@ Uw nachttemperatuur is zo stabiel dat een halve graad al betekenis heeft. In een
 Plus 0,5 graad of meer, zeker twee nachten op rij of samen met een hogere nachthartslag of ademfrequentie: dan geen harde training, en bij koorts rust tot u 24 uur klachtenvrij bent.`],
  'Slaap': ['Slaap', `De totale slaaptijd van vannacht volgens de ring, in uren en minuten. Het cijfer rechts is het verschil met de vorige nacht in minuten. Eén korte nacht werkt direct door op de dag erna; daarom staat hier de nacht zelf en niet een gemiddelde. Het 14-daags gemiddelde gebruikt het protocol alleen op de achtergrond voor een chronisch tekort (onder zeven uur).
 
+De norm is minimaal zeven uur: daarboven is de regel groen, daaronder oranje. Onder zes uur telt de nacht in het ochtendbesluit als korte nacht.
+
 ## Waarom het belangrijk is
 Slaap is het grootste deel van het herstel: groeihormoon, spierherstel en het verwerken van de trainingsprikkel gebeuren vooral in de nacht. Jonge atleten met minder dan acht uur slaap hadden een 1,7 keer hoger blessurerisico (Milewski 2014); de consensus voor volwassen sporters noemt onder de zeven uur een tekort (Walsh 2021). Andersom werkt slaapverlenging als training: basketballers die vijf weken tien uur in bed lagen, sprintten sneller en schoten beter (Mah 2011). Eliud Kipchoge slaapt naar eigen zeggen acht uur per nacht en nog een tot twee uur overdag.
 
@@ -728,7 +730,7 @@ function valueNow(key){
     if(r.band){ const b = r.band;
       const why = {'HRV 7 d':`${f(b.lo,0)}–${f(b.hi,0)} ms, je eigen baseline plus en min een halve standaardafwijking`, 'Laagste HR 7 d':`${f(b.lo,1)}–${f(b.hi,1)} bpm, je eigen baseline plus en min een halve standaardafwijking`,
         'Welzijn':'tot en met 5 op een schaal van 7; daarboven telt het als stopsignaal', 'Temperatuur':'−0,5 tot +0,5 °C; vanaf +0,5 °C telt het als stopsignaal',
-        'Slaap':'vanaf 6 uur; korter telt als korte nacht', 'Laagste HR':`tot ${f(b.hi,0)} bpm, je baseline plus 5; daarboven telt het als piek`,
+        'Slaap':'minimaal 7 uur, het advies voor volwassenen (Watson e.a. 2015); onder 6 uur telt in het ochtendbesluit als korte nacht', 'Laagste HR':`tot ${f(b.hi,0)} bpm, je baseline plus 5; daarboven telt het als piek`,
         'Ademfrequentie':`tot ${f(b.hi,1)} per minuut, 2 boven je gemiddelde van 3 weken`}[key];
       if(why) lines.push(`In het balkje is de lichtere strook je bereik: ${why}. Het streepje is de waarde van nu.`); }
     const cmp = (r.prev!=null && r.ref) ? `Ter vergelijking: ${r.prev_txt||(f(r.prev)+u)} (${r.ref})${r.delta!=null && r.delta!==0 ? `, dus ${r.delta>0?'+':''}${f(r.delta)}${r.delta_unit?' '+r.delta_unit:''}` : ', gelijk'}.` : '';
@@ -786,18 +788,18 @@ function infoChart(key){
   if(SELF_SCORE[key]){ const [f, band, sc] = SELF_SCORE[key]; const pts = P(W, f);
     s = [{pts, color:C.main, w:2},{pts, color:C.main, dots:true, r:3}]; o = {y0:1, y1:7, band, yfmt:v=>String(Math.round(v))}; lg = [[C.main,'jouw score'],['var(--e-bg)',`normaal (${band[0]}–${band[1]}) · ${sc}`]]; }
   else switch(key){
-    case 'HRV 7 d': s = [{pts:P(M,'hrv_ms'), color:C.dot, dots:true, r:2.2},{pts:P(M,'hrv_band_lo_ms'), color:C.band, dash:true, w:1.5},{pts:P(M,'hrv_band_hi_ms'), color:C.band, dash:true, w:1.5},{pts:P(M,'hrv_7d_ms'), color:C.main, w:2.5}];
-      o = {pad:2}; lg = [[C.main,'⌀ 7 dagen'],[C.dot,'per nacht'],[C.band,'je band']]; break;
-    case 'Laagste HR 7 d': s = [{pts:P(M,'rhr'), color:C.dot, dots:true, r:2.2},{pts:P(M,'rhr_band_lo'), color:C.band, dash:true, w:1.5},{pts:P(M,'rhr_band_hi'), color:C.band, dash:true, w:1.5},{pts:P(M,'rhr_7d'), color:C.main, w:2.5}];
-      o = {pad:1}; lg = [[C.main,'⌀ 7 dagen'],[C.dot,'per nacht'],[C.band,'je band']]; break;
-    case 'Laagste HR': { const lim = M.filter(r=>r.rhr_base!=null).map(r=>({x:dd(r.day), y:r.rhr_base+5}));
-      s = [{pts:P(M,'rhr'), color:C.main, w:2},{pts:P(M,'rhr'), color:C.main, dots:true, r:2.6},{pts:lim, color:C.lim, dash:true, w:1.5}]; o = {pad:1}; lg = [[C.main,'per nacht'],[C.lim,'piekgrens (baseline + 5)']]; break; }
+    case 'HRV 7 d': s = [{pts:P(M,'hrv_ms'), color:C.dot, dots:true, r:2.2},{pts:P(M,'hrv_7d_ms'), color:C.main, w:2.5}];
+      o = {pad:2, bands:M.map(r=>({x:dd(r.day), lo:r.hrv_band_lo_ms, hi:r.hrv_band_hi_ms}))}; lg = [[C.main,'⌀ 7 dagen'],[C.dot,'per nacht'],['var(--e-bg)','je band (baseline ± 0,5 SD)']]; break;
+    case 'Laagste HR 7 d': s = [{pts:P(M,'rhr'), color:C.dot, dots:true, r:2.2},{pts:P(M,'rhr_7d'), color:C.main, w:2.5}];
+      o = {pad:1, bands:M.map(r=>({x:dd(r.day), lo:r.rhr_band_lo, hi:r.rhr_band_hi}))}; lg = [[C.main,'⌀ 7 dagen'],[C.dot,'per nacht'],['var(--e-bg)','je band (baseline ± 0,5 SD)']]; break;
+    case 'Laagste HR': s = [{pts:P(M,'rhr'), color:C.main, w:2},{pts:P(M,'rhr'), color:C.main, dots:true, r:2.6}];
+      o = {pad:1, bands:M.filter(r=>r.rhr_base!=null).map(r=>({x:dd(r.day), lo:r.rhr_base-8, hi:r.rhr_base+5}))}; lg = [[C.main,'per nacht'],['var(--e-bg)','normaal (tot baseline + 5)']]; break;
     case 'HR op 7:15 p/km': s = [{pts:P(M,'hr_at_pace_bpm'), color:C.main, w:2},{pts:P(M,'hr_at_pace_bpm'), color:C.main, dots:true, r:2.6}]; o = {pad:1}; lg = [[C.main,'hartslag bij 7:15 per km, ⌀ 14 dagen']]; break;
     case 'Welzijn': s = [{pts:P(M,'wellness_max'), color:C.main, w:2},{pts:P(M,'wellness_max'), color:C.main, dots:true, r:2.6}]; o = {y0:1, y1:7, band:[1,5], yfmt:v=>String(Math.round(v))}; lg = [[C.main,'hoogste score van de dag'],['var(--e-bg)','normaal (tot en met 5)']]; break;
     case 'Temperatuur': s = [{pts:P(M,'temp_dev'), color:C.main, w:2},{pts:P(M,'temp_dev'), color:C.main, dots:true, r:2.6}]; o = {y0:-1, y1:1, band:[-0.5,0.5], yfmt:v=>nl(v,1)}; lg = [[C.main,'afwijking per nacht'],['var(--e-bg)','normaal (−0,5 tot +0,5 °C)']]; break;
-    case 'Slaap': s = [{pts:P(M,'sleep_h'), color:C.main, w:2},{pts:P(M,'sleep_h'), color:C.main, dots:true, r:2.6}]; o = {y0:4, y1:10, band:[6,10], yfmt:v=>Math.round(v)+'u'}; lg = [[C.main,'slaap per nacht'],['var(--e-bg)','6 uur of meer']]; break;
-    case 'Ademfrequentie': { const B = H.breath||[]; s = [{pts:B.map(r=>({x:dd(r.day), y:r.v})), color:C.main, w:2},{pts:B.map(r=>({x:dd(r.day), y:r.v})), color:C.main, dots:true, r:2.6},{pts:B.filter(r=>r.base!=null).map(r=>({x:dd(r.day), y:r.base+2})), color:C.lim, dash:true, w:1.5}];
-      o = {pad:0.5, yfmt:v=>nl(v,1)}; lg = [[C.main,'per nacht'],[C.lim,'signaalgrens (+2 boven 3 weken)']]; break; }
+    case 'Slaap': s = [{pts:P(M,'sleep_h'), color:C.main, w:2},{pts:P(M,'sleep_h'), color:C.main, dots:true, r:2.6}]; o = {y0:4, y1:10, band:[7,10], yfmt:v=>Math.round(v)+'u'}; lg = [[C.main,'slaap per nacht'],['var(--e-bg)','minimaal 7 uur']]; break;
+    case 'Ademfrequentie': { const B = H.breath||[]; s = [{pts:B.map(r=>({x:dd(r.day), y:r.v})), color:C.main, w:2},{pts:B.map(r=>({x:dd(r.day), y:r.v})), color:C.main, dots:true, r:2.6}];
+      o = {pad:0.5, yfmt:v=>nl(v,1), bands:B.filter(r=>r.base!=null).map(r=>({x:dd(r.day), lo:r.base-3, hi:r.base+2}))}; lg = [[C.main,'per nacht'],['var(--e-bg)','normaal (tot 2 boven je 3-weeksgemiddelde)']]; break; }
     case 'Gewicht': case 'Lichaamsvet': case 'Spiermassa': { const f = {Gewicht:'weight_kg', Lichaamsvet:'body_fat_pct', Spiermassa:'muscle_mass_kg'}[key]; const pts = ((D.insight||{}).scale||[]).filter(r=>r[f]!=null).map(r=>({x:dd(r.day), y:r[f]}));
       s = [{pts, color:C.main, w:2},{pts, color:C.main, dots:true, r:2.6}]; o = {pad:0.3, yfmt:v=>nl(v,1)}; lg = [[C.main,'weegschaal']]; break; }
   }
@@ -1135,11 +1137,15 @@ function chart(series, opts){
     const y0v = at(x0); if(y0v!=null) out.push({x:new Date(x0), y:y0v}); a.forEach(p=>{ if(+p.x>x0 && +p.x<x1) out.push(p); }); const y1v = at(x1); if(y1v!=null) out.push({x:new Date(x1), y:y1v}); return out; };
   const vis = series.map(s=>({...s, pts: clip(s)}));
   const ys = vis.flatMap(s=>s.pts.map(p=>p.y)).filter(v=>v!=null); if(opts.band) ys.push(...opts.band);
+  const BS = (opts.bands||[]).filter(b=>b.lo!=null && b.hi!=null && +b.x>=x0 && +b.x<=x1).sort((a,b)=>+a.x-+b.x); BS.forEach(b=>ys.push(b.lo, b.hi));
   let y0 = opts.y0 ?? Math.min(...ys), y1 = opts.y1 ?? Math.max(...ys); if(!isFinite(y0)||!isFinite(y1)){ y0=0; y1=1; } if(opts.pad && opts.y0==null){ const pd=(y1-y0)*0.15||opts.pad; y0-=pd; y1+=pd; } if(y1===y0){ y1=y0+1; }
   const X = x => pl + (x1===x0?0:(+x-x0)/(x1-x0))*(W-pl-pr), Y = y => pt + (1-(y-y0)/(y1-y0))*(H-pt-pb);
   let g = `<svg class="chart" viewBox="0 0 ${W} ${H}">`;
   [y0, (y0+y1)/2, y1].forEach(v=>{ g += `<text x="2" y="${Y(v)+3}" font-size="9" fill="var(--ink3)">${opts.yfmt?opts.yfmt(v):nl(v,0)}</text><line x1="${pl}" y1="${Y(v)}" x2="${W-pr}" y2="${Y(v)}" stroke="var(--line)" stroke-dasharray="3 3"/>`; });
   if(opts.band){ const [lo,hi]=opts.band; g += `<rect x="${pl}" y="${Y(hi)}" width="${W-pl-pr}" height="${Math.max(0,Y(lo)-Y(hi))}" fill="var(--e-bg)" opacity=".8"/>`; }
+  if(BS.length){ const cy = v => Math.max(pt, Math.min(H-pb, Y(v)));
+    const pts = BS.length===1 ? [{...BS[0], x:new Date(x0)},{...BS[0], x:new Date(x1)}] : BS;
+    g += `<polygon fill="var(--e-bg)" opacity=".8" points="${pts.map(b=>`${X(b.x)},${cy(b.hi)}`).concat(pts.slice().reverse().map(b=>`${X(b.x)},${cy(b.lo)}`)).join(' ')}"/>`; }
   if(opts.today && +opts.today>=x0 && +opts.today<=x1) g += `<line x1="${X(opts.today)}" y1="${pt}" x2="${X(opts.today)}" y2="${H-pb}" stroke="var(--ink3)" stroke-width="1" stroke-dasharray="2 3"/>`;
   vis.filter(s=>s.dots).forEach(s=>{ g += s.pts.map(p=>`<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="${s.r||2.6}" fill="${s.color}" opacity="${s.op||1}"/>`).join(''); });
   vis.filter(s=>!s.dots && s.pts.length>1).forEach(s=>{ g += `<polyline fill="none" stroke="${s.color}" stroke-width="${s.w||2}" stroke-linecap="round" ${s.dash?'stroke-dasharray="5 4"':''} points="${s.pts.map(p=>`${X(p.x)},${Y(p.y)}`).join(' ')}"/>`; });
@@ -1185,9 +1191,9 @@ function vInzicht(){
   const m0 = avgOf(aM, START, new Date(+START+6*86400000)), m1 = avgOf(aM, new Date(+lastX-6*86400000), lastX);
   const comp = (f0!=null && f1!=null) ? `<div class="card"><h2>Lichaamssamenstelling sinds de start</h2><div class="small" style="margin-bottom:6px">Het doel is vet kwijt, daarna spier erbij; gewicht volgt daaruit. Haal je 88 kg later omdat je spier opbouwt, dan is dat winst.</div><ul class="trk"><li class="${f1<=f0?'ok':'warn'}">${ICON_GARMIN}<div class="n">Vetmassa<span>doel ${nl(I.fat_mass_goal,1)} kg</span></div><div class="v"><span class="num">${nl(f1,1)}</span><small>kg</small></div><div class="dl ${Math.abs(f1-f0)<0.05?'':f1<=f0?'up':'dn'}">${Math.abs(f1-f0)<0.05?'0':(f1-f0>0?'+':'')+nl(f1-f0,1)}</div></li>${m0!=null&&m1!=null?`<li class="${m1>=m0-0.2?'ok':'warn'}">${ICON_GARMIN}<div class="n">Spiermassa<span>weegschaal</span></div><div class="v"><span class="num">${nl(m1,1)}</span><small>kg</small></div><div class="dl ${Math.abs(m1-m0)<0.05?'':m1>=m0?'up':'dn'}">${Math.abs(m1-m0)<0.05?'0':(m1-m0>0?'+':'')+nl(m1-m0,1)}</div></li>`:''}</ul><div class="small" style="margin-top:6px">Gemiddelde van de laatste week tegen de eerste week (${START.toLocaleDateString('nl-NL',{day:'numeric',month:'short'})}). De weegschaal schat vet en spier met elektrische weerstand: kijk naar de trend over weken, niet naar één meting.</div></div>` : '';
   const M = I.metrics; const bandLo = M.length?M[M.length-1].hrv_band_lo_ms:null, bandHi = M.length?M[M.length-1].hrv_band_hi_ms:null;
-  const c4 = M.length ? chart([{pts:M.map(p=>({x:d(p.day),y:p.hrv_ms})), color:'var(--ink3)', dots:true, r:2},{pts:M.map(p=>({x:d(p.day),y:p.hrv_7d_ms})), color:'var(--accent)'}], {band: bandLo?[bandLo,bandHi]:null, yfmt:v=>nl(v,0)}) : '<p class="muted">Nog geen data.</p>';
-  const c5 = M.length ? chart([{pts:M.map(p=>({x:d(p.day),y:p.rhr})), color:'var(--ink3)', dots:true, r:2},{pts:M.map(p=>({x:d(p.day),y:p.rhr_7d})), color:'var(--red)'}], {yfmt:v=>nl(v,0)}) : '';
-  const c6 = M.length ? chart([{pts:M.map(p=>({x:d(p.day),y:p.sleep_h})), color:'var(--accent)', dots:true, r:2.4}], {y0:4, y1:10, yfmt:v=>nl(v,0)+' u'}) : '';
+  const c4 = M.length ? chart([{pts:M.map(p=>({x:d(p.day),y:p.hrv_ms})), color:'var(--ink3)', dots:true, r:2},{pts:M.map(p=>({x:d(p.day),y:p.hrv_7d_ms})), color:'var(--accent)'}], {bands: M.map(p=>({x:d(p.day), lo:p.hrv_band_lo_ms, hi:p.hrv_band_hi_ms})), yfmt:v=>nl(v,0)}) : '<p class="muted">Nog geen data.</p>';
+  const c5 = M.length ? chart([{pts:M.map(p=>({x:d(p.day),y:p.rhr})), color:'var(--ink3)', dots:true, r:2},{pts:M.map(p=>({x:d(p.day),y:p.rhr_7d})), color:'var(--red)'}], {bands: M.map(p=>({x:d(p.day), lo:p.rhr_band_lo, hi:p.rhr_band_hi})), yfmt:v=>nl(v,0)}) + leg([['var(--ink3)','nacht'],['var(--red)','7 d'],['var(--e-bg)','band']]) : '';
+  const c6 = M.length ? chart([{pts:M.map(p=>({x:d(p.day),y:p.sleep_h})), color:'var(--accent)', dots:true, r:2.4}], {y0:4, y1:10, band:[7,10], yfmt:v=>nl(v,0)+' u'}) + leg([['var(--accent)','per nacht'],['var(--e-bg)','minimaal 7 uur']]) : '';
   const g30 = I.goals30; const n = g30.length; const ns = g30.filter(x=>x.steps>=10000).length, nf = g30.filter(x=>x.floors>=10).length, nw = g30.filter(x=>(x.water_ml||0)>=2000).length;
   const H = I.habits || {}; const hab = (key, name) => { const h = H[key]; if(!h) return ''; const dots = h.days.map(x=>`<i class="${x.v==null?'na':x.v?'n':'y'}" title="${x.eve}"></i>`).join('');
     const txt = h.n_known ? `${h.streak} ${h.streak===1?'avond':'avonden'} zonder ${name}${h.last_yes_txt?` · laatste keer ${esc(h.last_yes_txt)}`:h.since_txt?` · sinds ${esc(h.since_txt)}`:''}` : `nog niets ingevuld`;
@@ -1415,7 +1421,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261021-1842'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261021-1902'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
