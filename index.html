@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261021-1607">
+<meta name="app-build" content="20261021-1613">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -680,7 +680,7 @@ function vCheckin(){
   <div class="card"><h2 class="info" onclick="showInfo('personal')">Personal input <span class="n muted">(over gisteren)</span></h2><textarea class="inp" id="ci-text" placeholder="Hoe ging het gisteren? Bijzonderheden, pijntjes, reistijd, werkdruk…" oninput="CI.text=this.value;ciQueue(1500)">${esc(CI.text)}</textarea><div class="small" id="ci-status" style="margin-top:8px">${CI_STATUS}</div></div>
   <button class="btn" onclick="requestCoach()" ${COACHING?'disabled':''}>${COACHING?'Coach is bezig…':(prev.report && prev.generated_at && String(prev.generated_at).slice(0,10) === D.today ? 'Coachrapport opnieuw genereren' : 'Coachrapport genereren')}</button>
   <div class="small" style="margin:6px 0 10px;text-align:center">Analyseert gisteren met uw workouts, de bio markers van vannacht, het wellness report en uw personal input.</div>
-  ${coachCard(prev)}${prev.weekly?`<div class="card coach"><h2>Coach · weekrapport</h2><p style="margin-top:0">${esc(prev.weekly)}</p>${fbBar('weekly:'+(prev.weekly_day||prev.day))}</div>`:''}</div>`;
+  ${coachCard(prev)}</div>`;
 }
 // ---- beoordeling van de coach (duim omhoog/omlaag + opmerking) ----
 let FB = Object.assign({}, LS.get('pt_fb', {})); let FB_OPEN = {}; let FB_TIMER = null;
@@ -1157,7 +1157,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261021-1607'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261021-1613'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
