@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261021-1305">
+<meta name="app-build" content="20261021-1306">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -549,7 +549,7 @@ Geen diagnoses, geen angsttaal, geen oordeel over één afwijkende nacht, geen s
 Je rustmetabolisme komt uit het gemiddelde van twee formules op je vetvrije massa (Cunningham; ten Haaf 2014, de nauwkeurigste bij sporters in de meta-analyse van 2023). Daar komen de stappen, de sessie van vandaag en de thermogenese van voedsel bij: dat is je onderhoud. In het vetverliesblok gaat daar een tekort af: zo'n 600 kcal op rust-, kracht- en rustige-loopdagen, 350 bij intervallen, 200 bij de duurloop, en 350 op een rustdag vóór een kwaliteitsloop of duurloop. Samen ≈ 3.600 kcal per week, plus wat je met zone 2-sessies verbrandt (die eet je niet terug): 0,5 tot 0,6 kg per week.
 
 ## Waarom niet sneller
-Garthe (2011) zag bij 0,7 % per week nog spierwinst, bij 1,4 % niet. De vloer is de energiebeschikbaarheid: minstens 30 kcal per kilo vetvrije massa ná aftrek van de sessie (IOC REDs 2023); die begrenst het tekort op rust- en krachtdagen. Valt het gewicht twee weken sneller dan 0,7 kg per week, is de ochtend oranje of meld je hoge vermoeidheid of weinig motivatie, dan gaat er automatisch 150 tot 300 kcal bij.
+Garthe (2011) zag bij 0,7 % per week nog spierwinst, bij 1,4 % niet. De vloer is de energiebeschikbaarheid: minstens 30 kcal per kilo vetvrije massa ná aftrek van de sessie (IOC REDs 2023); die begrenst het tekort op rust- en krachtdagen. Val je meer dan 1,5 kg per week af (weekgemiddelde tegen de week ervoor), is de ochtend oranje of meld je hoge vermoeidheid of weinig motivatie, dan gaat er automatisch 150 tot 300 kcal bij.
 
 ## Tekort op een rustdag?
 Spieren groeien in de 24 tot 48 uur na de training, dus ook op een rustdag. Wat die groei nodig heeft is vooral eiwit: de spiereiwitsynthese reageert op aminozuren, niet op een calorieoverschot op die ene dag. Het herstel zelf kost maar weinig energie, en die energie komt in een tekort uit je vetreserve. Een tekort remt de eiwitopbouw wel iets (Areta 2014; Pasiakos 2010), maar krachttraining met voldoende eiwit heft dat grotendeels op; dat geldt voor elke dag van de week. Het tekort ligt daarom op de dagen waar geen prestatie nodig is, zodat de sessies die het verschil maken gevoed zijn. Eén uitzondering: de rustdag vóór een kwaliteitsloop of duurloop krijgt een kleiner tekort en koolhydraten bij het avondeten, voor de voorraad van morgen.
@@ -1157,7 +1157,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261021-1305'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261021-1306'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
