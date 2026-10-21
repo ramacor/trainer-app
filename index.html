@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261021-1828">
+<meta name="app-build" content="20261021-1842">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -142,6 +142,8 @@ svg.chart{width:100%;height:130px;display:block}.legend{display:flex;gap:12px;fo
 .trk.bm li.ok .pl em{background:var(--green);box-shadow:var(--glow)}.trk.bm li.warn .pl em{background:var(--amber)}.trk.bm li.bad .pl em{background:var(--red)}
 :root{--bandtrk:rgba(27,30,39,.10);--bandin:rgba(27,30,39,.30)}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bandtrk:rgba(233,235,242,.10);--bandin:rgba(233,235,242,.34)}}:root[data-theme="dark"]{--bandtrk:rgba(233,235,242,.10);--bandin:rgba(233,235,242,.34)}
+.ichart{margin:10px 0 4px;padding:10px 10px 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px}.ichart .chips.hw{margin:0 0 6px}.ichart .chips.hw span{padding:5px 10px;font-size:12px}.ichart .hab-t{margin:2px 0 0}.dots.thin{gap:1px}.dots.thin i{border-radius:1px}
+.h2row .gear{margin:0 -2px 0 8px;font-size:20px;line-height:1}
 </style>
 </head>
 <body>
@@ -333,6 +335,90 @@ De structuur volgt het onderzoek naar effectieve feedback (Hattie en Timperley 2
 
 ## Beoordelen
 De duimen en opmerkingen sturen de coach bij: lengte, citaten, feiten, herhaling en vragen passen zich aan, en onderdelen die u niet nuttig vond komen niet terug.`],
+ 'Spierpijn': ['Spierpijn', `Spierpijn die een dag na een sessie opkomt, heet DOMS (delayed onset muscle soreness). Hij piekt 24 tot 72 uur na de inspanning en gaat samen met minder kracht, minder bewegingsuitslag en een veranderd looppatroon (Cheung, Hume en Maxwell 2003). Juist in die dagen loop je een kwaliteitssessie met een lichaam dat anders beweegt dan normaal.
+
+## Waarom de app het vraagt
+Spierpijn hoort bij de vier vaste vragen van de Hooper-index (Hooper en Mackinnon 1995), de dagelijkse lijst die topsporters al decennia invullen. Spierpijn zie je niet terug in de nacht van de ring: de HRV herstelt vaak binnen een dag, de spieren hebben er twee nodig.
+
+## Wat de app ermee doet
+• 5 of hoger telt als afwijkend.
+• 5 of hoger vóór een kwaliteitsloop geeft een keuze: drempelblokken of de sessie verschuiven.
+• 6 of hoger maakt van de kwaliteitsloop een rustige loop van dezelfde duur.`],
+ 'Vermoeidheid': ['Vermoeidheid', `Hoe moe je je voelt, los van spierpijn. In een overzicht van 56 studies reageerden korte vragen zoals deze gevoeliger en consistenter op trainingsbelasting dan HRV, hartslag of bloedwaarden (Saw, Main en Gastin 2016). Vermoeidheid was in die studies een van de vragen die het snelst meebewoog met zware weken.
+
+## Waarom de app het vraagt
+Ook vermoeidheid staat in de Hooper-index. In de oorspronkelijke studie bij zwemmers voorspelden deze vragen samen grotendeels wie in een 'staleness'-periode raakte (Hooper en Mackinnon 1995).
+
+## Wat de app ermee doet
+• 5 of hoger telt als afwijkend en weegt mee in hoe je ervoor staat.
+• Samen met een afwijkende nacht weegt het zwaarder dan elk signaal apart.
+• Een lage score (fris) helpt mee aan het oordeel 'fris'.`],
+ 'Stress': ['Stress', `Stress buiten de sport, zoals werk, privé of slecht slapen door een volle kop. Het lichaam maakt geen onderscheid tussen stress van training en stress van het leven: beide vragen om herstel.
+
+## Waarom de app het vraagt
+Bij American-footballspelers was de kans op een blessure in weken met veel studiestress ruim drie keer zo groot als in rustige weken (Mann e.a. 2016). In een meta-analyse van psychosociale factoren was de reactie op stress de sterkste voorspeller van sportblessures (Ivarsson e.a. 2017). Stress hoort daarom ook bij de Hooper-index.
+
+## Wat de app ermee doet
+• 5 of hoger telt als afwijkend en weegt mee in hoe je ervoor staat.
+• De coach kijkt of stress samengaat met een afwijkende nacht; samen is dat een sterker signaal.`],
+ 'Stemming': ['Stemming', `Hoe opgewekt of juist somber en prikkelbaar je je voelt. Stemming is een van de eerste dingen die veranderen als training en herstel uit balans raken.
+
+## Waarom de app het vraagt
+Bij zwemmers steeg de stemmingsverstoring (gemeten met de POMS-vragenlijst) mee met het trainingsvolume en daalde ze weer in de rustige weken (Morgan e.a. 1987). De Europese en Amerikaanse consensus over overtraining noemt stemmingsveranderingen een vroeg signaal (Meeusen e.a. 2013). McLean (2010) voegde stemming daarom toe aan de dagelijkse vragenlijst in het profrugby.
+
+## Wat de app ermee doet
+• 3 of lager telt als afwijkend.
+• Eén sombere dag is een stemming; meerdere dagen achter elkaar is een signaal waar de coach op let.`],
+ 'Motivatie': ['Motivatie', `Hoeveel zin je hebt om te trainen. Dat klinkt als karakter, maar het is ook een meetwaarde: minder zin is in de literatuur een vroeg teken van te veel belasting.
+
+## Waarom de app het vraagt
+De consensus over overtraining noemt verlies van motivatie als een van de eerste symptomen van overreaching, vaak eerder dan een daling in prestatie (Meeusen e.a. 2013). Het overzicht van Saw e.a. (2016) liet zien dat zulke subjectieve maten de belasting goed volgen.
+
+## Wat de app ermee doet
+• 6 of hoger helpt mee aan het oordeel 'fris'.
+• 2 of lager is een signaal; drie dagen achter elkaar weegt zwaar.`],
+ 'Pijn aan gewricht of pees': ['Pijn aan gewricht of pees', `Pijn in een knie, scheen, achillespees, heup of rug is iets anders dan spierpijn. Het is vaak het eerste teken van een overbelastingsblessure, en bij hardlopers ontstaat bijna elke blessure geleidelijk.
+
+## Waarom de app het vraagt
+Wie klachten wekelijks vastlegt, ook als je er nog mee kunt trainen, ziet ongeveer tien keer zoveel overbelastingsproblemen als wie alleen telt wanneer je niet meer kunt trainen (Clarsen, Myklebust en Bahr 2013). Vroeg zien betekent vroeg bijsturen. Bij achillespeesklachten bleek doorgaan met lopen bij lichte pijn, die de volgende ochtend weer weg is, even goed te werken als rust (Silbernagel e.a. 2007). Daarom vraagt de app elke ochtend of de pijn er nog is.
+
+## Wat de app ermee doet
+• Een groene ochtend wordt oranje.
+• Geen kwaliteitsloop en geen zware benen in de gym; rustig lopen alleen als het pijnvrij is.
+• Drie dagen achter elkaar pijn is een reden om ernaar te laten kijken.`],
+ 'Ziektesymptomen': ['Ziektesymptomen', `Keel, neus, hoesten of rillerig. Training met een beginnende infectie kan die verlengen, maar niet elke verkoudheid is een reden om te stoppen.
+
+## Waarom de app het vraagt
+De nekregel uit de sportgeneeskunde (Eichner 1993) maakt het onderscheid: klachten boven de nek, zoals een loopneus of keelpijn, verdragen rustige training. In een gecontroleerde studie verergerde matige inspanning een verkoudheid niet en duurde die ook niet langer (Weidner e.a. 1998). Klachten onder de nek, koorts of spierpijn over het hele lichaam betekenen rust. De consensus van het IOC over belasting en ziekte vraagt daarom om symptomen dagelijks bij te houden (Schwellnus e.a. 2016).
+
+## Wat de app ermee doet
+• Symptomen alleen: de ochtend wordt oranje en de nekregel geldt.
+• Symptomen samen met een afwijkende temperatuur, nachthartslag of ademhaling: rood, rust tot je 24 uur klachtenvrij bent.`],
+ 'Eetlust minder': ['Eetlust minder', `Minder trek dan normaal. In een periode van vetverlies is dat makkelijk te zien als winst, maar het kan ook een signaal zijn.
+
+## Waarom de app het vraagt
+Verminderde eetlust staat in de lijst met symptomen van overreaching en overtraining (Meeusen e.a. 2013). Daarnaast waarschuwt de IOC-consensus over RED-S dat te weinig energie, naast de training, ten koste gaat van herstel, hormonen, botten en prestatie (Mountjoy e.a. 2018). In een tekort is minder eetlust dus juist het moment om op te letten.
+
+## Wat de app ermee doet
+• De coach adviseert toch je eiwit te halen, desnoods als kwark of shake.
+• Het telt als licht signaal en zet geen ochtend op oranje.`],
+ 'Alcohol': ['Alcohol', `Of je de avond ervoor alcohol hebt gedronken. Dat gaat over de avond vóór deze ochtend.
+
+## Waarom de app het vraagt
+Alcohol verlaagt het herstel in de nacht meetbaar. In metingen bij ruim 4.000 mensen daalde het herstel op basis van HRV met ongeveer 9 % na een lage dosis, 24 % na een matige en 39 % na een hoge dosis (Pietilä e.a. 2018). Na een zware sessie remde alcohol de aanmaak van spiereiwit met ongeveer een kwart, ook als er eiwit bij werd gegeten (Parr e.a. 2014).
+
+## Wat de app ermee doet
+• Een slechte nacht na alcohol krijgt die verklaring, zodat de coach het niet als vermoeidheid van training leest.
+• Inzicht telt de avonden zonder alcohol, als gewoonte die je zelf wilt volgen.`],
+ 'Avondsnack': ['Avondsnack', `Of je na het avondeten nog hebt gesnackt, zoals chips of koek. Dit gaat over de avond vóór deze ochtend.
+
+## Waarom de app het vraagt
+Dit is een gewoonte die je zelf wilt veranderen voor het vetverlies. Bijhouden helpt: in een systematisch overzicht ging het zelf registreren van eten steeds samen met meer gewichtsverlies (Burke, Wang en Sevick 2011). Een nieuwe gewoonte voelt na gemiddeld ongeveer 66 dagen automatisch, met grote verschillen per persoon (Lally e.a. 2010). Daarnaast houdt een grote, late maaltijd de nachtelijke hartslag hoger, terwijl een kleine eiwitrijke snack geen nadeel liet zien (Kinsey en Ormsbee 2015).
+
+## Wat de app ermee doet
+• Inzicht telt de avonden zonder avondsnack.
+• Na een avondsnack met een afwijkende nachthartslag noemt de coach de snack als mogelijke oorzaak.
+• Het telt niet mee in de kleur van de ochtend.`],
  'HRV 7 d': ['HRV 7 d', `HRV, hartritmevariabiliteit, is de variatie in de tijd tussen opeenvolgende hartslagen tijdens de nacht, gemeten door de ring. Meer variatie betekent dat het parasympathische zenuwstelsel, de rem van het lichaam, de overhand heeft: het lichaam herstelt. Minder variatie betekent dat het lichaam in de waakstand staat, door training, stress, alcohol of ziekte.
 
 ## Waarom het 7-daags gemiddelde en een eigen band
@@ -668,7 +754,57 @@ function valueNow(key){
     const revs = (D.markers.revisions||[]).filter(v=>v.day===D.today); if(revs.length) lines.push('Oura heeft deze nacht na de eerste synchronisatie aangepast: ' + revs.map(v=>`${v.changes.join(', ')} (versie van ${v.fetched} vervangen om ${v.replaced})`).join('; ') + '.'); }
   return `<div class="valbox ${r.status}"><h4>Uw waarde nu · ${esc(stat)}</h4>${lines.map(l=>`<p>${esc(l)}</p>`).join('')}</div>`;
 }
-function showInfo(key){ const i = INFO[key]; if(!i) return; const more = MORE[key] ? `<details class="more"><summary>Meer informatie</summary><div class="morebody">${infoHtml(MORE[key])}</div></details>` : ''; document.getElementById('mbody').innerHTML = `<h3>${esc(i[0])}</h3><div class="infobody">${infoHtml(i[1])}${more}${valueNow(key)}</div>`; document.getElementById('modal').classList.add('open'); }
+function showInfo(key){ const i = INFO[key]; if(!i) return; const more = MORE[key] ? `<details class="more"><summary>Meer informatie</summary><div class="morebody">${infoHtml(MORE[key])}</div></details>` : ''; EX_BACK = null; EX_OPEN = false;
+  const keep = (document.getElementById('modal').classList.contains('open') && document.getElementById('mbody').dataset.key===key) ? (modalBox()||{}).scrollTop : 0;
+  document.getElementById('mbody').dataset.key = key;
+  document.getElementById('mbody').innerHTML = `<h3>${esc(i[0])}</h3>${infoChart(key)}<div class="infobody">${valueNow(key)}${infoHtml(i[1])}${more}</div>`; document.getElementById('modal').classList.add('open'); const b = modalBox(); if(b) b.scrollTop = keep||0; }
+// ---- grafiek in het detailvenster: 30 of 90 dagen, alleen gemeten of ingevulde waarden ----
+let HWIN = LS.get('pt_hwin', 30);
+function setHwin(n, key){ HWIN = n; LS.set('pt_hwin', n); showInfo(key); }
+const SELF_SCORE = {'Spierpijn':['soreness',[1,4],'1 = geen, 7 = overal pijnlijk'], 'Vermoeidheid':['fatigue',[1,4],'1 = fris, 7 = uitgeput'], 'Stress':['stress',[1,4],'1 = ontspannen, 7 = gespannen'],
+  'Stemming':['mood',[4,7],'1 = somber, 7 = opgewekt'], 'Motivatie':['motivation',[3,7],'1 = geen zin, 7 = veel zin']};
+const SELF_FLAG = {'Pijn aan gewricht of pees':['pain','pijn gemeld'], 'Ziektesymptomen':['symptoms','symptomen gemeld'], 'Eetlust minder':['appetite_low','minder eetlust gemeld'],
+  'Alcohol':['alcohol','alcohol gedronken'], 'Avondsnack':['evening_snack','gesnackt'], 'Pijn of ziekte':['_ps','pijn of symptomen gemeld']};
+function dayList(n){ const out = []; const t0 = new Date(D.today+'T12:00:00'); for(let i=n-1;i>=0;i--){ const x = new Date(+t0 - i*86400000); out.push(x.toISOString().slice(0,10)); } return out; }
+function infoChart(key){
+  const H = D.history; if(!H) return '';
+  const dd = s => new Date(s+'T12:00:00'); const T = dd(D.today); const from = new Date(+T - (HWIN-1)*86400000);
+  const M = H.metrics||[], W = H.wellness||[];
+  const P = (rows, f) => rows.filter(r=>r[f]!=null).map(r=>({x:dd(r.day), y:r[f]}));
+  const win = `<div class="chips hw"><span class="${HWIN===30?'on':''}" onclick="setHwin(30,'${esc(key)}')">30 dagen</span><span class="${HWIN===90?'on':''}" onclick="setHwin(90,'${esc(key)}')">90 dagen</span></div>`;
+  // ja/nee-vragen: één blokje per dag, net als bij Inzicht (groen = niet, rood = wel, grijs = niet ingevuld)
+  if(SELF_FLAG[key]){ const [f, lab] = SELF_FLAG[key]; const eve = f==='alcohol'||f==='evening_snack'; const by = Object.fromEntries(W.map(r=>[r.day, f==='_ps' ? ((r.pain==null && r.symptoms==null) ? null : ((r.pain||r.symptoms) ? 1 : 0)) : r[f]]));
+    const nextDay = s => new Date(+new Date(s+'T12:00:00') + 86400000).toISOString().slice(0,10);
+    const days = eve ? dayList(HWIN+1).slice(0,-1) : dayList(HWIN);   // avondvragen: de avond vóór de ochtend van invullen
+    const vals = days.map(d=>eve ? by[nextDay(d)] : by[d]); const known = vals.filter(v=>v!=null), yes = known.filter(v=>v).length;
+    const dots = days.map((d,i)=>`<i class="${vals[i]==null?'na':vals[i]?'n':'y'}" title="${d}"></i>`).join('');
+    const h = eve && D.insight && D.insight.habits && D.insight.habits[f];
+    const head = h && h.n_known ? `<div class="hab-t"><b>${h.streak}</b><span>${h.streak===1?'avond':'avonden'} zonder ${f==='alcohol'?'alcohol':'avondsnack'}${h.last_yes_txt?` · laatste keer ${esc(h.last_yes_txt)}`:''}</span></div>` : '';
+    return `<div class="ichart">${win}${head}<div class="dots${HWIN>30?' thin':''}">${dots}</div><div class="small" style="margin-top:6px">${known.length?`${yes} van ${known.length} ingevulde ${eve?'avonden':'dagen'} ${lab}`:'nog niets ingevuld'} · groen = nee, rood = ja, grijs = niet ingevuld${eve?' · elk blokje is de avond vóór die ochtend':''}.</div></div>`; }
+  let s = null, o = {}, lg = [];
+  const C = {main:'var(--accent)', dot:'var(--ink3)', band:'var(--green)', lim:'var(--red)'};
+  if(SELF_SCORE[key]){ const [f, band, sc] = SELF_SCORE[key]; const pts = P(W, f);
+    s = [{pts, color:C.main, w:2},{pts, color:C.main, dots:true, r:3}]; o = {y0:1, y1:7, band, yfmt:v=>String(Math.round(v))}; lg = [[C.main,'jouw score'],['var(--e-bg)',`normaal (${band[0]}–${band[1]}) · ${sc}`]]; }
+  else switch(key){
+    case 'HRV 7 d': s = [{pts:P(M,'hrv_ms'), color:C.dot, dots:true, r:2.2},{pts:P(M,'hrv_band_lo_ms'), color:C.band, dash:true, w:1.5},{pts:P(M,'hrv_band_hi_ms'), color:C.band, dash:true, w:1.5},{pts:P(M,'hrv_7d_ms'), color:C.main, w:2.5}];
+      o = {pad:2}; lg = [[C.main,'⌀ 7 dagen'],[C.dot,'per nacht'],[C.band,'je band']]; break;
+    case 'Laagste HR 7 d': s = [{pts:P(M,'rhr'), color:C.dot, dots:true, r:2.2},{pts:P(M,'rhr_band_lo'), color:C.band, dash:true, w:1.5},{pts:P(M,'rhr_band_hi'), color:C.band, dash:true, w:1.5},{pts:P(M,'rhr_7d'), color:C.main, w:2.5}];
+      o = {pad:1}; lg = [[C.main,'⌀ 7 dagen'],[C.dot,'per nacht'],[C.band,'je band']]; break;
+    case 'Laagste HR': { const lim = M.filter(r=>r.rhr_base!=null).map(r=>({x:dd(r.day), y:r.rhr_base+5}));
+      s = [{pts:P(M,'rhr'), color:C.main, w:2},{pts:P(M,'rhr'), color:C.main, dots:true, r:2.6},{pts:lim, color:C.lim, dash:true, w:1.5}]; o = {pad:1}; lg = [[C.main,'per nacht'],[C.lim,'piekgrens (baseline + 5)']]; break; }
+    case 'HR op 7:15 p/km': s = [{pts:P(M,'hr_at_pace_bpm'), color:C.main, w:2},{pts:P(M,'hr_at_pace_bpm'), color:C.main, dots:true, r:2.6}]; o = {pad:1}; lg = [[C.main,'hartslag bij 7:15 per km, ⌀ 14 dagen']]; break;
+    case 'Welzijn': s = [{pts:P(M,'wellness_max'), color:C.main, w:2},{pts:P(M,'wellness_max'), color:C.main, dots:true, r:2.6}]; o = {y0:1, y1:7, band:[1,5], yfmt:v=>String(Math.round(v))}; lg = [[C.main,'hoogste score van de dag'],['var(--e-bg)','normaal (tot en met 5)']]; break;
+    case 'Temperatuur': s = [{pts:P(M,'temp_dev'), color:C.main, w:2},{pts:P(M,'temp_dev'), color:C.main, dots:true, r:2.6}]; o = {y0:-1, y1:1, band:[-0.5,0.5], yfmt:v=>nl(v,1)}; lg = [[C.main,'afwijking per nacht'],['var(--e-bg)','normaal (−0,5 tot +0,5 °C)']]; break;
+    case 'Slaap': s = [{pts:P(M,'sleep_h'), color:C.main, w:2},{pts:P(M,'sleep_h'), color:C.main, dots:true, r:2.6}]; o = {y0:4, y1:10, band:[6,10], yfmt:v=>Math.round(v)+'u'}; lg = [[C.main,'slaap per nacht'],['var(--e-bg)','6 uur of meer']]; break;
+    case 'Ademfrequentie': { const B = H.breath||[]; s = [{pts:B.map(r=>({x:dd(r.day), y:r.v})), color:C.main, w:2},{pts:B.map(r=>({x:dd(r.day), y:r.v})), color:C.main, dots:true, r:2.6},{pts:B.filter(r=>r.base!=null).map(r=>({x:dd(r.day), y:r.base+2})), color:C.lim, dash:true, w:1.5}];
+      o = {pad:0.5, yfmt:v=>nl(v,1)}; lg = [[C.main,'per nacht'],[C.lim,'signaalgrens (+2 boven 3 weken)']]; break; }
+    case 'Gewicht': case 'Lichaamsvet': case 'Spiermassa': { const f = {Gewicht:'weight_kg', Lichaamsvet:'body_fat_pct', Spiermassa:'muscle_mass_kg'}[key]; const pts = ((D.insight||{}).scale||[]).filter(r=>r[f]!=null).map(r=>({x:dd(r.day), y:r[f]}));
+      s = [{pts, color:C.main, w:2},{pts, color:C.main, dots:true, r:2.6}]; o = {pad:0.3, yfmt:v=>nl(v,1)}; lg = [[C.main,'weegschaal']]; break; }
+  }
+  if(!s) return '';
+  const n = s.flatMap(x=>x.pts).filter(p=>+p.x>=+from).length;
+  return `<div class="ichart">${win}${n ? chart(s, Object.assign({x0:from, x1:T}, o)) + leg(lg) : '<p class="small">Nog geen metingen in deze periode.</p>'}</div>`;
+}
 function markerRows(rows){
   let out='', grp='';
   rows.forEach(r=>{ if(r.group!==grp){ grp=r.group; const [gn, gs] = grp.split(' · '); out+=`<div class="grp info" onclick="showInfo('${esc(gn)}')">${esc(gn)}${gs?` <span class="gsub">(${esc(gs)})</span>`:''}</div>`; }
@@ -692,22 +828,22 @@ function vCheckin(){
   if(!CI) CI = { soreness: w.soreness||null, fatigue: w.fatigue||null, stress: w.stress||null, mood: w.mood||null, motivation: w.motivation||null, alcohol: !!w.alcohol, evening_snack: !!w.evening_snack, pain: !!w.pain, pain_note: w.pain_note||'', symptoms: !!w.symptoms, appetite_low: !!w.appetite_low, text: m.personal||'' };
   const seg = (k, v) => `<div class="seg ${LOCKED?'lock':''}">${[1,2,3,4,5,6,7].map(i=>`<span class="${v===i?'on':(pw[k]===i?'prev':'')}" ${LOCKED?'':`onclick="ciSet('${k}',${i})"`}>${i}</span>`).join('')}</div>`;
   const tog = (k) => `<span class="toggle ${CI[k]?'':'off'} ${LOCKED?'lock':''} ${(!CI[k] && pw[k])?'prev':''}" ${LOCKED?'':`onclick="ciToggle('${k}')"`}></span>`;
-  return `<div class="ci"><div class="hdr"><h1>Reflect</h1><span class="date">${esc(D.timeline.yesterday_txt||D.timeline.today_txt)} <span class="gear" id="rf-btn" onclick="requestRefresh()" title="Verversen">${REFRESHING?'⟳':'↻'}</span></span></div>
-  <div class="card"><h2 class="info" onclick="showInfo('biomarkers')">Bio markers <span class="n muted">(vannacht en gisteren)</span></h2>${markerRows(m.rows)}</div>
+  return `<div class="ci"><div class="hdr"><h1>Reflect</h1><span class="date">${esc(D.timeline.yesterday_txt||D.timeline.today_txt)}</span></div>
+  <div class="card"><div class="h2row"><h2 class="info" onclick="showInfo('biomarkers')">Bio markers <span class="n muted">(vannacht en gisteren)</span></h2><span class="gear${REFRESHING?' spin':''}" id="rf-btn" onclick="requestRefresh()" title="Oura en Garmin verversen">${REFRESHING?'⟳':'↻'}</span></div>${markerRows(m.rows)}</div>
   ${syncLine('margin:-4px 0 12px')}
   <div class="card"><h2 class="info" onclick="showInfo('wellness')">Wellness report <span class="n muted">(invullen vóór workout)</span></h2>
     ${LOCKED?`<div class="small lockline"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Ingevuld en verwerkt in het coachrapport van vandaag. <span style="color:var(--accent);cursor:pointer;font-weight:700" onclick="CI_UNLOCK=true;render()">Toch wijzigen</span></span></div>`:''}
-    <div class="muted">Spierpijn</div>${seg('soreness', CI.soreness)}
-    <div class="muted" style="margin-top:8px">Vermoeidheid</div>${seg('fatigue', CI.fatigue)}
-    <div class="muted" style="margin-top:8px">Stress</div>${seg('stress', CI.stress)}
-    <div class="muted" style="margin-top:8px">Stemming</div>${seg('mood', CI.mood)}
-    <div class="muted" style="margin-top:8px">Motivatie</div>${seg('motivation', CI.motivation)}
-    <div class="setrow" style="margin-top:6px"><div><b>Pijn aan gewricht of pees</b><span>geen spierpijn: knie, scheen, achilles, heup, rug</span></div>${tog('pain')}</div>
+    <div class="muted info" onclick="showInfo('Spierpijn')">Spierpijn</div>${seg('soreness', CI.soreness)}
+    <div class="muted info" style="margin-top:8px" onclick="showInfo('Vermoeidheid')">Vermoeidheid</div>${seg('fatigue', CI.fatigue)}
+    <div class="muted info" style="margin-top:8px" onclick="showInfo('Stress')">Stress</div>${seg('stress', CI.stress)}
+    <div class="muted info" style="margin-top:8px" onclick="showInfo('Stemming')">Stemming</div>${seg('mood', CI.mood)}
+    <div class="muted info" style="margin-top:8px" onclick="showInfo('Motivatie')">Motivatie</div>${seg('motivation', CI.motivation)}
+    <div class="setrow" style="margin-top:6px"><div><b class="info" onclick="showInfo('Pijn aan gewricht of pees')">Pijn aan gewricht of pees</b><span>geen spierpijn: knie, scheen, achilles, heup, rug</span></div>${tog('pain')}</div>
     ${CI.pain?`<input class="inp" style="margin:0 0 8px" placeholder="Waar? (bijv. linkerknie)" value="${esc(CI.pain_note||'')}" oninput="CI.pain_note=this.value;ciQueue(1200)">`:''}
-    <div class="setrow"><div><b>Ziektesymptomen</b><span>keel, neus, hoest, rillerig</span></div>${tog('symptoms')}</div>
-    <div class="setrow"><div><b>Eetlust minder</b><span>minder trek dan normaal</span></div>${tog('appetite_low')}</div>
-    <div class="setrow"><div><b>Alcohol</b><span>gisteravond</span></div>${tog('alcohol')}</div>
-    <div class="setrow"><div><b>Avondsnack</b><span>gesnackt na het avondeten (chips, koek, …)</span></div>${tog('evening_snack')}</div>
+    <div class="setrow"><div><b class="info" onclick="showInfo('Ziektesymptomen')">Ziektesymptomen</b><span>keel, neus, hoest, rillerig</span></div>${tog('symptoms')}</div>
+    <div class="setrow"><div><b class="info" onclick="showInfo('Eetlust minder')">Eetlust minder</b><span>minder trek dan normaal</span></div>${tog('appetite_low')}</div>
+    <div class="setrow"><div><b class="info" onclick="showInfo('Alcohol')">Alcohol</b><span>gisteravond</span></div>${tog('alcohol')}</div>
+    <div class="setrow"><div><b class="info" onclick="showInfo('Avondsnack')">Avondsnack</b><span>gesnackt na het avondeten (chips, koek, …)</span></div>${tog('evening_snack')}</div>
   </div>
   <div class="card"><h2 class="info" onclick="showInfo('personal')">Personal input <span class="n muted">(over gisteren)</span></h2><textarea class="inp" id="ci-text" placeholder="Hoe ging het gisteren? Bijzonderheden, pijntjes, reistijd, werkdruk…" oninput="CI.text=this.value;ciQueue(1500)">${esc(CI.text)}</textarea><div class="small" id="ci-status" style="margin-top:8px">${CI_STATUS}</div></div>
   <button class="btn" onclick="requestCoach()" ${COACHING?'disabled':''}>${COACHING?'Coach is bezig…':(prev.report && prev.generated_at && String(prev.generated_at).slice(0,10) === D.today ? 'Coachrapport opnieuw genereren' : 'Coachrapport genereren')}</button>
@@ -1279,7 +1415,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261021-1828'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261021-1842'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
