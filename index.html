@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261022-1505">
+<meta name="app-build" content="20261022-1902">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -150,6 +150,7 @@ svg.chart{width:100%;height:130px;display:block}.legend{display:flex;gap:12px;fo
 .logcoach p{font-size:14.5px;line-height:1.55;margin:0 0 6px}.logcoach h4{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--q);margin:14px 0 4px}.logcoach .sub{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);font-weight:700;margin:8px 0 2px}.logcoach ul{margin:2px 0 6px;padding-left:16px;font-size:14px;line-height:1.5}
 .chab{padding:8px 0}.chab+.chab{border-top:1px solid var(--line)}.chab .hab-t b{font-size:15px;min-width:0;letter-spacing:0}.chab .hab-t span{flex:1}.chab .hab-t em{font-style:normal;font-size:13px;font-weight:700;color:var(--ink2)}
 .list li.plain{display:block;padding:0;border:0;background:none;cursor:default}
+.trk.bm svg.sp{width:40px;height:22px;overflow:visible;display:block}
 </style>
 </head>
 <body>
@@ -779,6 +780,7 @@ function valueNow(key){
         'Slaap':'minimaal 7 uur, het advies voor volwassenen (Watson e.a. 2015); onder 6 uur telt in het ochtendbesluit als korte nacht', 'Laagste HR':`tot ${f(b.hi,0)} bpm, je baseline plus 5; daarboven telt het als piek`,
         'Ademfrequentie':`tot ${f(b.hi,1)} per minuut, 2 boven je gemiddelde van 3 weken`}[key];
       if(why) lines.push(`In het balkje is de lichtere strook je bereik: ${why}. Het streepje is de waarde van nu.`); }
+    else if(['Gewicht','Lichaamsvet','Spiermassa'].includes(key)) lines.push('Het grafiekje naast de waarde is je trend van de laatste 14 dagen: de dunne lijn is elke weging, de dikkere lijn het gemiddelde van drie wegingen, en de stip is vandaag. Dagelijkse schommelingen zijn vooral vocht; let op de richting van de dikke lijn.');
     const cmp = (r.prev!=null && r.ref) ? `Ter vergelijking: ${r.prev_txt||(f(r.prev)+u)} (${r.ref})${r.delta!=null && r.delta!==0 ? `, dus ${r.delta>0?'+':''}${f(r.delta)}${r.delta_unit?' '+r.delta_unit:''}` : ', gelijk'}.` : '';
     if(key==='HRV 7 d'){
       if(r.lo!=null && r.hi!=null) lines.push(`Uw band is ${f(r.lo,0)}–${f(r.hi,0)} ms en het 7-daags gemiddelde ligt ${r.value<r.lo?'eronder: het lichaam is nog niet in de herstelstand':r.value>r.hi?'erboven: meestal diep herstel, soms overcompensatie':'erbinnen: normaal herstel'}. Dat bepaalt de kleur van de regel.`);
@@ -853,6 +855,16 @@ function infoChart(key){
   const n = s.flatMap(x=>x.pts).filter(p=>+p.x>=+from).length;
   return `<div class="ichart">${win}${n ? chart(s, Object.assign({x0:from, x1:T}, o)) + leg(lg) : '<p class="small">Nog geen metingen in deze periode.</p>'}</div>`;
 }
+// weegschaal: mini-grafiek van de laatste 14 dagen (elke weging dun, voortschrijdend gemiddelde van 3 wegingen dik, vandaag als stip in de statuskleur)
+function scaleSpark(r){
+  const f = {Gewicht:'weight_kg', Lichaamsvet:'body_fat_pct', Spiermassa:'muscle_mass_kg'}[r.name]; if(!f || !D.insight) return '';
+  const from = addDays(D.today, -13);
+  const pts = (D.insight.scale||[]).filter(s=>s.day>=from && s[f]!=null && s[f]>0).map(s=>s[f]); if(pts.length < 2) return '';
+  const lo = Math.min(...pts), hi = Math.max(...pts); const x = k => (k/(pts.length-1)*38+1).toFixed(1), y = v => (19-(v-lo)/((hi-lo)||1)*16).toFixed(1);
+  const avg = pts.map((_,k)=>{ const s = pts.slice(Math.max(0,k-2), k+1); return s.reduce((a,c)=>a+c,0)/s.length; });
+  const col = r.status==='ok' ? 'var(--green)' : r.status==='warn' ? 'var(--amber)' : r.status==='bad' ? 'var(--red)' : 'var(--ink2)';
+  return `<svg class="sp" viewBox="0 0 40 22" aria-label="trend 14 dagen"><polyline points="${pts.map((v,k)=>`${x(k)},${y(v)}`).join(' ')}" fill="none" stroke="var(--bandin)" stroke-width="1.2" stroke-linejoin="round"/><polyline points="${avg.map((v,k)=>`${x(k)},${y(v)}`).join(' ')}" fill="none" stroke="var(--ink2)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${x(pts.length-1)}" cy="${y(pts[pts.length-1])}" r="2.6" fill="${col}"/></svg>`;
+}
 function markerRows(rows){
   let out='', grp='';
   rows.forEach(r=>{ if(r.group!==grp){ grp=r.group; const [gn, gs] = grp.split(' · '); out+=`<div class="grp info" onclick="showInfo('${esc(gn)}')">${esc(gn)}${gs?` <span class="gsub">(${esc(gs)})</span>`:''}</div>`; }
@@ -862,8 +874,10 @@ function markerRows(rows){
     const val = r.txt!=null ? r.txt : (r.value==null ? '—' : (Number.isInteger(r.value)? r.value : nl(r.value, r.unit==='°C'?2:1)));
     MROWS[r.key||r.name] = r;
     const b = r.band; const pc = x => Math.max(0, Math.min(100, (x-b.min)/((b.max-b.min)||1)*100));
-    const pill = b && r.value!=null ? `<div class="pl" title="bereik ${nl(b.lo,1)}–${nl(b.hi,1)}"><i style="left:${pc(b.lo)}%;right:${100-pc(b.hi)}%"></i><em style="left:${pc(r.value)}%"></em></div>` : '<div class="pl none"></div>';
-    out+=`<li class="${r.status} info" onclick="showInfo('${esc(r.key||r.name)}')">${SRC[r.src]||''}<div class="n">${esc(r.name)}${r.sub?`<span>${esc(r.sub)}</span>`:''}</div>${pill}<div class="v"><span class="num">${val}</span><small>${r.unit?esc(r.unit):''}</small></div><div class="dl ${cls}">${dl}</div></li>`; });
+    const sp = !b ? scaleSpark(r) : '';
+    const pill = b && r.value!=null ? `<div class="pl" title="bereik ${nl(b.lo,1)}–${nl(b.hi,1)}"><i style="left:${pc(b.lo)}%;right:${100-pc(b.hi)}%"></i><em style="left:${pc(r.value)}%"></em></div>` : (sp || '<div class="pl none"></div>');
+    const sub = r.sub || (sp ? '14 dagen' : '');
+    out+=`<li class="${r.status} info" onclick="showInfo('${esc(r.key||r.name)}')">${SRC[r.src]||''}<div class="n">${esc(r.name)}${sub?`<span>${esc(sub)}</span>`:''}</div>${pill}<div class="v"><span class="num">${val}</span><small>${r.unit?esc(r.unit):''}</small></div><div class="dl ${cls}">${dl}</div></li>`; });
   return `<ul class="trk bm">${out}</ul>`;
 }
 
@@ -1496,7 +1510,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261022-1505'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261022-1902'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
