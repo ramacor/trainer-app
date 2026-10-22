@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261022-1913">
+<meta name="app-build" content="20261022-1923">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -155,6 +155,7 @@ svg.chart{width:100%;height:130px;display:block}.legend{display:flex;gap:12px;fo
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--deep:rgba(0,0,0,.38);--edge:rgba(164,147,255,.28)}}
 :root[data-theme="dark"]{--deep:rgba(0,0,0,.38);--edge:rgba(164,147,255,.28)}
 .coach .concl,.coach .concl.ok,.coach .concl.warn,.coach .concl.r,.coach .fuel{background:var(--deep);border:1px solid var(--edge)}
+.olist.bands li{display:flex;justify-content:space-between;gap:10px;align-items:center}.olist.bands .t span{display:block}.olist.bands .bh{font-size:11.5px;color:var(--ink3);margin-top:2px}.olist.bands .bd{text-align:right;flex:0 0 auto}.olist.bands .bd b{font-size:14px}.bdots{justify-content:flex-end;margin-top:5px}.bdots i{flex:0 0 18px;height:6px}
 </style>
 </head>
 <body>
@@ -449,6 +450,21 @@ Dit is een gewoonte die je zelf wilt veranderen voor het vetverlies. Bijhouden h
 • Inzicht telt de avonden zonder avondsnack.
 • Na een avondsnack met een afwijkende nachthartslag noemt de coach de snack als mogelijke oorzaak.
 • Het telt niet mee in de kleur van de ochtend.`],
+ 'Tempobanden': ['Tempobanden', `Je kwaliteitssessies hebben een tempoband: drempeltempo, 4×4-tempo en intervaltempo. De coach schuift die band niet op één goede sessie, maar kijkt naar meerdere sessies en naar het herstel ertussen.
+
+## Wanneer een band sneller wordt
+Na twee opeenvolgende sessies op dezelfde band die allebei voldoen, gaat de band 5 s/km sneller. Een sessie voldoet als:
+• het tempo in of iets onder de band lag, zonder dat het een andere sessie werd (meer dan 10 % sneller);
+• de herhalingen gelijkmatig waren, zonder verval;
+• bij blokken van 2,5 minuut of langer de hartslag met borstband onder de bandvloer bleef;
+• de zwaarte niet hoger was dan de sessie vraagt;
+• het herstel in de 48 uur erna schoon was: spierpijn niet hoger dan 4, geen pijn, geen piek in je nachthartslag, geen HRV onder je band, en je eerstvolgende rustige loop zonder verhoogde hartslag bij hetzelfde tempo.
+
+## De toets en de rem
+Na een stap is de eerstvolgende sessie op die band de toets. Gaat die beheerst, dan is de stap bevestigd; zo niet, dan gaat de band terug. Nooit meer dan één stap tegelijk, en niet in de drie weken voor een doel. Lukt in twee sessies op rij de eerste herhaling al niet binnen de band, dan gaat hij een stap trager.
+
+## Waar het vandaan komt
+De regel volgt de beslisregels voor progressie uit het onderzoek naar coachfeedback per hardloopworkout (Menu › Whitepapers). Na een ongewoon snelle sessie kijkt de coach naar de dagen erna: blijven kuiten en hamstrings rustig, dan was het fitheid; worden ze stijf, dan was het enthousiasme en blijft de band staan.`],
  'HRV 7 d': ['HRV 7 d', `HRV, hartritmevariabiliteit, is de variatie in de tijd tussen opeenvolgende hartslagen tijdens de nacht, gemeten door de ring. Meer variatie betekent dat het parasympathische zenuwstelsel, de rem van het lichaam, de overhand heeft: het lichaam herstelt. Minder variatie betekent dat het lichaam in de waakstand staat, door training, stress, alcohol of ziekte.
 
 ## Waarom het 7-daags gemiddelde en een eigen band
@@ -1160,6 +1176,14 @@ function showMilestone(i){ const m = D.plan.milestones[i]; if(!m) return; if(m.g
   document.getElementById('mbody').innerHTML = `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><h3>${esc(m.title)}</h3><span class="pill ${MS_PILL[m.kind]||'q'}">${esc(m.label)}</span></div>
     <p class="meta">${esc(dNL(m.date))} · week ${m.week} van ${D.plan.pursuit.weeks} · ${days>0?`over ${days} dagen`:days===0?'vandaag':`${-days} dagen geleden`}</p><p><b>${esc(m.sub)}</b></p><h4>Wat en waarom</h4><p>${esc(m.detail)}</p>`;
   document.getElementById('modal').classList.add('open'); const b = modalBox(); if(b) b.scrollTop = 0; }
+function bandCard(){
+  const B = (D.plan||{}).pace_bands||[]; if(!B.length) return '';
+  const rows = B.map(b=>{ const l = b.last; const dots = Array.from({length:b.need}, (_,i)=>`<i class="${i<b.streak?'y':'na'}"></i>`).join('');
+    const sub = b.pending ? 'nieuwe band: de volgende sessie is de toets' : l ? (l.qualifies ? `${l.day.slice(8,10)}-${l.day.slice(5,7)} telt mee` : (l.notes||[]).filter(n=>n!=='herstel wordt nog gevolgd').length ? `${l.day.slice(8,10)}-${l.day.slice(5,7)}: ${(l.notes||[]).filter(n=>n!=='herstel wordt nog gevolgd').slice(0,2).join(', ')}` : `${l.day.slice(8,10)}-${l.day.slice(5,7)}: herstel wordt nog gevolgd`) : 'nog geen sessie op dit tempo';
+    const hist = (b.history||[]).length ? `<span class="bh">${b.history.map(h=>`${h.day.slice(8,10)}-${h.day.slice(5,7)} ${esc(h.from)} → ${esc(h.to)} (${esc(h.status)})`).join(' · ')}</span>` : '';
+    return `<li><div class="t"><b>${esc(b.name)}</b><span>${esc(sub)}</span>${hist}</div><div class="bd"><b>${esc(b.band.replace('/km',''))}</b><div class="dots bdots">${dots}</div></div></li>`; }).join('');
+  return `<div class="card"><h2 class="info" onclick="showInfo('Tempobanden')">Tempobanden</h2><ul class="olist bands">${rows}</ul><div class="small" style="margin-top:8px">Een band gaat ${'5'} s/km sneller na twee beheerste sessies op rij met schoon herstel ertussen; de blokjes tellen mee. Rustig tempo en wedstrijdtempo schuiven niet via deze regel.</div></div>`;
+}
 function vDoel(){
   goalsLoad();
   const p = D.plan; const gs = goalsAll(); const byId = Object.fromEntries(gs.map(g=>[g.id,g]));
@@ -1178,6 +1202,7 @@ function vDoel(){
   <div class="card"><div class="h2row"><h2>Doelen</h2><span class="plus" onclick="showGoal(null, true)" title="Doel toevoegen"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></div><div class="glist">${gs.map(goalCard).join('')}</div></div>
   <div class="card"><h2>Doelstellingen</h2>${objH}</div>
   <div class="card"><h2>Trainingsfases</h2>${phH}</div>
+  ${bandCard()}
   <div class="card"><h2>Mijlpalen</h2><ul class="ms2">${msH}</ul><div class="small" style="margin-top:8px">Tik op een mijlpaal voor uitleg. Alleen de komende weken zijn in detail uitgewerkt; herzieningsmomenten: ${esc(p.revisions.join(', '))}.</div></div>`;
 }
 function sessLi(s, click){ return `<li class="${(s.kind==='vervalt'||s.kind==='rust')?'':'tap'}${s.result?' done':''}${s.kind==='rust'?' rest':''}${(!s.result && s.date<D.today)?' past':''}${s.date===D.today?' today':''}" onclick="${(s.kind==='vervalt'||s.kind==='rust')?'':`${click}`}"><div class="day"><b>${s.date.slice(8,10)}</b><span>${s.date_txt.slice(0,2)}</span></div><div class="li-main"><div class="ttl">${esc(s.kind==='rust'?'Rust':cname(s.code))}${s.result?' <span class="tick on ttl-tick">✓</span>':''} ${s.kind==='rust'?'':s.kind==='vervalt'?'<span class="pill r">vervalt</span>':s.kind==='kracht'?`<span class="pill s">${esc(s.tag||'kracht')}</span>`:s.quality?'<span class="pill q">kwaliteit</span>':'<span class="pill e">rustig</span>'}</div>${s.kind==='rust'?'':`<b>${esc(wname(s))}</b>`}<span>${s.kind==='rust'?esc(s.purpose||''):s.kind==='loop'?(s.purpose||'').split('Focus:')[0].replace('Doel: ','').slice(0,90):s.kind==='kracht'?(s.exercises||[]).filter(e=>!e.startsWith('Warming-up')).slice(0,3).map(e=>e.split(' · ')[0].replace(/^\d[ab]? /,'')).join(', '):''}</span></div><div class="li-r col">${(s.kind==='vervalt'||s.kind==='rust')?'':stopwatch(s.result?{minutes: parseInt(s.result.duration)||s.minutes, km: s.result.distance_km||null}:s)}</div></li>`; }
@@ -1518,7 +1543,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261022-1913'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261022-1923'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
