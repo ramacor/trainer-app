@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261022-1902">
+<meta name="app-build" content="20261022-1910">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -780,7 +780,7 @@ function valueNow(key){
         'Slaap':'minimaal 7 uur, het advies voor volwassenen (Watson e.a. 2015); onder 6 uur telt in het ochtendbesluit als korte nacht', 'Laagste HR':`tot ${f(b.hi,0)} bpm, je baseline plus 5; daarboven telt het als piek`,
         'Ademfrequentie':`tot ${f(b.hi,1)} per minuut, 2 boven je gemiddelde van 3 weken`}[key];
       if(why) lines.push(`In het balkje is de lichtere strook je bereik: ${why}. Het streepje is de waarde van nu.`); }
-    else if(['Gewicht','Lichaamsvet','Spiermassa'].includes(key)) lines.push('Het grafiekje naast de waarde is je trend van de laatste 14 dagen: de dunne lijn is elke weging, de dikkere lijn het gemiddelde van drie wegingen, en de stip is vandaag. Dagelijkse schommelingen zijn vooral vocht; let op de richting van de dikke lijn.');
+    else if(['Gewicht','Lichaamsvet','Spiermassa'].includes(key)) lines.push('Het grafiekje naast de waarde is een verkleinde versie van de grafiek hierboven: elke weging over dezelfde periode, met vandaag als stip. Dagelijkse schommelingen zijn vooral vocht; let op de richting over meerdere dagen.');
     const cmp = (r.prev!=null && r.ref) ? `Ter vergelijking: ${r.prev_txt||(f(r.prev)+u)} (${r.ref})${r.delta!=null && r.delta!==0 ? `, dus ${r.delta>0?'+':''}${f(r.delta)}${r.delta_unit?' '+r.delta_unit:''}` : ', gelijk'}.` : '';
     if(key==='HRV 7 d'){
       if(r.lo!=null && r.hi!=null) lines.push(`Uw band is ${f(r.lo,0)}–${f(r.hi,0)} ms en het 7-daags gemiddelde ligt ${r.value<r.lo?'eronder: het lichaam is nog niet in de herstelstand':r.value>r.hi?'erboven: meestal diep herstel, soms overcompensatie':'erbinnen: normaal herstel'}. Dat bepaalt de kleur van de regel.`);
@@ -848,22 +848,26 @@ function infoChart(key){
     case 'Slaap': s = [{pts:P(M,'sleep_h'), color:C.main, w:2},{pts:P(M,'sleep_h'), color:C.main, dots:true, r:2.6}]; o = {y0:4, y1:10, band:[7,10], yfmt:v=>Math.round(v)+'u'}; lg = [[C.main,'slaap per nacht'],['var(--e-bg)','minimaal 7 uur']]; break;
     case 'Ademfrequentie': { const B = H.breath||[]; s = [{pts:B.map(r=>({x:dd(r.day), y:r.v})), color:C.main, w:2},{pts:B.map(r=>({x:dd(r.day), y:r.v})), color:C.main, dots:true, r:2.6}];
       o = {pad:0.5, yfmt:v=>nl(v,1), bands:B.filter(r=>r.base!=null).map(r=>({x:dd(r.day), lo:r.base-3, hi:r.base+2}))}; lg = [[C.main,'per nacht'],['var(--e-bg)','normaal (tot 2 boven je 3-weeksgemiddelde)']]; break; }
-    case 'Gewicht': case 'Lichaamsvet': case 'Spiermassa': { const f = {Gewicht:'weight_kg', Lichaamsvet:'body_fat_pct', Spiermassa:'muscle_mass_kg'}[key]; const pts = ((D.insight||{}).scale||[]).filter(r=>r[f]!=null).map(r=>({x:dd(r.day), y:r[f]}));
+    case 'Gewicht': case 'Lichaamsvet': case 'Spiermassa': { const f = {Gewicht:'weight_kg', Lichaamsvet:'body_fat_pct', Spiermassa:'muscle_mass_kg'}[key]; const pts = ((D.insight||{}).scale||[]).filter(r=>r[f]!=null && r[f]>0).map(r=>({x:dd(r.day), y:r[f]}));
       s = [{pts, color:C.main, w:2},{pts, color:C.main, dots:true, r:2.6}]; o = {pad:0.3, yfmt:v=>nl(v,1)}; lg = [[C.main,'weegschaal']]; break; }
   }
   if(!s) return '';
   const n = s.flatMap(x=>x.pts).filter(p=>+p.x>=+from).length;
   return `<div class="ichart">${win}${n ? chart(s, Object.assign({x0:from, x1:T}, o)) + leg(lg) : '<p class="small">Nog geen metingen in deze periode.</p>'}</div>`;
 }
-// weegschaal: mini-grafiek van de laatste 14 dagen (elke weging dun, voortschrijdend gemiddelde van 3 wegingen dik, vandaag als stip in de statuskleur)
+// weegschaal: mini-versie van de grafiek in het detailvenster (zelfde periode, op datum, zelfde schaal), vandaag als stip in de statuskleur
 function scaleSpark(r){
   const f = {Gewicht:'weight_kg', Lichaamsvet:'body_fat_pct', Spiermassa:'muscle_mass_kg'}[r.name]; if(!f || !D.insight) return '';
-  const from = addDays(D.today, -13);
-  const pts = (D.insight.scale||[]).filter(s=>s.day>=from && s[f]!=null && s[f]>0).map(s=>s[f]); if(pts.length < 2) return '';
-  const lo = Math.min(...pts), hi = Math.max(...pts); const x = k => (k/(pts.length-1)*38+1).toFixed(1), y = v => (19-(v-lo)/((hi-lo)||1)*16).toFixed(1);
-  const avg = pts.map((_,k)=>{ const s = pts.slice(Math.max(0,k-2), k+1); return s.reduce((a,c)=>a+c,0)/s.length; });
-  const col = r.status==='ok' ? 'var(--green)' : r.status==='warn' ? 'var(--amber)' : r.status==='bad' ? 'var(--red)' : 'var(--ink2)';
-  return `<svg class="sp" viewBox="0 0 40 22" aria-label="trend 14 dagen"><polyline points="${pts.map((v,k)=>`${x(k)},${y(v)}`).join(' ')}" fill="none" stroke="var(--bandin)" stroke-width="1.2" stroke-linejoin="round"/><polyline points="${avg.map((v,k)=>`${x(k)},${y(v)}`).join(' ')}" fill="none" stroke="var(--ink2)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${x(pts.length-1)}" cy="${y(pts[pts.length-1])}" r="2.6" fill="${col}"/></svg>`;
+  const T = new Date(D.today+'T12:00:00'), from = new Date(+T - (HWIN-1)*86400000);
+  const all = (D.insight.scale||[]).filter(s=>s[f]!=null && s[f]>0).map(s=>({x:new Date(s.day+'T12:00:00'), y:s[f]}));
+  const pts = all.filter(p=>+p.x>=+from && +p.x<=+T);
+  const before = all.filter(p=>+p.x<+from).pop();   // net als de grote grafiek: de lijn begint aan de linkerrand vanuit de meting ervoor
+  if(before && pts.length){ const a = pts[0]; pts.unshift({x:from, y: before.y + (a.y-before.y)*((+from - +before.x)/((+a.x - +before.x)||1))}); }
+  if(pts.length < 2) return '';
+  let lo = Math.min(...pts.map(p=>p.y)), hi = Math.max(...pts.map(p=>p.y)); const pd = (hi-lo)*0.15 || 0.3; lo -= pd; hi += pd;
+  const X = p => (1 + (+p.x - +from)/(+T - +from)*38).toFixed(1), Y = p => (20 - (p.y-lo)/(hi-lo)*18).toFixed(1);
+  const last = pts[pts.length-1]; const col = r.status==='ok' ? 'var(--green)' : r.status==='warn' ? 'var(--amber)' : r.status==='bad' ? 'var(--red)' : 'var(--ink2)';
+  return `<svg class="sp" viewBox="0 0 40 22" aria-label="trend ${HWIN} dagen"><polyline points="${pts.map(p=>`${X(p)},${Y(p)}`).join(' ')}" fill="none" stroke="var(--ink2)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${X(last)}" cy="${Y(last)}" r="2.6" fill="${col}"/></svg>`;
 }
 function markerRows(rows){
   let out='', grp='';
@@ -876,7 +880,7 @@ function markerRows(rows){
     const b = r.band; const pc = x => Math.max(0, Math.min(100, (x-b.min)/((b.max-b.min)||1)*100));
     const sp = !b ? scaleSpark(r) : '';
     const pill = b && r.value!=null ? `<div class="pl" title="bereik ${nl(b.lo,1)}–${nl(b.hi,1)}"><i style="left:${pc(b.lo)}%;right:${100-pc(b.hi)}%"></i><em style="left:${pc(r.value)}%"></em></div>` : (sp || '<div class="pl none"></div>');
-    const sub = r.sub || (sp ? '14 dagen' : '');
+    const sub = r.sub;
     out+=`<li class="${r.status} info" onclick="showInfo('${esc(r.key||r.name)}')">${SRC[r.src]||''}<div class="n">${esc(r.name)}${sub?`<span>${esc(sub)}</span>`:''}</div>${pill}<div class="v"><span class="num">${val}</span><small>${r.unit?esc(r.unit):''}</small></div><div class="dl ${cls}">${dl}</div></li>`; });
   return `<ul class="trk bm">${out}</ul>`;
 }
@@ -1250,7 +1254,7 @@ function vInzicht(){
   const c2 = chart([{pts:aM, color:'var(--ink)', dots:true, op:.75},{pts:tM, color:'var(--accent)', w:2.5}], kort ? {...RB, yfmt:v=>nl(v,1)} : {...RB, y0:35, y1:39.5, yfmt:v=>nl(v,1)});
   const tW = I.weight_target.map(p=>({x:d(p.day),y:p.v})), aW = sc.map(p=>({x:d(p.day),y:p.weight_kg}));
   const c3 = chart([{pts:aW, color:'var(--ink)', dots:true, op:.75},{pts:tW, color:'var(--accent)', w:2.5}], kort ? {...RB, yfmt:v=>nl(v,1)} : {...RB, y0:86, y1:97, yfmt:v=>nl(v,0)});
-  const tF = I.fat_target.map(p=>({x:d(p.day),y:p.v})), aF = sc.map(p=>({x:d(p.day),y:p.body_fat_pct}));
+  const tF = I.fat_target.map(p=>({x:d(p.day),y:p.v})), aF = sc.filter(p=>p.body_fat_pct>0).map(p=>({x:d(p.day),y:p.body_fat_pct}));
   const c3b = chart([{pts:aF, color:'var(--ink)', dots:true, op:.75},{pts:tF, color:'var(--red)', dash:true, w:2.5}], kort ? {...RB, yfmt:v=>nl(v,1)+' %'} : {...RB, y0:18, y1:30, yfmt:v=>nl(v,0)+' %'});
   const tFk = (I.fatkg_target||[]).map(p=>({x:d(p.day),y:p.v})), aFk = sc.filter(p=>p.weight_kg&&p.body_fat_pct).map(p=>({x:d(p.day),y:p.weight_kg*p.body_fat_pct/100}));
   const cFk = chart([{pts:aFk, color:'var(--ink)', dots:true, op:.75},{pts:tFk, color:'var(--green)', w:2.5}], kort ? {...RB, yfmt:v=>nl(v,1)} : {...RB, yfmt:v=>nl(v,0)});
@@ -1510,7 +1514,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261022-1902'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261022-1910'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
