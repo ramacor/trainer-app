@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261022-2004">
+<meta name="app-build" content="20261022-2055">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -191,7 +191,7 @@ async function api(method, path, body){ const r = await fetch(SYNC_URL+path, {me
 async function load(){
   if(!CODE){ renderSetup(); return; }
   render();
-  try{ const r = await api('GET','/state'); if(r && r.payload){ D = r.payload; D._updated = r.updated_at; applyLocalDone(); LS.set('pt_snapshot', D); render(); dayCheck(); } else if(!D){ renderSetup('Nog geen snapshot voor deze synccode. Draai de dagelijkse ronde op de Mac.'); } }
+  try{ const r = await api('GET','/state'); if(r && r.payload){ D = r.payload; D._updated = r.updated_at; applyLocalDone(); applyLocalInputs(); LS.set('pt_snapshot', D); render(); dayCheck(); inputsRetry(); } else if(!D){ renderSetup('Nog geen snapshot voor deze synccode. Draai de dagelijkse ronde op de Mac.'); } }
   catch(e){ if(!D) renderSetup('Kan de server niet bereiken: '+e.message); else toast('Offline: laatste snapshot getoond'); }
 }
 function renderSetup(msg){ document.getElementById('app').innerHTML = `<div class="setup"><img src="logo.svg" alt="" style="width:72px;height:auto;margin:0 0 14px;display:block"><h1 style="font-size:28px;margin:0 0 6px">Trainer</h1><p class="muted">Vul de synccode in die op de Mac in config/app_sync.json staat. De code is het enige geheim; uw gegevens staan achter die code.</p>${msg?`<p class="muted" style="color:var(--red)">${esc(msg)}</p>`:''}<input id="code" placeholder="PT-XXXX-XXXX-XXXX" value="${esc(CODE)}"><button class="btn" onclick="saveCode()">Verbinden</button></div>`; }
@@ -237,7 +237,7 @@ async function coachGo(){
   const t0 = Date.now();
   while(Date.now()-t0 < 240000){
     await new Promise(r=>setTimeout(r,5000));
-    try{ const r = await api('GET','/state'); if(r && r.payload && r.updated_at !== before){ D = r.payload; D._updated = r.updated_at; LS.set('pt_snapshot', D); COACHING=false; CI_UNLOCK=false; render(); toast('Coachrapport klaar'); return; } }catch(e){}
+    try{ const r = await api('GET','/state'); if(r && r.payload && r.updated_at !== before){ D = r.payload; D._updated = r.updated_at; applyLocalDone(); applyLocalInputs(); LS.set('pt_snapshot', D); COACHING=false; CI_UNLOCK=false; render(); toast('Coachrapport klaar'); return; } }catch(e){}
   }
   COACHING=false; render(); toast('Geen antwoord van de server; probeer het later opnieuw');
 }
@@ -265,7 +265,7 @@ async function requestRefresh(first){
   const t0 = Date.now();
   while(Date.now()-t0 < (first ? 180000 : 120000)){
     await new Promise(r=>setTimeout(r,5000));
-    try{ const r = await api('GET','/state'); if(r && r.payload && r.updated_at !== before && (!first || r.payload.today >= todayNL())){ D = r.payload; D._updated = r.updated_at; applyLocalDone(); LS.set('pt_snapshot', D); REFRESHING=false; render(); toast(first ? 'De gegevens van vandaag zijn geladen' : 'Bijgewerkt'); return; } }catch(e){}
+    try{ const r = await api('GET','/state'); if(r && r.payload && r.updated_at !== before && (!first || r.payload.today >= todayNL())){ D = r.payload; D._updated = r.updated_at; applyLocalDone(); applyLocalInputs(); LS.set('pt_snapshot', D); REFRESHING=false; render(); toast(first ? 'De gegevens van vandaag zijn geladen' : 'Bijgewerkt'); return; } }catch(e){}
   }
   REFRESHING=false; render(); toast(first ? 'De dag van vandaag is nog niet geladen; tik op ↻ om het opnieuw te proberen' : 'Geen nieuwe gegevens binnen 2 minuten; staat de server aan?');
 }
@@ -935,6 +935,8 @@ function vCheckin(){
   const w = ST ? {} : (m.wellness || {}); const prev = ST ? {} : (D.today_block.coach || {});
   if(CI_DAY !== TD){ CI = null; CI_DAY = TD; CI_UNLOCK = false; }   // nieuwe dag: leeg beginnen, nooit de waarden van gisteren
   const LOCKED = !!(prev.generated_at && String(prev.generated_at).slice(0,10) === TD) && !CI_UNLOCK;
+  const LOCI = (inputsGet()['checkin:'+TD]||{}).data;
+  if(!CI && LOCI) CI = Object.assign({}, LOCI);
   if(!CI) CI = { soreness: w.soreness||null, fatigue: w.fatigue||null, stress: w.stress||null, mood: w.mood||null, motivation: w.motivation||null, alcohol: !!w.alcohol, evening_snack: !!w.evening_snack, pain: !!w.pain, pain_note: w.pain_note||'', symptoms: !!w.symptoms, appetite_low: !!w.appetite_low, text: ST ? '' : (m.personal||'') };
   const seg = (k, v) => `<div class="seg ${LOCKED?'lock':''}">${[1,2,3,4,5,6,7].map(i=>`<span class="${v===i?'on':''} ${pw[k]===i?'prev':''}" ${LOCKED?'':`onclick="ciSet('${k}',${i})"`}>${i}</span>`).join('')}</div>`;
   const tog = (k) => `<span class="toggle ${CI[k]?'':'off'} ${LOCKED?'lock':''} ${pw[k]?'prev':''}" ${LOCKED?'':`onclick="ciToggle('${k}')"`}></span>`;
@@ -1018,13 +1020,13 @@ function coachCard(prev){
 }
 let CI_STATUS = 'Wordt automatisch opgeslagen.'; let CI_TIMER = null;
 let CH_TIMER = null;
-function chToggle(k){ const ch = D.today_block.challenge; ch.checked = ch.checked || {}; if(ch.checked[k]) delete ch.checked[k]; else ch.checked[k] = true; LS.set('pt_snapshot', D); render(); clearTimeout(CH_TIMER); CH_TIMER = setTimeout(chSave, 600); }
-async function chSave(){ try{ await api('PUT','/input',{day:D.today, kind:'challenge', data:{items: D.today_block.challenge.checked||{}}}); }catch(e){ toast('Afvinken niet opgeslagen, probeer opnieuw'); } }
+function chToggle(k){ if(isStale()){ toast('Even wachten: de challenge van vandaag wordt geladen'); requestRefresh(true); return; } const ch = D.today_block.challenge; ch.checked = ch.checked || {}; if(ch.checked[k]) delete ch.checked[k]; else ch.checked[k] = true; inputSave('challenge', D.today, {items: Object.assign({}, ch.checked)}); LS.set('pt_snapshot', D); render(); clearTimeout(CH_TIMER); CH_TIMER = setTimeout(chSave, 600); }
+async function chSave(){ const ok = await inputPush('challenge', D.today); if(!ok) toast('Afgevinkt op je telefoon; naar de server lukt nu niet, de app probeert het opnieuw'); }
 function ciSet(k,v){ CI[k] = (CI[k]===v) ? null : v; render(); ciQueue(600); }
 function ciToggle(k){ CI[k]=!CI[k]; render(); ciQueue(600); }
-function ciQueue(ms){ clearTimeout(CI_TIMER); ciStatus('Opslaan…'); CI_TIMER = setTimeout(ciSave, ms); }
+function ciQueue(ms){ inputSave('checkin', todayNL(), Object.assign({}, CI)); clearTimeout(CI_TIMER); ciStatus('Opslaan…'); CI_TIMER = setTimeout(ciSave, ms); }
 function ciStatus(t){ CI_STATUS = t; const el=document.getElementById('ci-status'); if(el) el.textContent = t; }
-async function ciSave(){ try{ await api('PUT','/input',{day:todayNL(), kind:'checkin', data:CI}); if(!isStale()){ D.markers.wellness = {...CI}; D.markers.personal = CI.text; } LS.set('pt_snapshot', D); ciStatus('Automatisch opgeslagen · '+new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'})); }catch(e){ ciStatus('Opslaan mislukt, probeert het opnieuw bij de volgende wijziging'); } }
+async function ciSave(){ inputSave('checkin', todayNL(), Object.assign({}, CI)); const ok = await inputPush('checkin', todayNL()); if(!isStale()){ D.markers.wellness = {...CI}; D.markers.personal = CI.text; } LS.set('pt_snapshot', D); ciStatus(ok ? 'Automatisch opgeslagen · '+new Date().toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}) : 'Bewaard op je telefoon; de server krijgt het zodra de verbinding er is'); }
 
 // ---------------------------------------------------------------- vandaag
 function vVandaag(){
@@ -1095,6 +1097,24 @@ function resultBlock(x){ const r=x.result; if(!r) return ''; if(r.manual) return
   if(r.laps && r.laps.length){ h += `<table class="wtab" style="margin-top:8px">${r.laps.map(l=>`<tr class="${l.type==='midpoint'?'mid':''}"><td class="t">${esc(l.type)}</td><td class="d">${esc(l.duration)}</td><td class="d">${l.distance_m?l.distance_m+' m':''}</td><td class="z">${esc(l.pace||'')}</td><td class="n">${l.avg_hr?'HR '+Math.round(l.avg_hr)+(l.max_hr?' / '+Math.round(l.max_hr):''):''}</td></tr>`).join('')}</table>`; }
   return h; }
 let MD = LS.get('pt_done', {});   // {dag: {code: {done, at}}}: handmatig afgevinkte sessies, tot de server ze heeft overgenomen
+// ---- lokale invoer: alles wat je invult wordt meteen op je telefoon bewaard en gaat vóór de snapshot van de server,
+// zodat een verversing of sync niets wegveegt; mislukt de server, dan probeert de app het later opnieuw
+const PEND_KEY = 'pt_inputs';
+function inputsGet(){ return LS.get(PEND_KEY, {}) || {}; }
+function inputSave(kind, day, data){ const P = inputsGet(); P[kind+':'+day] = {kind, day, data, at: new Date().toISOString(), synced: false}; LS.set(PEND_KEY, P); }
+async function inputPush(kind, day){ const P = inputsGet(); const e = P[kind+':'+day]; if(!e) return true;
+  try{ await api('PUT','/input',{day, kind, data: e.data}); const Q = inputsGet(); if(Q[kind+':'+day] && Q[kind+':'+day].at === e.at){ Q[kind+':'+day].synced = true; LS.set(PEND_KEY, Q); } return true; }
+  catch(err){ return false; } }
+function inputsRetry(){ Object.values(inputsGet()).filter(e=>!e.synced).forEach(e=>inputPush(e.kind, e.day)); }
+function applyLocalInputs(){
+  if(!D) return; const P = inputsGet(); const keep = {}; const cut = addDays(todayNL(), -4);
+  Object.entries(P).forEach(([k, e])=>{ if(!e || e.day < cut) return; keep[k] = e;
+    if(e.day !== D.today) return;
+    if(e.kind === 'challenge' && D.today_block && D.today_block.challenge) D.today_block.challenge.checked = Object.assign({}, (e.data||{}).items||{});
+    if(e.kind === 'checkin' && D.markers){ D.markers.wellness = Object.assign({}, D.markers.wellness||{}, e.data); D.markers.personal = (e.data||{}).text || D.markers.personal; }
+  });
+  LS.set(PEND_KEY, keep);
+}
 function applyLocalDone(){ if(!D) return; const cut = new Date(Date.now()-5*86400000).toISOString().slice(0,10);
   Object.keys(MD).forEach(day=>{ if(day < cut){ delete MD[day]; return; } Object.entries(MD[day]).forEach(([code,v])=>{ const set = x=>{ if(!x || x.code!==code || x.date!==day) return; if(v.done && !x.result) x.result = {manual:true, at:v.at}; if(!v.done && x.result && x.result.manual) delete x.result; };
     (D.today_block.workouts||[]).forEach(set); (D.plan.weeks||[]).forEach(w=>w.sessions.forEach(set)); (D.log||[]).forEach(L=>{ if(L.day!==day) return; L.planned.forEach(pl=>{ if(pl.code===code) pl.manual_done = !!v.done; }); }); }); });
@@ -1595,7 +1615,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261022-2004'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261022-2055'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
