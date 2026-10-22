@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261022-1946">
+<meta name="app-build" content="20261022-1956">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -920,7 +920,10 @@ let CI = null; let CI_DAY = null; let CI_UNLOCK = false;
 function vCheckin(){
   const m = D.markers; const ST = isStale(); const TD = todayNL();
   // nieuwe dag nog niet gesynchroniseerd: de snapshot gaat over gisteren, dus leeg beginnen en gisteren als paarse ring tonen
-  const w = ST ? {} : (m.wellness || {}); const pw = ST ? (m.wellness || {}) : (m.wellness_prev || {}); const prev = ST ? {} : (D.today_block.coach || {});
+  // paarse ring = per vraag de laatst ingevulde waarde (niet per se gisteren); op een nieuwe dag telt ook wat in de snapshot van gisteren staat
+  const pw = Object.assign({}, m.wellness_prev || {});
+  if(ST && m.wellness) Object.keys(m.wellness).forEach(k=>{ if(k!=='day' && m.wellness[k]!=null) pw[k] = m.wellness[k]; });
+  const w = ST ? {} : (m.wellness || {}); const prev = ST ? {} : (D.today_block.coach || {});
   if(CI_DAY !== TD){ CI = null; CI_DAY = TD; CI_UNLOCK = false; }   // nieuwe dag: leeg beginnen, nooit de waarden van gisteren
   const LOCKED = !!(prev.generated_at && String(prev.generated_at).slice(0,10) === TD) && !CI_UNLOCK;
   if(!CI) CI = { soreness: w.soreness||null, fatigue: w.fatigue||null, stress: w.stress||null, mood: w.mood||null, motivation: w.motivation||null, alcohol: !!w.alcohol, evening_snack: !!w.evening_snack, pain: !!w.pain, pain_note: w.pain_note||'', symptoms: !!w.symptoms, appetite_low: !!w.appetite_low, text: ST ? '' : (m.personal||'') };
@@ -1573,7 +1576,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261022-1946'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261022-1956'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
