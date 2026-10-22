@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261022-1910">
+<meta name="app-build" content="20261022-1913">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -151,6 +151,10 @@ svg.chart{width:100%;height:130px;display:block}.legend{display:flex;gap:12px;fo
 .chab{padding:8px 0}.chab+.chab{border-top:1px solid var(--line)}.chab .hab-t b{font-size:15px;min-width:0;letter-spacing:0}.chab .hab-t span{flex:1}.chab .hab-t em{font-style:normal;font-size:13px;font-weight:700;color:var(--ink2)}
 .list li.plain{display:block;padding:0;border:0;background:none;cursor:default}
 .trk.bm svg.sp{width:40px;height:22px;overflow:visible;display:block}
+:root{--deep:rgba(108,86,224,.08);--edge:rgba(108,86,224,.28)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--deep:rgba(0,0,0,.38);--edge:rgba(164,147,255,.28)}}
+:root[data-theme="dark"]{--deep:rgba(0,0,0,.38);--edge:rgba(164,147,255,.28)}
+.coach .concl,.coach .concl.ok,.coach .concl.warn,.coach .concl.r,.coach .fuel{background:var(--deep);border:1px solid var(--edge)}
 </style>
 </head>
 <body>
@@ -1514,7 +1518,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261022-1910'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261022-1913'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
