@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261022-1956">
+<meta name="app-build" content="20261022-1959">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -156,6 +156,7 @@ svg.chart{width:100%;height:130px;display:block}.legend{display:flex;gap:12px;fo
 :root[data-theme="dark"]{--deep:rgba(0,0,0,.38);--edge:rgba(164,147,255,.28)}
 .coach .concl,.coach .concl.ok,.coach .concl.warn,.coach .concl.r,.coach .fuel{background:var(--deep);border:1px solid var(--edge)}
 .olist.bands li{display:flex;justify-content:space-between;gap:10px;align-items:center}.olist.bands .t span{display:block}.olist.bands .bh{font-size:11.5px;color:var(--ink3);margin-top:2px}.olist.bands .bd{text-align:right;flex:0 0 auto}.olist.bands .bd b{font-size:14px}.bdots{justify-content:flex-end;margin-top:5px}.bdots i{flex:0 0 18px;height:6px}
+.lockbtn{margin:0 -2px 0 8px;cursor:pointer;display:inline-flex;line-height:1}.lockbtn svg{width:20px;height:20px;fill:none;stroke:var(--green);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.lockbtn.open svg{stroke:var(--ink2)}
 </style>
 </head>
 <body>
@@ -917,6 +918,13 @@ function markerRows(rows){
 
 // ---------------------------------------------------------------- check-in
 let CI = null; let CI_DAY = null; let CI_UNLOCK = false;
+// slotje rechtsboven in het wellness report: dicht = verwerkt in het coachrapport van vandaag (tik om toch te wijzigen), open = ontgrendeld
+function lockIcon(locked, done){
+  if(!done) return '';
+  const body = '<rect x="5" y="11" width="14" height="10" rx="2"/>';
+  if(locked) return `<span class="lockbtn" title="Ingevuld en verwerkt in het coachrapport van vandaag; tik om toch te wijzigen" onclick="CI_UNLOCK=true;render();toast('Ontgrendeld: wijzig wat je wilt en genereer daarna het coachrapport opnieuw')"><svg viewBox="0 0 24 24">${body}<path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>`;
+  return `<span class="lockbtn open" title="Ontgrendeld; genereer het coachrapport opnieuw om de wijziging te verwerken" onclick="CI_UNLOCK=false;render()"><svg viewBox="0 0 24 24">${body}<path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg></span>`;
+}
 function vCheckin(){
   const m = D.markers; const ST = isStale(); const TD = todayNL();
   // nieuwe dag nog niet gesynchroniseerd: de snapshot gaat over gisteren, dus leeg beginnen en gisteren als paarse ring tonen
@@ -933,8 +941,7 @@ function vCheckin(){
   ${weeklyCard()}
   <div class="card"><div class="h2row"><h2 class="info" onclick="showInfo('biomarkers')">Bio markers <span class="n muted">(vannacht en gisteren)</span></h2><span class="gear${REFRESHING?' spin':''}" id="rf-btn" onclick="requestRefresh()" title="Oura en Garmin verversen">${REFRESHING?'⟳':'↻'}</span></div>${markerRows(m.rows)}</div>
   ${syncLine('margin:-4px 0 12px')}
-  <div class="card"><h2 class="info" onclick="showInfo('wellness')">Wellness report <span class="n muted">(invullen vóór workout)</span></h2>
-    ${LOCKED?`<div class="small lockline"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>Ingevuld en verwerkt in het coachrapport van vandaag. <span style="color:var(--accent);cursor:pointer;font-weight:700" onclick="CI_UNLOCK=true;render()">Toch wijzigen</span></span></div>`:''}
+  <div class="card"><div class="h2row"><h2 class="info" onclick="showInfo('wellness')">Wellness report <span class="n muted">(vóór workout)</span></h2>${lockIcon(LOCKED, !!(prev.generated_at && String(prev.generated_at).slice(0,10) === TD))}</div>
     <div class="muted info" onclick="showInfo('Spierpijn')">Spierpijn</div>${seg('soreness', CI.soreness)}
     <div class="muted info" style="margin-top:8px" onclick="showInfo('Vermoeidheid')">Vermoeidheid</div>${seg('fatigue', CI.fatigue)}
     <div class="muted info" style="margin-top:8px" onclick="showInfo('Stress')">Stress</div>${seg('stress', CI.stress)}
@@ -1576,7 +1583,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261022-1956'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261022-1959'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
