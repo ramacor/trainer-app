@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261022-1923">
+<meta name="app-build" content="20261022-1946">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -173,6 +173,7 @@ let lastTouch = 0; document.addEventListener('touchend', e => { const now = Date
 const SYNC_URL = 'https://duhynxczceeqixyocaqr.supabase.co/functions/v1/pt';
 const LS = { get:(k,d)=>{ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v);}catch(e){return d;} }, set:(k,v)=>{ try{localStorage.setItem(k, JSON.stringify(v));}catch(e){} } };
 let CODE = LS.get('pt_code', ''); let D = LS.get('pt_snapshot', null); let TAB = LS.get('pt_tab', 'vandaag');
+try{ const q = new URLSearchParams(location.search).get('tab'); if(q){ TAB = q; history.replaceState(null, '', location.pathname); } }catch(e){}   // pushmelding opent een pagina, bijv. ?tab=weekly
 const ICON_OURA = '<i class="src oura"><svg viewBox="0 0 40 40" width="16" height="16"><rect x="13" y="3" width="14" height="4" rx="1" fill="currentColor"/><circle cx="20" cy="24" r="12.5" fill="none" stroke="currentColor" stroke-width="4"/></svg></i>';
 const ICON_GARMIN = '<i class="src garmin"></i>';
 const ICON_SELF = '<i class="src self"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></i>';
@@ -203,8 +204,8 @@ function render(){
     ['plan','Plan','<path d="M4 6h16M4 12h16M4 18h10"/>'],
     ['doel','Doel','<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>'],
     ['menu','Menu','<path d="M4 7h16M4 12h16M4 17h16"/>']];
-  const screens = {checkin: vCheckin, vandaag: vVandaag, doel: vDoel, plan: vPlan, inzicht: vInzicht, menu: vMenu, log: vLog, meer: vMeer, reminders: vReminders, voeding: vVoeding, zone2: vZone2, papers: vPapers, paper: vPaper, voedpref: vVoedPref};
-  const tabOf = {inzicht:'menu', log:'menu', meer:'menu', reminders:'menu', zone2:'menu', papers:'menu', paper:'menu', voedpref:'voeding'}; const cur = tabOf[TAB] || TAB;
+  const screens = {weekly: vWeekly, checkin: vCheckin, vandaag: vVandaag, doel: vDoel, plan: vPlan, inzicht: vInzicht, menu: vMenu, log: vLog, meer: vMeer, reminders: vReminders, voeding: vVoeding, zone2: vZone2, papers: vPapers, paper: vPaper, voedpref: vVoedPref};
+  const tabOf = {weekly:'menu', inzicht:'menu', log:'menu', meer:'menu', reminders:'menu', zone2:'menu', papers:'menu', paper:'menu', voedpref:'voeding'}; const cur = tabOf[TAB] || TAB;
   const old = document.getElementById('screen'); const keep = (old && LAST_TAB===TAB) ? old.scrollTop : 0;
   const oldChips = document.querySelector('.chips'); const keepX = (oldChips && LAST_TAB===TAB) ? oldChips.scrollLeft : 0;
   document.getElementById('app').innerHTML = vTimeline() + `<div class="screen" id="screen">${isStale()?`<div class="newday" onclick="requestRefresh(true)"><span class="nd-spin">${REFRESHING?'⟳':'↻'}</span><div><b>Nieuwe dag</b>${REFRESHING?'Oura en Garmin worden gesynchroniseerd; de gegevens van vandaag laden zo.':'Je ziet nog de gegevens van gisteren. Tik om Oura en Garmin te synchroniseren.'}</div></div>`:''}${(screens[TAB]||vVandaag)()}</div>` +
@@ -459,6 +460,15 @@ Na twee opeenvolgende sessies op dezelfde band die allebei voldoen, gaat de band
 • bij blokken van 2,5 minuut of langer de hartslag met borstband onder de bandvloer bleef;
 • de zwaarte niet hoger was dan de sessie vraagt;
 • het herstel in de 48 uur erna schoon was: spierpijn niet hoger dan 4, geen pijn, geen piek in je nachthartslag, geen HRV onder je band, en je eerstvolgende rustige loop zonder verhoogde hartslag bij hetzelfde tempo.
+
+## De 4×4 stuurt op hartslag
+Bij de Noorse 4×4 meet de coach met de gegevens per seconde hoe lang je hartslag in blok 2 nodig heeft om 174 te halen. Haalt hij die niet binnen twee minuten bij het geplande tempo, dan is dat tempo te makkelijk geworden.
+
+## Rustig tempo
+De rustige band schuift niet op een snelle rustige loop. Alleen de snelle kant schuift 10 s/km, in totaal hooguit 15, na drie stabiele rustige lopen van 40 minuten of langer aan de snelle kant van de band, met borstband, een gemiddelde hartslag van 146 of lager en minder dan 3,5 % drift tussen de eerste en tweede helft.
+
+## Na een tijdrit
+Een tijdrit herijkt alle banden. De tijd wordt omgerekend naar een VDOT-getal (Daniels en Gilbert); de banden van blok 1 gaan uit van een 5 km in 26:30. Elke band schuift hooguit 10 s/km per tijdrit, ook bij een doorbraak.
 
 ## De toets en de rem
 Na een stap is de eerstvolgende sessie op die band de toets. Gaat die beheerst, dan is de stap bevestigd; zo niet, dan gaat de band terug. Nooit meer dan één stap tegelijk, en niet in de drie weken voor een doel. Lukt in twee sessies op rij de eerste herhaling al niet binnen de band, dan gaat hij een stap trager.
@@ -917,6 +927,7 @@ function vCheckin(){
   const seg = (k, v) => `<div class="seg ${LOCKED?'lock':''}">${[1,2,3,4,5,6,7].map(i=>`<span class="${v===i?'on':''} ${pw[k]===i?'prev':''}" ${LOCKED?'':`onclick="ciSet('${k}',${i})"`}>${i}</span>`).join('')}</div>`;
   const tog = (k) => `<span class="toggle ${CI[k]?'':'off'} ${LOCKED?'lock':''} ${pw[k]?'prev':''}" ${LOCKED?'':`onclick="ciToggle('${k}')"`}></span>`;
   return `<div class="ci"><div class="hdr"><h1>Reflect</h1><span class="date">${esc(dayYesterday())}</span></div>
+  ${weeklyCard()}
   <div class="card"><div class="h2row"><h2 class="info" onclick="showInfo('biomarkers')">Bio markers <span class="n muted">(vannacht en gisteren)</span></h2><span class="gear${REFRESHING?' spin':''}" id="rf-btn" onclick="requestRefresh()" title="Oura en Garmin verversen">${REFRESHING?'⟳':'↻'}</span></div>${markerRows(m.rows)}</div>
   ${syncLine('margin:-4px 0 12px')}
   <div class="card"><h2 class="info" onclick="showInfo('wellness')">Wellness report <span class="n muted">(invullen vóór workout)</span></h2>
@@ -1179,10 +1190,10 @@ function showMilestone(i){ const m = D.plan.milestones[i]; if(!m) return; if(m.g
 function bandCard(){
   const B = (D.plan||{}).pace_bands||[]; if(!B.length) return '';
   const rows = B.map(b=>{ const l = b.last; const dots = Array.from({length:b.need}, (_,i)=>`<i class="${i<b.streak?'y':'na'}"></i>`).join('');
-    const sub = b.pending ? 'nieuwe band: de volgende sessie is de toets' : l ? (l.qualifies ? `${l.day.slice(8,10)}-${l.day.slice(5,7)} telt mee` : (l.notes||[]).filter(n=>n!=='herstel wordt nog gevolgd').length ? `${l.day.slice(8,10)}-${l.day.slice(5,7)}: ${(l.notes||[]).filter(n=>n!=='herstel wordt nog gevolgd').slice(0,2).join(', ')}` : `${l.day.slice(8,10)}-${l.day.slice(5,7)}: herstel wordt nog gevolgd`) : 'nog geen sessie op dit tempo';
+    const sub = (b.rule==='drift' && !l) ? 'nog geen rustige loop van 40 minuten of langer' : b.pending ? 'nieuwe band: de volgende sessie is de toets' : l ? (l.qualifies ? `${l.day.slice(8,10)}-${l.day.slice(5,7)} telt mee` : (l.notes||[]).filter(n=>n!=='herstel wordt nog gevolgd').length ? `${l.day.slice(8,10)}-${l.day.slice(5,7)}: ${(l.notes||[]).filter(n=>n!=='herstel wordt nog gevolgd').slice(0,2).join(', ')}` : `${l.day.slice(8,10)}-${l.day.slice(5,7)}: herstel wordt nog gevolgd`) : 'nog geen sessie op dit tempo';
     const hist = (b.history||[]).length ? `<span class="bh">${b.history.map(h=>`${h.day.slice(8,10)}-${h.day.slice(5,7)} ${esc(h.from)} → ${esc(h.to)} (${esc(h.status)})`).join(' · ')}</span>` : '';
     return `<li><div class="t"><b>${esc(b.name)}</b><span>${esc(sub)}</span>${hist}</div><div class="bd"><b>${esc(b.band.replace('/km',''))}</b><div class="dots bdots">${dots}</div></div></li>`; }).join('');
-  return `<div class="card"><h2 class="info" onclick="showInfo('Tempobanden')">Tempobanden</h2><ul class="olist bands">${rows}</ul><div class="small" style="margin-top:8px">Een band gaat ${'5'} s/km sneller na twee beheerste sessies op rij met schoon herstel ertussen; de blokjes tellen mee. Rustig tempo en wedstrijdtempo schuiven niet via deze regel.</div></div>`;
+  return `<div class="card"><h2 class="info" onclick="showInfo('Tempobanden')">Tempobanden</h2><ul class="olist bands">${rows}</ul><div class="small" style="margin-top:8px">Een kwaliteitsband gaat 5 s/km sneller na twee beheerste sessies op rij met schoon herstel ertussen. Bij rustig tempo schuift alleen de snelle kant, na drie stabiele rustige lopen van 40 minuten of langer met lage hartslag en weinig drift. Een tijdrit herijkt alle banden. De blokjes tellen mee.</div></div>`;
 }
 function vDoel(){
   goalsLoad();
@@ -1456,10 +1467,29 @@ function vZone2(){
 }
 
 // ---------------------------------------------------------------- meer
+// ---------------------------------------------------------------- weekrapport (zondag 20:00)
+let WKI = 0;
+function weeklyCard(){
+  const R = (D.weekly||[])[0]; if(!R) return '';
+  const age = Math.round((new Date(todayNL()+'T12:00:00') - new Date(R.end+'T12:00:00'))/86400000); if(age > 2) return '';
+  return `<div class="card coach hl" onclick="WKI=0;goTab('weekly')" style="cursor:pointer"><h2>Coach · weekrapport</h2><p class="kop">${esc(R.titel)}</p><p>${esc(R.kern)}</p><div class="small" style="margin-top:4px"><span style="color:var(--accent);font-weight:700">Lees het weekrapport ›</span></div></div>`;
+}
+function vWeekly(){
+  const L = D.weekly||[];
+  const head = `<div class="hdr"><h1>Weekrapport</h1><span class="d" onclick="goTab('menu')" style="cursor:pointer">← menu</span></div>`;
+  if(!L.length) return head + `<div class="card"><p class="muted">Het eerste weekrapport verschijnt zondag om 20:00, met een melding op je telefoon.</p></div>`;
+  const R = L[Math.min(WKI, L.length-1)];
+  const secs = (R.secties||[]).map(s=>`<b class="t">${esc(s.t)}</b><ul class="concl-l">${s.p.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('');
+  const when = R.generated_at ? String(R.generated_at).replace('T',' ').slice(0,16) : '';
+  const others = L.map((x,i)=>i===WKI?'':`<li class="tap" onclick="WKI=${i};render();document.getElementById('screen').scrollTop=0"><div class="li-main"><b>${esc(x.titel)}</b><span>${esc(x.kern)}</span></div><div class="li-r">${CHEV}</div></li>`).join('');
+  return head + `<div class="card coach hl"><h2>${esc(R.titel)}</h2><div class="concl"><b class="t" style="margin-top:0">In het kort</b><p style="margin:2px 0 0">${esc(R.kern)}</p></div>${secs}${when?`<div class="small">Gemaakt ${esc(when)}</div>`:''}${fbBar('weekrapport:'+R.end)}</div>`
+    + (others ? `<div class="card"><h2>Eerdere weken</h2><ul class="list">${others}</ul></div>` : '');
+}
 function vMenu(){
   return `<div class="hdr"><h1 style="display:flex;align-items:center;gap:10px"><img src="logo.svg" alt="" style="width:34px;height:auto">Menu</h1></div>
   <div class="card"><ul class="list">
     <li class="tap" onclick="goTab('inzicht')"><div class="li-main"><b>Inzicht</b><span>gewoontes, vet- en spiermassa, 10 km-prognose, herstel</span></div><div class="li-r">${CHEV}</div></li>
+    <li class="tap" onclick="goTab('weekly')"><div class="li-main"><b>Weekrapporten</b><span>elke zondag om 20:00: prestaties, herstel en biomarkers van de week</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('log')"><div class="li-main"><b>Log</b><span>per dag · workouts, challenge, wellness en coach</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('papers')"><div class="li-main"><b>Whitepapers</b><span>de onderzoeksrapporten achter de app, om rustig door te lezen</span></div><div class="li-r">${CHEV}</div></li>
     <li class="tap" onclick="goTab('zone2')"><div class="li-main"><b>Zone 2</b><span>extra workouts: fietsen (Tacx), zwemmen, roeien</span></div><div class="li-r">${CHEV}</div></li>
@@ -1543,7 +1573,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261022-1923'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261022-1946'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
