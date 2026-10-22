@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261022-1959">
+<meta name="app-build" content="20261022-2004">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -157,6 +157,7 @@ svg.chart{width:100%;height:130px;display:block}.legend{display:flex;gap:12px;fo
 .coach .concl,.coach .concl.ok,.coach .concl.warn,.coach .concl.r,.coach .fuel{background:var(--deep);border:1px solid var(--edge)}
 .olist.bands li{display:flex;justify-content:space-between;gap:10px;align-items:center}.olist.bands .t span{display:block}.olist.bands .bh{font-size:11.5px;color:var(--ink3);margin-top:2px}.olist.bands .bd{text-align:right;flex:0 0 auto}.olist.bands .bd b{font-size:14px}.bdots{justify-content:flex-end;margin-top:5px}.bdots i{flex:0 0 18px;height:6px}
 .lockbtn{margin:0 -2px 0 8px;cursor:pointer;display:inline-flex;line-height:1}.lockbtn svg{width:20px;height:20px;fill:none;stroke:var(--green);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.lockbtn.open svg{stroke:var(--ink2)}
+.coach p{margin:0 0 10px}.coach p:last-child{margin-bottom:6px}.coach p b{font-weight:700}.coach p.aside{font-size:13.5px;line-height:1.5;color:var(--ink2);border-left:2px solid var(--edge);padding:2px 0 2px 10px;margin:4px 0 12px}.coach p.quote{font-style:italic;color:var(--ink2);margin:4px 0 12px}.coach .concl p{margin:2px 0 0}
 </style>
 </head>
 <body>
@@ -977,31 +978,42 @@ function fbNote(t, txt){ const f = Object.assign({}, fbGet(t)); f.text = txt; f.
 function fbQueue(ms){ clearTimeout(FB_TIMER); FB_TIMER = setTimeout(fbSave, ms||400); }
 async function fbSave(){ try{ await api('PUT','/input',{day:todayNL(), kind:'feedback', data:{items: FB}}); Object.keys(FB).forEach(k=>{ FB[k].saved = true; }); LS.set('pt_fb', FB); if(D){ D.feedback = Object.assign({}, D.feedback||{}, FB); LS.set('pt_snapshot', D); } document.querySelectorAll('[id^=fbs-]').forEach(el=>el.textContent='Opgeslagen ✓'); return true; }catch(e){ toast('Beoordeling niet opgeslagen, probeer opnieuw'); return false; } }
 const FUEL_LBL = {voor:'Vóór', tijdens:'Tijdens', na:'Na', avond:'Vanavond', dag:'De dag'};
+// ---------------------------------------------------------------- coachtekst leesbaar: alinea's, labels vet, feit en citaat apart
+function para(s){
+  if(!s) return '';
+  return String(s).split(/\n\s*\n/).map(p=>{ p = p.trim(); if(!p) return '';
+    if(p.startsWith('§')) return `<p class="aside">${esc(p.slice(1).trim())}</p>`;
+    if(p.startsWith('❝')) return `<p class="quote">${esc(p.slice(1).trim())}</p>`;
+    const ss = p.split(/(?<=[.!?”])\s+(?=[A-Z0-9“ÉÈ])/); const out = [];
+    for(let i=0;i<ss.length;i+=3) out.push(ss.slice(i,i+3).join(' '));   // lange alinea's in stukken van hooguit drie zinnen
+    return out.map((c,k)=>`<p>${k===0 ? leadBold(esc(c)) : esc(c)}</p>`).join(''); }).join('');
+}
+function leadBold(h){ const m = h.match(/^([^:.!?<]{2,42}):\s/); return m ? `<b>${m[1]}:</b> ${h.slice(m[0].length)}` : h; }
 function coachFood(c){
   const r = c && c.report; const v = r && r.voeding;
   if(!v || !v.titel) return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach · voeding</h2><p>Nog geen voedingsadvies voor vandaag: genereer het coachrapport onder Reflect.</p></div>`;
   const rows = ['voor','tijdens','na','avond'].filter(k=>v[k]).map(k=>`<li><b>${FUEL_LBL[k]}</b> ${esc(v[k])}</li>`).join('');
   return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach · voeding</h2><p class="kop">${esc(v.titel)}</p>
     ${v.letop?`<div class="concl warn"><b class="t" style="margin-top:0">Let op</b><p style="margin:2px 0 0">${esc(v.letop)}</p></div>`:''}
-    ${v.dag?`<b class="t">De dag</b><p>${esc(v.dag)}</p>`:''}
+    ${v.dag?`<b class="t">De dag</b>${para(v.dag)}`:''}
     ${rows?`<b class="t">Rond de sessie</b><ul class="concl-l">${rows}</ul>`:''}
-    ${v.feit?`<b class="t">Achtergrond</b><p>${esc(v.feit)}</p>`:''}
+    ${v.feit?`<p class="aside">${esc(v.feit)}</p>`:''}
     ${v.bron?`<div class="small" style="margin-top:6px">Op basis van ${esc(v.bron)}.</div>`:''}${c.day?fbBar('voeding:'+c.day):''}</div>`;
 }
 function coachToday(c){
   const r = c.report; const col = r ? ({GREEN:'ok',GREEN_HOLD:'ok',AMBER:'warn',RED:'r',NO_DATA:'ok'}[r.colour]||'ok') : 'ok';
   const concl = (r&&r.conclusie&&r.conclusie.length) ? `<div class="concl ${col}"><b class="t" style="margin-top:0">Aandachtspunten</b><ul>${r.conclusie.map(x=>`<li><b>${esc(x.k)}</b> ${esc(x.t)}</li>`).join('')}</ul></div>` : '';
-  const vo = r && r.vooruit ? `<b class="t">Vooruit</b><p>${esc(r.vooruit)}</p>` : '';
-  return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach</h2>${concl}<b class="t">Programma</b><p>${esc(c.today||'Nog geen advies: genereer het coachrapport onder Reflect.')}</p>${vo}${c.day?fbBar('vandaag:'+c.day):''}</div>`;
+  const vo = r && r.vooruit ? `<b class="t">Vooruit</b>${para(r.vooruit)}` : '';
+  return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach</h2>${concl}<b class="t">Programma</b>${para(c.today||'Nog geen advies: genereer het coachrapport onder Reflect.')}${vo}${c.day?fbBar('vandaag:'+c.day):''}</div>`;
 }
 function coachCard(prev){
   const r = prev.report;
   if(!r) return `<div class="card coach hl"><h2>Coach</h2><p>${esc(prev.analysis||'Nog geen rapport: vul het wellness report in en tik op "Coachrapport genereren".')}</p>${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}</div>`;
   const col = {GREEN:'ok',GREEN_HOLD:'ok',AMBER:'warn',RED:'r',NO_DATA:'ok'}[r.colour]||'ok';
-  const sec = (t, x) => x ? `<b class="t">${t}</b><p>${esc(x)}</p>` : '';
-  const deep = (r.verdieping&&r.verdieping.length) ? `<b class="t">Verdieping</b>${r.verdieping.map(d=>`<details class="more"><summary>${esc(d.title)}</summary><div class="morebody"><p>${esc(d.text)}</p></div></details>`).join('')}` : '';
+  const sec = (t, x) => x ? `<b class="t">${t}</b>${para(x)}` : '';
+  const deep = (r.verdieping&&r.verdieping.length) ? `<b class="t">Verdieping</b>${r.verdieping.map(d=>`<details class="more"><summary>${esc(d.title)}</summary><div class="morebody">${para(d.text)}</div></details>`).join('')}` : '';
   return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach</h2><p class="kop"><span class="pill ${col}">${esc((r.kop.match(/\. (Groen|Oranje|Rood)[^.]*/)||['',''])[1]||'')}</span> ${esc(r.kop)}</p>
-    ${sec('Gisteren', r.gisteren)}${sec('Vannacht', r.vannacht)}${sec('Zelfrapportage', r.zelf)}${r.impact?`<div class="concl ${col}"><b class="t" style="margin-top:0">Wat dit betekent voor vandaag</b><p style="margin:2px 0 0">${esc(r.impact)}</p><div class="small" style="margin-top:6px"><span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="goTab('vandaag')">Programma ›</span>&nbsp;&nbsp;<span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="goTab('voeding')">Voeding ›</span></div></div>`:''}${deep}
+    ${sec('Gisteren', r.gisteren)}${sec('Vannacht', r.vannacht)}${sec('Zelfrapportage', r.zelf)}${r.impact?`<div class="concl ${col}"><b class="t" style="margin-top:0">Wat dit betekent voor vandaag</b>${para(r.impact)}<div class="small" style="margin-top:6px"><span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="goTab('vandaag')">Programma ›</span>&nbsp;&nbsp;<span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="goTab('voeding')">Voeding ›</span></div></div>`:''}${deep}
     ${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}${fbBar('daily:'+prev.day)}</div>`;
 }
 let CI_STATUS = 'Wordt automatisch opgeslagen.'; let CI_TIMER = null;
@@ -1079,7 +1091,7 @@ function gymTable(rows){
   return h + '</table><div class="small" style="margin-top:6px">RIR = herhalingen in reserve. Gekleurde band = superset: a en b afwisselen, rust na het paar.</div>';
 }
 function resultBlock(x){ const r=x.result; if(!r) return ''; if(r.manual) return `<h4>Resultaat</h4><p>Handmatig op gedaan gezet${r.at?' · begonnen om '+tHM(r.at):''}, zonder horlogegegevens. De coach telt de sessie mee in het ritme, maar kan niets zeggen over duur en zwaarte.</p><button class="btn ghost" onclick="markDone('${esc(x.date)}','${esc(x.code)}',false)">Toch niet gedaan</button>`; let h = `<h4>Resultaat · ${esc(new Date(r.start).toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'}))}</h4><p>${resultLine(x).replace('✓ ','')}${r.training_load?` · belasting ${r.training_load}`:''}</p>`;
-  if(r.review) h += `<div class="card coach hl" style="margin:10px 0"><h2>Coach over deze sessie</h2><p>${esc(r.review)}</p>${fbBar('review:'+r.activity_id)}</div>`;
+  if(r.review) h += `<div class="card coach hl" style="margin:10px 0"><h2>Coach over deze sessie</h2>${para(r.review)}${fbBar('review:'+r.activity_id)}</div>`;
   if(r.laps && r.laps.length){ h += `<table class="wtab" style="margin-top:8px">${r.laps.map(l=>`<tr class="${l.type==='midpoint'?'mid':''}"><td class="t">${esc(l.type)}</td><td class="d">${esc(l.duration)}</td><td class="d">${l.distance_m?l.distance_m+' m':''}</td><td class="z">${esc(l.pace||'')}</td><td class="n">${l.avg_hr?'HR '+Math.round(l.avg_hr)+(l.max_hr?' / '+Math.round(l.max_hr):''):''}</td></tr>`).join('')}</table>`; }
   return h; }
 let MD = LS.get('pt_done', {});   // {dag: {code: {done, at}}}: handmatig afgevinkte sessies, tot de server ze heeft overgenomen
@@ -1096,7 +1108,7 @@ function showExtra(i){ const x = (D.today_block.extras||[])[i]; if(!x) return; c
   let h = `<div style="display:flex;justify-content:space-between;align-items:baseline"><h3>Extra · ${esc(x.type_nl)}</h3><span class="pill ${({rustig:'e',matig:'s',stevig:'q'})[x.level]||'e'}">${esc(x.level)}</span></div><p class="meta">${esc(x.date_txt)} · ${x.minutes} min · buiten het plan</p>`;
   h += `<h4>Resultaat · ${esc(tHM(r.start))}</h4><p>${resultLine(x).replace('✓ ','')}${r.training_load?` · belasting ${r.training_load}`:''}${r.calories?` · ${r.calories} kcal`:''}</p>`;
   if(x.evidence) h += `<p class="small">Indeling '${esc(x.level)}' op gemeten waarden: ${esc(x.evidence)}.</p>`;
-  if(r.review) h += `<div class="card coach hl" style="margin:10px 0"><h2>Coach over deze activiteit</h2><p>${esc(r.review)}</p>${fbBar('review:'+r.activity_id)}</div>`;
+  if(r.review) h += `<div class="card coach hl" style="margin:10px 0"><h2>Coach over deze activiteit</h2>${para(r.review)}${fbBar('review:'+r.activity_id)}</div>`;
   else h += `<p class="small muted">De duiding van de coach verschijnt na de volgende synchronisatie.</p>`;
   h += `<h4>Wat de coach ermee doet</h4><p>Extra activiteiten tellen mee in het rapport van morgen: rustig is bonus zonder herstelkosten, matig of stevig telt als extra belasting en weegt mee in hoe je ervoor staat. De calorieën (Garmin) gaan vandaag bij je voedingsdoelen op.</p>`;
   document.getElementById('mbody').innerHTML = h; document.getElementById('modal').classList.add('open'); }
@@ -1341,16 +1353,16 @@ function vInzicht(){
 let LOGX = [];
 function showReview(i){ const x = LOGX[i]; if(!x) return; const r = x.result||{}; EX_BACK = null; EX_OPEN = false;
   document.getElementById('mbody').innerHTML = `<h3>${esc(wtitle(x))}</h3><p class="meta">${esc(x.date_txt||'')}${r.duration?' · '+esc(r.duration):''}${r.distance_km?' · '+nl(r.distance_km)+' km':''}</p>
-    <div class="card coach hl" style="margin-top:10px"><h2>Coach over deze workout</h2><p>${esc(r.review||'')}</p>${r.activity_id?fbBar('review:'+r.activity_id):''}</div>
+    <div class="card coach hl" style="margin-top:10px"><h2>Coach over deze workout</h2>${para(r.review||'')}${r.activity_id?fbBar('review:'+r.activity_id):''}</div>
     <button class="btn ghost" style="margin-top:6px" onclick="showWorkout(LOGX[${i}])">Workout bekijken</button>`;
   document.getElementById('modal').classList.add('open'); const b = modalBox(); if(b) b.scrollTop = 0; }
 function sentences(s, n){ const a = String(s||'').split(/(?<=[.!?])\s+/); return [a.slice(0,n).join(' '), a.slice(n).join(' ')]; }
 function logCoach(cr){
   const r = cr.report || {}; const v = r.voeding || {};
   const lead = [r.gisteren, r.vannacht].filter(Boolean).join(' '); const [head] = sentences(lead, 2);
-  const sec = (t, x) => x ? `<div class="sub">${t}</div><p>${esc(x)}</p>` : '';
+  const sec = (t, x) => x ? `<div class="sub">${t}</div>${para(x)}` : '';
   const concl = (r.conclusie||[]).length ? `<div class="sub">Aandachtspunten</div><ul>${r.conclusie.map(c=>`<li><b>${esc(c.k)}</b> ${esc(c.t)}</li>`).join('')}</ul>` : '';
-  const fuel = v.titel ? `<div class="sub">${esc(v.titel)}</div>${v.dag?`<p>${esc(v.dag)}</p>`:''}<ul>${['voor','tijdens','na','avond'].filter(k=>v[k]).map(k=>`<li><b>${FUEL_LBL[k]}</b> ${esc(v[k])}</li>`).join('')}</ul>` : '';
+  const fuel = v.titel ? `<div class="sub">${esc(v.titel)}</div>${v.dag?para(v.dag):''}<ul>${['voor','tijdens','na','avond'].filter(k=>v[k]).map(k=>`<li><b>${FUEL_LBL[k]}</b> ${esc(v[k])}</li>`).join('')}</ul>` : '';
   const when = cr.generated_at ? String(cr.generated_at).replace('T',' ').slice(0,16) : '';
   return `<div class="card coach hl logcoach"><h2>Coachrapport</h2>${r.kop?`<p class="kop">${esc(r.kop)}</p>`:''}<p>${esc(head)}</p>
     <details class="more"><summary>Meer</summary><div class="morebody">
@@ -1583,7 +1595,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261022-1959'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261022-2004'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
