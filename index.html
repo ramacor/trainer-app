@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Trainer">
-<meta name="app-build" content="20261022-2055">
+<meta name="app-build" content="20261023-1309">
 <meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.json">
@@ -1015,7 +1015,7 @@ function coachCard(prev){
   const sec = (t, x) => x ? `<b class="t">${t}</b>${para(x)}` : '';
   const deep = (r.verdieping&&r.verdieping.length) ? `<b class="t">Verdieping</b>${r.verdieping.map(d=>`<details class="more"><summary>${esc(d.title)}</summary><div class="morebody">${para(d.text)}</div></details>`).join('')}` : '';
   return `<div class="card coach hl"><h2 class="info" onclick="showInfo('coach')">Coach</h2><p class="kop"><span class="pill ${col}">${esc((r.kop.match(/\. (Groen|Oranje|Rood)[^.]*/)||['',''])[1]||'')}</span> ${esc(r.kop)}</p>
-    ${sec('Gisteren', r.gisteren)}${sec('Vannacht', r.vannacht)}${sec('Zelfrapportage', r.zelf)}${r.impact?`<div class="concl ${col}"><b class="t" style="margin-top:0">Wat dit betekent voor vandaag</b>${para(r.impact)}<div class="small" style="margin-top:6px"><span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="goTab('vandaag')">Programma ›</span>&nbsp;&nbsp;<span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="goTab('voeding')">Voeding ›</span></div></div>`:''}${deep}
+    ${sec('Gisteren', r.gisteren)}${sec('Vannacht', r.vannacht)}${sec('Zelfrapportage', r.zelf)}${sec('Wat je hiervan leert', r.leren)}${r.impact?`<div class="concl ${col}"><b class="t" style="margin-top:0">Wat dit betekent voor vandaag</b>${para(r.impact)}<div class="small" style="margin-top:6px"><span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="goTab('vandaag')">Programma ›</span>&nbsp;&nbsp;<span style="color:var(--accent);font-weight:700;cursor:pointer" onclick="goTab('voeding')">Voeding ›</span></div></div>`:''}${deep}
     ${prev.generated_at?`<div class="small">Gemaakt ${esc(String(prev.generated_at).replace('T',' ').slice(0,16))}</div>`:''}${fbBar('daily:'+prev.day)}</div>`;
 }
 let CI_STATUS = 'Wordt automatisch opgeslagen.'; let CI_TIMER = null;
@@ -1386,7 +1386,7 @@ function logCoach(cr){
   const when = cr.generated_at ? String(cr.generated_at).replace('T',' ').slice(0,16) : '';
   return `<div class="card coach hl logcoach"><h2>Coachrapport</h2>${r.kop?`<p class="kop">${esc(r.kop)}</p>`:''}<p>${esc(head)}</p>
     <details class="more"><summary>Meer</summary><div class="morebody">
-      <h4>Reflect</h4>${sec('Gisteren', r.gisteren)}${sec('Vannacht', r.vannacht)}${sec('Zelfrapportage', r.zelf)}${sec('Wat dit betekent', r.impact)}
+      <h4>Reflect</h4>${sec('Gisteren', r.gisteren)}${sec('Vannacht', r.vannacht)}${sec('Zelfrapportage', r.zelf)}${sec('Wat je hiervan leert', r.leren)}${sec('Wat dit betekent', r.impact)}
       <h4>Dag</h4>${concl}${sec('Programma', r.vandaag)}${sec('Vooruit', r.vooruit)}
       ${fuel?`<h4>Voeding</h4>${fuel}`:''}
     </div></details>${when?`<div class="small">Gemaakt ${esc(when)}</div>`:''}</div>`;
@@ -1615,7 +1615,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize', fitShell);
 document.addEventListener('visibilitychange', fitShell); [150, 500, 1200, 3000, 6000].forEach(ms=>setTimeout(fitShell, ms));
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 // ---- nieuwe versie van de app opmerken (de ↻-knop ververst alleen de data) ----
-const BUILD = '20261022-2055'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
+const BUILD = '20261023-1309'; const STAMPED = /^\d{8}-\d{4}$/.test(BUILD); let UPDATE_SEEN = false;  // STAMPED: gepubliceerde versie (het publicatiescript vervangt de stempeltekst overal, dus nooit op die tekst vergelijken)
 async function checkUpdate(){
   if(!STAMPED || UPDATE_SEEN) return;
   try{ const r = await fetch('index.html?u='+Date.now(), {cache:'no-store'}); const txt = await r.text(); const m = txt.match(/app-build" content="([^"]+)"/);
